@@ -27,7 +27,7 @@ public class UserController {
     private UserService userService;
 
     //用户注册
-    @PostMapping("/register")         //localhost:8081/user/register
+    @PostMapping("/register")         //localhost:8081/user/register   method:post
     public ResponseMessage<String> register(@Valid @RequestBody UserDto user) {
         //查询用户
         User u=userService.findByNickname(user.getNickname());
