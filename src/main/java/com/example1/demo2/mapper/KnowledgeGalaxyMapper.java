@@ -63,4 +63,9 @@ public interface KnowledgeGalaxyMapper {
     @Update("update tab_knowledge_galaxy set member_count = member_count - 1 " +
             "where galaxy_id = #{galaxyId}")
     void decrementMemberCount(Integer galaxyId);
+
+    //重置成员计数
+    @Update("update tab_knowledge_galaxy set member_couunt=0"+
+    " where galaxy_id = #{galaxyId}")
+    void resetMemberCount(Integer galaxyId);
 }

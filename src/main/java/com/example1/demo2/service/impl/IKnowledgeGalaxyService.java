@@ -38,6 +38,8 @@ public class IKnowledgeGalaxyService implements KnowledgeGalaxyService {
 
         // 创建者自动成为成员
         galaxyMemberMapper.addMember(galaxy.getGalaxyId(), galaxy.getCreatorId(), "创建者");
+
+
     }
 
     @Override
