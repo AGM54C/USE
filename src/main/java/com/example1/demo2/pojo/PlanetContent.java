@@ -2,6 +2,7 @@ package com.example1.demo2.pojo;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "tab_planet_content")
@@ -77,6 +78,12 @@ public class PlanetContent {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
+    /**
+     * 包含的评论列表
+     */
+    @OneToMany(mappedBy = "planetContent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanetComment> planetComments;
+
     // JPA 回调方法：插入前自动设置时间
     @PrePersist
     protected void onCreate() {
@@ -134,6 +141,14 @@ public class PlanetContent {
 
     public String getFileUrl() {
         return fileUrl;
+    }
+
+    public List<PlanetComment> getPlanetComments() {
+        return planetComments;
+    }
+
+    public void setPlanetComments(List<PlanetComment> planetComments) {
+        this.planetComments = planetComments;
     }
 
     @Override

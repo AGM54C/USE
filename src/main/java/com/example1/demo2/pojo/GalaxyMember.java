@@ -1,6 +1,8 @@
 package com.example1.demo2.pojo;
 
 import java.util.Date;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -69,6 +71,14 @@ public class GalaxyMember {
     @Column(name = "update_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+
+    /**
+     * 该成员创建的知识星球列表
+     * 一对多关系，由KnowledgePlanet中的字段维护
+     */
+    @OneToMany(mappedBy = "creatorMember", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KnowledgePlanet> createdPlanets;
+
 
     /**
      * JPA回调方法，插入前自动设置创建时间和更新时间
@@ -169,6 +179,14 @@ public class GalaxyMember {
         this.updateTime = updateTime;
     }
 
+    public List<KnowledgePlanet> getCreatedPlanets() {
+        return createdPlanets;
+    }
+
+    public void setCreatedPlanets(List<KnowledgePlanet> createdPlanets) {
+        this.createdPlanets = createdPlanets;
+    }
+
     public Date getLastActivityTime() {
         return updateTime; // 最后活动时间等同于更新时间
     }
@@ -198,8 +216,8 @@ public class GalaxyMember {
      */
     public static class RoleType {
         public static final int MEMBER = 0;    // 普通成员
-        public static final int ADMIN = 1;     // 管理员
-        public static final int CREATOR = 2;   // 创建者
+        public static final int ADMIN = 0;     // 管理员
+        public static final int CREATOR = 1;   // 创建者
     }
 
     /**

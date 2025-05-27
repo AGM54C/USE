@@ -316,7 +316,6 @@ public class ConvertUtil {
         PlanetCommentDto dto = new PlanetCommentDto();
         dto.setCommentId(comment.getCommentId());
         dto.setPlanetId(comment.getPlanetId());
-        dto.setContentId(comment.getContentId());
         dto.setUserId(comment.getUserId());
         dto.setParentId(comment.getParentId());
         dto.setLevel(comment.getLevel());
@@ -334,7 +333,6 @@ public class ConvertUtil {
         PlanetComment comment = new PlanetComment();
         comment.setCommentId(dto.getCommentId());
         comment.setPlanetId(dto.getPlanetId());
-        comment.setContentId(dto.getContentId());
         comment.setUserId(dto.getUserId());
         comment.setParentId(dto.getParentId());
         comment.setLevel(dto.getLevel() != null ? dto.getLevel() : 1); // 默认层级1

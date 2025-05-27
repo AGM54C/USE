@@ -1,6 +1,8 @@
 package com.example1.demo2.pojo;
 
 import java.util.Date;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -65,6 +67,12 @@ public class KnowledgeGalaxy {
     @Column(name = "update_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+
+    /**
+     * 包含的知识星球列表
+     */
+    @OneToMany(mappedBy = "knowledgeGalaxy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KnowledgePlanet> knowledgePlanets;
 
     // JPA回调方法，插入前自动设置创建时间和更新时间
     @PrePersist
@@ -157,6 +165,14 @@ public class KnowledgeGalaxy {
         this.updateTime = updateTime;
     }
 
+    public List<KnowledgePlanet> getKnowledgePlanets() {
+        return knowledgePlanets;
+    }
+
+    public void setKnowledgePlanets(List<KnowledgePlanet> knowledgePlanets) {
+        this.knowledgePlanets = knowledgePlanets;
+    }
+
     @Override
     public String toString() {
         return "KnowledgeGalaxy{" +
@@ -169,6 +185,7 @@ public class KnowledgeGalaxy {
                 ", lastActivityTime=" + lastActivityTime +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", knowledgePlanets=" + knowledgePlanets +
                 '}';
     }
 }
