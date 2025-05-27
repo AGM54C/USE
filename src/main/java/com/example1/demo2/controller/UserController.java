@@ -26,11 +26,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //用户注册
-    @PostMapping("/register")         //localhost:8081/user/register   method:post
+    //用户注册（必要参数：用户名，密码,返回值：用户ID）
+    @PostMapping("/register")         //localhost:8081/user/register
     public ResponseMessage<String> register(@Valid @RequestBody UserDto user) {
         //查询用户
+        System.out.println(user);
         User u=userService.findByNickname(user.getNickname());
+        System.out.println(u);
         if(u!=null) {
             //用户名已经占用
             return ResponseMessage.error("用户名已被占用，请重新输入");
@@ -38,11 +40,12 @@ public class UserController {
         else{
             //没有占用
             userService.register(user.getNickname(),user.getPassword());
-            return ResponseMessage.success("用户"+user.getNickname()+"成功创建");
+            u=userService.findByNickname(user.getNickname());
+            return ResponseMessage.success(u.getUserId());
         }
     }
 
-    //用户登录
+    //用户登录（必要参数：用户名，密码，返回值：登录JWT令牌）
     @PostMapping("/login")       //localhost:8081/user/login
     public ResponseMessage<String> login(@Valid @RequestBody UserDto user) {
         //查询用户并匹配密码
@@ -60,7 +63,7 @@ public class UserController {
             userService.updatelastLoginTime(u);
 
             //返回jwt令牌
-            return ResponseMessage.success("JWT Token 令牌："+token);
+            return ResponseMessage.success(token);
         }
         else{
             //用户或密码错误
@@ -68,28 +71,33 @@ public class UserController {
         }
     }
 
-    //查询用户信息
+    //查询用户信息（必要参数：用户登录JWT令牌，返回值：用户列表信息）
     @GetMapping("/userinfo")
     public ResponseMessage<UserDto> userinfo(){
         //根据用户名查询,使用全局变量ThreadLocal
         Map<String,Object> map=ThreadLocalUtil.get();
         String nickname= (String)map.get("nickname");
         User u=userService.findByNickname(nickname);
-
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登陆状态已过期");
+        }
         //转化为userdto对象，防止数据泄漏
         UserDto user= ConvertUtil.convertUserToDto(u);
         return ResponseMessage.success(user);
     }
 
-/*
-    ***注意***
-    所有关于用户信息的更改后都会回收JWT令牌，此时要求用户重新登录更新JWT令牌版本
- */
-    //更新用户基本信息(nickname,bio,url,update_time）
+    /*
+        ***注意***
+        所有关于用户信息的更改后都会回收JWT令牌，此时要求用户重新登录更新JWT令牌版本
+     */
+    //更新用户基本信息(nickname,bio,url,update_time，返回值：成功或失败信息）
     @PutMapping("/update")
     public ResponseMessage update(@Valid @RequestBody UserDto user) {
         User u = userService.findById(user.getUserId());
 
+        if(u==null) {
+            return ResponseMessage.error("用户不存在");
+        }
         // 判断用户信息是否有变化
         boolean isChanged = false;
         if (!Objects.equals(user.getNickname(), u.getNickname())) isChanged = true;
@@ -105,7 +113,7 @@ public class UserController {
         return ResponseMessage.success("已更新用户信息，请重新登录！");
     }
 
-    //更新密码
+    //更新密码（必要参数：原密码，新密码，二次输入新密码,返回值：成功或失败信息）
     @PutMapping("/updatepassword")
     public ResponseMessage updatepassword(@Valid @RequestBody updatePasswordDto password){
         //校验参数
@@ -120,6 +128,9 @@ public class UserController {
         Map<String,Object> map = ThreadLocalUtil.get();
         String nickname= (String)map.get("nickname");
         User u=userService.findByNickname(nickname);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
         if(!BCryptUtil.verifyPassword(oldpassword,u.getPassword())) {
             return ResponseMessage.error("原密码输入不正确！");
         }
@@ -139,7 +150,7 @@ public class UserController {
         return ResponseMessage.success("已更新用户密码,请重新登录！");
     }
 
-    //更新绑定手机
+    //更新绑定手机（必要参数：手机号，用户id，返回值：成功或失败信息）
     @PutMapping("/updatemobile")
     public ResponseMessage updatemobile(@Valid @RequestBody UserDto user){
         User u=userService.findByMobile(user.getMobile());
@@ -151,11 +162,10 @@ public class UserController {
         return ResponseMessage.success("已更新手机绑定,请重新登录！");
     }
 
-    //更新绑定邮箱
+    //更新绑定邮箱（必要参数：邮箱，返回值：成功或失败信息）
     @PutMapping("/updateemail")
     public ResponseMessage updateemail(@Valid @RequestBody UserDto user){
         User u=userService.findByEmail(user.getEmail());
-
         if(u!=null){
             //邮箱已被其他用户绑定
             return ResponseMessage.error("该邮箱已绑定其他用户！");
@@ -165,7 +175,7 @@ public class UserController {
     }
 
 
-    //注销用户
+    //注销用户（必要参数，用户ID，返回信息：成功或失败信息）
     @DeleteMapping("/delete")       //localhost:8081/user/delete
     public ResponseMessage<String> delete(@RequestBody UserDto user) {
         //通过id删除用户
@@ -177,7 +187,7 @@ public class UserController {
         else{
             //删除用户
             userService.delete(user.getUserId());
-            return ResponseMessage.success("用户"+u.getNickname()+"已成功注销！");
+            return ResponseMessage.success("成功删除");
         }
     }
 
