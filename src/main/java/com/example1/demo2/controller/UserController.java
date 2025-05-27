@@ -86,10 +86,10 @@ public class UserController {
         return ResponseMessage.success(user);
     }
 
-/*
-    ***注意***
-    所有关于用户信息的更改后都会回收JWT令牌，此时要求用户重新登录更新JWT令牌版本
- */
+    /*
+        ***注意***
+        所有关于用户信息的更改后都会回收JWT令牌，此时要求用户重新登录更新JWT令牌版本
+     */
     //更新用户基本信息(nickname,bio,url,update_time，返回值：成功或失败信息）
     @PutMapping("/update")
     public ResponseMessage update(@Valid @RequestBody UserDto user) {
