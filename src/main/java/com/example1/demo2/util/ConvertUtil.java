@@ -1,9 +1,11 @@
 package com.example1.demo2.util;
 
 import com.example1.demo2.pojo.KnowledgePlanet;
+import com.example1.demo2.pojo.PlanetComment;
 import com.example1.demo2.pojo.PlanetContent;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
+import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.PlanetContentDto;
 import com.example1.demo2.pojo.dto.UserDto;
 
@@ -151,5 +153,39 @@ public class ConvertUtil {
         content.setStatus(dto.getStatus());
         // 时间字段由数据库自动管理，此处可省略或按需设置
         return content;
+    }
+
+    //  PlanetComment转DTO
+    public static PlanetCommentDto convertPlanetCommentToDto(PlanetComment comment) {
+        PlanetCommentDto dto = new PlanetCommentDto();
+        dto.setCommentId(comment.getCommentId());
+        dto.setPlanetId(comment.getPlanetId());
+        dto.setContentId(comment.getContentId());
+        dto.setUserId(comment.getUserId());
+        dto.setParentId(comment.getParentId());
+        dto.setLevel(comment.getLevel());
+        dto.setContent(comment.getContent());
+        dto.setLikeCount(comment.getLikeCount());
+        dto.setReplyCount(comment.getReplyCount());
+        dto.setStatus(comment.getStatus());
+        dto.setCreateTime(comment.getCreateTime());
+        dto.setUpdateTime(comment.getUpdateTime());
+        return dto;
+    }
+
+    // DTO转PlanetComment
+    public static PlanetComment convertDtoToPlanetComment(PlanetCommentDto dto) {
+        PlanetComment comment = new PlanetComment();
+        comment.setCommentId(dto.getCommentId());
+        comment.setPlanetId(dto.getPlanetId());
+        comment.setContentId(dto.getContentId());
+        comment.setUserId(dto.getUserId());
+        comment.setParentId(dto.getParentId());
+        comment.setLevel(dto.getLevel() != null ? dto.getLevel() : 1); // 默认层级1
+        comment.setContent(dto.getContent());
+        comment.setLikeCount(dto.getLikeCount() != null ? dto.getLikeCount() : 0); // 默认0
+        comment.setReplyCount(dto.getReplyCount() != null ? dto.getReplyCount() : 0); // 默认0
+        comment.setStatus(dto.getStatus() != null ? dto.getStatus() : 0); // 默认正常
+        return comment;
     }
 }

@@ -1,9 +1,13 @@
 package com.example1.demo2.pojo.dto;
 
 import jakarta.validation.constraints.*;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class KnowledgePlanetDto {
+public class KnowledgePlanetDto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // 创建时自动生成，无需前端传入
     @Pattern(regexp = "^PLNT-\\d{8}-\\d{4}$", message = "星球ID格式错误")
     private String planetId;

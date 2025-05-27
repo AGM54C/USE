@@ -2,18 +2,20 @@ package com.example1.demo2.pojo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
+
+import java.io.Serializable;
 import java.util.Date;
 import org.hibernate.validator.constraints.URL;
 
 
-public class UserDto {
+public class UserDto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // 对应数据库 user_id 字段
-    @NotNull
     private Integer userId;
 
     private Integer tokenVersion;
 
-    @NotBlank(message = "邮箱不能为空")
     @Email(message = "邮箱格式不正确")
     @Size(max = 100, message = "邮箱长度不能超过100个字符")
     private String email;

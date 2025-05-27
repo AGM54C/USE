@@ -1,9 +1,12 @@
 package com.example1.demo2.pojo.dto;
 
 import jakarta.validation.constraints.*;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class PlanetContentDto {
+public class PlanetContentDto implements Serializable {
+    private static final long serialVersionUID = 1L;
     // 创建时自动生成，无需前端传入
     private Integer contentId;
 
