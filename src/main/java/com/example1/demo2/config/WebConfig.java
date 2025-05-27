@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private Logininterceptor logininterceptor;
 
+
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         //登录注册不拦截
