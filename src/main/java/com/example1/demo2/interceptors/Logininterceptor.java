@@ -34,7 +34,6 @@ public class Logininterceptor implements HandlerInterceptor {
 
             //验证版本是否一致
             if (u == null || !u.getTokenVersion().equals(tokenVersion)) {
-                System.out.println("Token已过期，请重新登录");
              throw new JWTVerificationException("Token已过期，请重新登录");
            }
             //将业务数据存储到Threadlocal中，多线程运行

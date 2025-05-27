@@ -3,7 +3,11 @@ package com.example1.demo2.pojo.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public class updatePasswordDto {
+import java.io.Serializable;
+
+public class updatePasswordDto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String oldpassword;
 
     @NotBlank(message = "密码不能为空")
