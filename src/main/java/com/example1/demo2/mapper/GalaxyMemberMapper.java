@@ -2,7 +2,6 @@ package com.example1.demo2.mapper;
 
 import com.example1.demo2.pojo.GalaxyMember;
 import com.example1.demo2.pojo.KnowledgePlanet;
-import com.example1.demo2.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -63,7 +62,7 @@ public interface GalaxyMemberMapper {
             "VALUES(#{galaxyId}, #{userId.userId}, 2, #{roleDesc}, NOW(), " +
             "'[\"ALL_PERMISSIONS\"]', 1, NOW(), NOW())")
     void addMember(@Param("galaxyId") Integer galaxyId,
-                   @Param("userId") User userId,
+                   @Param("userId") Integer userId,
                    @Param("roleDesc") String roleDesc);
 
     @Delete("DELETE FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
@@ -76,7 +75,7 @@ public interface GalaxyMemberMapper {
     @Update("UPDATE tab_galaxy_member SET status = 2, update_time = NOW() " +
             "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId.userId}")
     void removeMember(@Param("galaxyId") Integer galaxyId,
-                      @Param("userId") User userId);
+                      @Param("userId") Integer userId);
 
     // ==================== 星球相关操作 ====================
 

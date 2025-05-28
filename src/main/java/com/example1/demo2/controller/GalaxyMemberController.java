@@ -2,6 +2,7 @@ package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.GalaxyMember;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.pojo.dto.GalaxyMemberDto;
 import com.example1.demo2.service.GalaxyMemberService;

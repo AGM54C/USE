@@ -4,6 +4,7 @@ import com.example1.demo2.mapper.GalaxyMemberMapper;
 import com.example1.demo2.mapper.KnowledgeGalaxyMapper;
 import com.example1.demo2.mapper.UserMapper;
 import com.example1.demo2.pojo.GalaxyMember;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyMemberDto;
 import com.example1.demo2.service.GalaxyMemberService;
 import com.example1.demo2.util.ConvertUtil;
@@ -329,6 +330,7 @@ public class IGalaxyMemberService implements GalaxyMemberService {
         return ConvertUtil.convertDtoToMember(memberDto);
     }
 
+    @Transactional
     @Override
     public boolean isMember(Integer galaxyId, Integer userId) {
         return galaxyMemberMapper.isMember(galaxyId, userId);

@@ -1,7 +1,6 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
-import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.knowledgeGalaxyDto;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +33,10 @@ public interface KnowledgeGalaxyService {
     // 查询用户加入的星系列表
     List<knowledgeGalaxyDto> findJoinedGalaxies(Integer userId);
 
-    // 添加成员
-    void addMember(Integer galaxyId, Integer userId);
 
     @Transactional
     //添加成员
-    void addMember(Integer galaxyId, User userId);
+    void addMember(Integer galaxyId, Integer userId);
 
     //添加星球
     void addPlanet(Integer galaxyId, KnowledgePlanet knowledgePlanet);
@@ -48,10 +45,8 @@ public interface KnowledgeGalaxyService {
     void removePlanet(Integer galaxyId, KnowledgePlanet knowledgePlanet);
 
     // 移除成员
-    void removeMember(Integer galaxyId, User userId);
-
-    @Transactional
     void removeMember(Integer galaxyId, Integer userId);
+
 
     // 删除星系
     void delete(Integer galaxyId);

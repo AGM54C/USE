@@ -4,7 +4,6 @@ import com.example1.demo2.mapper.KnowledgeGalaxyMapper;
 import com.example1.demo2.mapper.GalaxyMemberMapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
-import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.knowledgeGalaxyDto;
 import com.example1.demo2.service.KnowledgeGalaxyService;
 import com.example1.demo2.util.ConvertUtil;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public abstract class IKnowledgeGalaxyService implements KnowledgeGalaxyService {
+public class IKnowledgeGalaxyService implements KnowledgeGalaxyService {
 
     @Autowired
     private KnowledgeGalaxyMapper knowledgeGalaxyMapper;
@@ -39,7 +38,7 @@ public abstract class IKnowledgeGalaxyService implements KnowledgeGalaxyService 
         knowledgeGalaxyMapper.add(galaxy);
 
         // 创建者自动成为成员
-        galaxyMemberMapper.addMember(galaxy.getGalaxyId(), galaxy.getCreator(), "创建者");
+        galaxyMemberMapper.addMember(galaxy.getGalaxyId(), galaxy.getCreatorId(), "创建者");
 
 
     }
@@ -83,7 +82,7 @@ public abstract class IKnowledgeGalaxyService implements KnowledgeGalaxyService 
 
     @Transactional
     @Override
-    public void addMember(Integer galaxyId, User userId) {
+    public void addMember(Integer galaxyId, Integer userId) {
         galaxyMemberMapper.addMember(galaxyId, userId, "普通成员");
         knowledgeGalaxyMapper.incrementMemberCount(galaxyId);
         updateLastActivityTime(galaxyId);
@@ -91,11 +90,12 @@ public abstract class IKnowledgeGalaxyService implements KnowledgeGalaxyService 
 
     @Transactional
     @Override
-    public void removeMember(Integer galaxyId, User userId) {
+    public void removeMember(Integer galaxyId, Integer userId) {
         galaxyMemberMapper.removeMember(galaxyId, userId);
         knowledgeGalaxyMapper.decrementMemberCount(galaxyId);
         updateLastActivityTime(galaxyId);
     }
+
 
     @Transactional
     @Override

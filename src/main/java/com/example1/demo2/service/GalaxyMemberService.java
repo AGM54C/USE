@@ -1,7 +1,10 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.GalaxyMember;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyMemberDto;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +76,6 @@ public interface GalaxyMemberService {
      * @param userId 用户ID
      */
     void removeMember(Integer galaxyId, Integer userId);
-
     /**
      * 批量移除成员
      * @param galaxyId 星系ID
@@ -181,6 +183,8 @@ public interface GalaxyMemberService {
      * @param userId 用户ID
      * @return true如果是成员，否则false
      */
+
+    @Transactional
     boolean isMember(Integer galaxyId, Integer userId);
 
     /**

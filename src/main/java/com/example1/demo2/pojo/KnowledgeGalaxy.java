@@ -39,7 +39,7 @@ public class KnowledgeGalaxy {
      * 创建者ID（外键）
      */
     @ManyToOne
-    @JoinColumn(name = "creator_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "creator", referencedColumnName = "user_id", nullable = false)
     private User creator;
 
     /**
@@ -172,6 +172,11 @@ public class KnowledgeGalaxy {
     public void setKnowledgePlanets(List<KnowledgePlanet> knowledgePlanets) {
         this.knowledgePlanets = knowledgePlanets;
     }
+
+    public Integer getCreatorId() {
+        return creator != null ? creator.getUserId() : null;
+    }
+
 
     @Override
     public String toString() {
