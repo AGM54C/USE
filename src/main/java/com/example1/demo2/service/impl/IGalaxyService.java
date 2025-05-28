@@ -78,11 +78,6 @@ public class IGalaxyService implements GalaxyService {
         galaxyMapper.removePlanetFromGalaxy(galaxyId, planetId);
     }
 
-    @Override
-    public KnowledgeGalaxy getKnowledgeGalaxyByInviteCode(String inviteCode) {
-        return galaxyMapper.getKnowledgeGalaxyByInviteCode(inviteCode);
-    }
-
     /**
      * 生成星系ID格式字符串
      * 格式：GLXY-YYYYMMDD-XXXX

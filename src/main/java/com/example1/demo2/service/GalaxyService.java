@@ -49,13 +49,4 @@ public interface GalaxyService {
      * @param planetId 星球ID
      */
     void removeKnowledgePlanetFromGalaxy(String galaxyId, String planetId);
-
-    /**
-     * 添加评论到星系
-     * @param galaxyId 星系ID
-     * @param commentId 评论ID
-     * @param
-     * @return 返回找到的星系实体，如果未找到返回null
-     */
-    KnowledgeGalaxy getKnowledgeGalaxyByInviteCode(String inviteCode);
 }
