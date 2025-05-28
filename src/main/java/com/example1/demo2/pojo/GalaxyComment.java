@@ -1,7 +1,9 @@
+// 1. 首先修改GalaxyComment实体，添加一些必要的字段和方法
 package com.example1.demo2.pojo;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "tab_galaxy_comment")
@@ -36,6 +38,13 @@ public class GalaxyComment {
     private Date createTime = new Date();
 
     /**
+     * 更新时间
+     */
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime = new Date();
+
+    /**
      * 评论内容
      */
     @Column(name = "content", columnDefinition = "text", length = 500, nullable = false)
@@ -51,7 +60,13 @@ public class GalaxyComment {
      * 父评论ID（0表示一级评论）
      */
     @Column(name = "parent_comment_id", columnDefinition = "int default 0")
-    private Long parentId = 0L;
+    private Integer parentId = 0;
+
+    /**
+     * 被回复的用户ID（用于@功能，可为空）
+     */
+    @Column(name = "reply_to_user_id")
+    private Integer replyToUserId;
 
     /**
      * 创建者角色（0 星系创建者 1 星系管理员 2普通成员）
@@ -83,12 +98,23 @@ public class GalaxyComment {
     @Column(name = "report_count", columnDefinition = "int default 0")
     private Integer reportCount = 0;
 
+    /**
+     * 子评论列表（一对多自关联）
+     */
+    @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
+    private List<GalaxyComment> replies;
+
     // JPA回调方法
     @PrePersist
     protected void onCreate() {
-        if (this.createTime == null) {
-            this.createTime = new Date();
-        }
+        Date now = new Date();
+        this.createTime = now;
+        this.updateTime = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateTime = new Date();
     }
 
     // Getters and Setters
@@ -124,6 +150,14 @@ public class GalaxyComment {
         this.createTime = createTime;
     }
 
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public String getContent() {
         return content;
     }
@@ -140,12 +174,20 @@ public class GalaxyComment {
         this.level = level;
     }
 
-    public Long getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    public Integer getReplyToUserId() {
+        return replyToUserId;
+    }
+
+    public void setReplyToUserId(Integer replyToUserId) {
+        this.replyToUserId = replyToUserId;
     }
 
     public Integer getCreatorRole() {
@@ -188,12 +230,20 @@ public class GalaxyComment {
         this.reportCount = reportCount;
     }
 
+    public List<GalaxyComment> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<GalaxyComment> replies) {
+        this.replies = replies;
+    }
+
     @Override
     public String toString() {
         return "GalaxyComment{" +
                 "galaxyCommentId=" + galaxyCommentId +
-                ", user=" + user +
-                ", knowledgeGalaxy=" + knowledgeGalaxy +
+                ", userId=" + (user != null ? user.getUserId() : null) +
+                ", galaxyId=" + (knowledgeGalaxy != null ? knowledgeGalaxy.getGalaxyId() : null) +
                 ", createTime=" + createTime +
                 ", content='" + content + '\'' +
                 ", level=" + level +
@@ -202,7 +252,6 @@ public class GalaxyComment {
                 ", likeCount=" + likeCount +
                 ", replyCount=" + replyCount +
                 ", status=" + status +
-                ", reportCount=" + reportCount +
                 '}';
     }
 }

@@ -271,7 +271,28 @@ public class ConvertUtil {
 
         return galaxy;
     }
+    /**
+     * 将GalaxyCommentDto转换为GalaxyComment实体
+     */
+    public static GalaxyComment convertDtoToGalaxyComment(GalaxyCommentDto dto) {
+        if (dto == null) {
+            return null;
+        }
 
+        GalaxyComment comment = new GalaxyComment();
+        comment.setGalaxyCommentId(dto.getGalaxyCommentId());
+        comment.setContent(dto.getContent());
+        comment.setLevel(dto.getLevel());
+        comment.setParentId(dto.getParentId());
+        comment.setReplyToUserId(dto.getReplyToUserId());
+        comment.setCreatorRole(dto.getCreatorRole());
+        comment.setLikeCount(dto.getLikeCount());
+        comment.setReplyCount(dto.getReplyCount());
+        comment.setStatus(dto.getStatus());
+        comment.setCreateTime(dto.getCreateTime());
+        comment.setUpdateTime(dto.getUpdateTime());
 
+        return comment;
+    }
 
 }
