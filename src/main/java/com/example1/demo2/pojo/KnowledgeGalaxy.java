@@ -22,7 +22,13 @@ public class KnowledgeGalaxy {
     private Integer userId;
 
     /**
-     * 星系标签/名称
+     * 星系名称
+     */
+    @Column(name = "name", length = 100, nullable = false)
+    private String name;
+
+    /**
+     * 星系标签
      */
     @Column(name = "label", length = 100, nullable = false)
     private String label;
@@ -108,6 +114,14 @@ public class KnowledgeGalaxy {
         this.userId = userId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getLabel() {
         return label;
     }
@@ -185,6 +199,7 @@ public class KnowledgeGalaxy {
         return "KnowledgeGalaxy{" +
                 "galaxyId=" + galaxyId +
                 ", userId=" + userId +
+                ", name='" + name + '\'' +
                 ", label='" + label + '\'' +
                 ", permission=" + permission +
                 ", inviteCode='" + inviteCode + '\'' +

@@ -180,4 +180,98 @@ public class ConvertUtil {
         return comment;
     }
 
+    /**
+     * 将 KnowledgeGalaxy 实体转换为 KnowledgeGalaxyDto
+     * @param galaxy KnowledgeGalaxy 实体对象
+     * @return 转换后的 KnowledgeGalaxyDto 对象
+     */
+    public static KnowledgeGalaxyDto convertKnowledgeGalaxyToDto(KnowledgeGalaxy galaxy) {
+        if (galaxy == null) return null;
+
+        KnowledgeGalaxyDto dto = new KnowledgeGalaxyDto();
+
+        // 主键ID转换：Integer -> String
+        // 注意：这里需要将数据库的自增整数ID转换为字符串格式
+        if (galaxy.getGalaxyId() != null) {
+            dto.setGalaxyId(galaxy.getGalaxyId().toString());
+        }
+
+        // 创建者用户ID
+        dto.setUserId(galaxy.getUserId());
+
+        // 星系名称
+        dto.setName(galaxy.getName());
+
+        // 星系标签
+        dto.setLabel(galaxy.getLabel());
+
+        // 星系权限（0私有，1公开）
+        dto.setPermission(galaxy.getPermission());
+
+        // 星系邀请码
+        dto.setInviteCode(galaxy.getInviteCode());
+
+        // 创建时间
+        dto.setCreateTime(galaxy.getCreateTime());
+
+        // 更新时间
+        dto.setUpdateTime(galaxy.getUpdateTime());
+
+        // 注意：实体中的关联对象（creator, planets, comments, administrators）
+        // 在DTO中不需要，所以这里不进行转换
+
+        return dto;
+    }
+
+    /**
+     * 将 KnowledgeGalaxyDto 转换为 KnowledgeGalaxy 实体
+     * @param dto KnowledgeGalaxyDto 对象
+     * @return 转换后的 KnowledgeGalaxy 实体对象
+     */
+    public static KnowledgeGalaxy convertDtoToKnowledgeGalaxy(KnowledgeGalaxyDto dto) {
+        if (dto == null) return null;
+
+        KnowledgeGalaxy galaxy = new KnowledgeGalaxy();
+
+        // 主键ID转换：String -> Integer
+        // 注意：创建新记录时galaxyId可能为null（数据库自增生成）
+        // 更新记录时galaxyId是必需的
+        if (dto.getGalaxyId() != null && !dto.getGalaxyId().isEmpty()) {
+            try {
+                // 尝试将字符串ID转换为整数
+                // 如果是"GLXY-20250101-ABCD"格式，则提取数字部分
+                // 如果是纯数字字符串，则直接转换
+                galaxy.setGalaxyId(Integer.parseInt(dto.getGalaxyId()));
+            } catch (NumberFormatException e) {
+                // 如果无法转换为数字，说明可能是格式化的ID
+                // 这种情况下galaxyId应该由数据库自动生成，所以不设置
+                // 实际使用时根据业务需求决定如何处理
+            }
+        }
+
+        // 创建者用户ID
+        galaxy.setUserId(dto.getUserId());
+
+        // 星系名称
+        galaxy.setName(dto.getName());
+
+        // 星系标签
+        galaxy.setLabel(dto.getLabel());
+
+        // 星系权限（默认值为1-公开）
+        galaxy.setPermission(dto.getPermission() != null ? dto.getPermission() : 1);
+
+        // 星系邀请码
+        galaxy.setInviteCode(dto.getInviteCode());
+
+        // 时间字段通常由数据库自动管理（通过@PrePersist和@PreUpdate）
+        // 创建时不需要手动设置，更新时可根据需要设置
+        // galaxy.setCreateTime(dto.getCreateTime());
+        // galaxy.setUpdateTime(dto.getUpdateTime());
+
+        return galaxy;
+    }
+
+
+
 }
