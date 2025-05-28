@@ -110,6 +110,13 @@ public class User {
     private Integer knowledgeDust;
 
     /**
+     * 创建的星球（一对多关联星球表）
+     */
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+    private List<KnowledgePlanet> createdPlanets;
+
+
+    /**
      * 创建的星系（一对多关联星系表）
      */
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
@@ -268,6 +275,14 @@ public class User {
 
     public void setKnowledgeDust(Integer knowledgeDust) {
         this.knowledgeDust = knowledgeDust;
+    }
+
+    public List<KnowledgePlanet> getCreatedPlanets() {
+        return createdPlanets;
+    }
+
+    public void setCreatedPlanets(List<KnowledgePlanet> createdPlanets) {
+        this.createdPlanets = createdPlanets;
     }
 
     public List<KnowledgeGalaxy> getCreatedGalaxies() {
