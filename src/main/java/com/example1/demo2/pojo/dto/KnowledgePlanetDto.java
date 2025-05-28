@@ -1,7 +1,5 @@
 package com.example1.demo2.pojo.dto;
 
-import com.example1.demo2.pojo.GalaxyMember;
-import com.example1.demo2.pojo.KnowledgeGalaxy;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
@@ -43,10 +41,6 @@ public class KnowledgePlanetDto implements Serializable {
     @Max(value = 2, message = "可见性取值范围为0-2")
     private Integer visibility = 1; // 默认值1
 
-    @NotNull(message = "所属知识星系不能为空")
-    private KnowledgeGalaxy knowledgeGalaxy;
-
-    private GalaxyMember creatorMember;
 
     // 自动计算，前端无需传入
     private Integer fuelValue = 0; // 默认值0
@@ -77,10 +71,6 @@ public class KnowledgePlanetDto implements Serializable {
     public void setColorScheme(String colorScheme) { this.colorScheme = colorScheme; }
     public Integer getVisibility() { return visibility; }
     public void setVisibility(Integer visibility) { this.visibility = visibility; }
-    public KnowledgeGalaxy getKnowledgeGalaxy() { return knowledgeGalaxy; }
-    public void setKnowledgeGalaxy(KnowledgeGalaxy knowledgeGalaxy) { this.knowledgeGalaxy = knowledgeGalaxy; }
-    public GalaxyMember getCreatorMember() { return creatorMember; }
-    public void setCreatorMember(GalaxyMember creatorMember) { this.creatorMember = creatorMember; }
     public Integer getFuelValue() { return fuelValue; }
     public void setFuelValue(Integer fuelValue) { this.fuelValue = fuelValue; }
     public Integer getBrightness() { return brightness; }
@@ -106,8 +96,6 @@ public class KnowledgePlanetDto implements Serializable {
                 ", modelType=" + modelType +
                 ", colorScheme='" + colorScheme + '\'' +
                 ", visibility=" + visibility +
-                ", knowledgeGalaxy=" + (knowledgeGalaxy != null ? knowledgeGalaxy.getGalaxyId() : null) +
-                ", creatorMember=" + (creatorMember != null ? creatorMember.getMemberId() : null) +
                 ", fuelValue=" + fuelValue +
                 ", brightness=" + brightness +
                 ", visitCount=" + visitCount +

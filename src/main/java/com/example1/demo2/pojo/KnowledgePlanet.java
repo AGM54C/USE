@@ -95,19 +95,6 @@ public class KnowledgePlanet {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
-    /**
-    *所属的知识星系
-     * **/
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "galaxy_id", nullable = false)
-    private KnowledgeGalaxy knowledgeGalaxy;
-
-    /**
-     * 创建者成员
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
-    private GalaxyMember creatorMember;
 
     @Override
     public String toString() {
@@ -272,19 +259,4 @@ public class KnowledgePlanet {
         return updateTime;
     }
 
-    public KnowledgeGalaxy getKnowledgeGalaxy() {
-        return knowledgeGalaxy;
-    }
-
-    public void setKnowledgeGalaxy(KnowledgeGalaxy knowledgeGalaxy) {
-        this.knowledgeGalaxy = knowledgeGalaxy;
-    }
-
-    public GalaxyMember getCreatorMember() {
-        return creatorMember;
-    }
-
-    public void setCreatorMember(GalaxyMember creatorMember) {
-        this.creatorMember = creatorMember;
-    }
 }
