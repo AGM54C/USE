@@ -1,10 +1,12 @@
 package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.pojo.dto.knowledgeGalaxyDto;
 import com.example1.demo2.service.KnowledgeGalaxyService;
+import com.example1.demo2.service.PlanetService;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ public class GalaxyController {
 
     @Autowired
     private KnowledgeGalaxyService KnowledgeGalaxyService;
+    private PlanetService planetService;
 
     // 创建星系
     @PostMapping("/create")
@@ -174,31 +177,77 @@ public class GalaxyController {
     }
 
     //将星球加入星系
-    @PostMapping("/addPlanet/{galaxyId}/{knowledgePlanet}")
-    public ResponseMessage<String> addPlanet(@PathVariable Integer galaxyId, @PathVariable String knowledgePlanet) {
+    @PostMapping("/addPlanet/{galaxyId}/{planetId}")
+    public ResponseMessage<String> addPlanet(@PathVariable Integer galaxyId,
+                                             @PathVariable String planetId) {
+        // Get the current user from ThreadLocal
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
 
+        // Check if galaxy exists
         KnowledgeGalaxy galaxy = KnowledgeGalaxyService.findById(galaxyId);
         if (galaxy == null) {
             return ResponseMessage.error("星系不存在");
         }
-        return ResponseMessage.success("星系创建成功");
+
+        // Check if user has permission (e.g., is the creator or a member)
+        if (!galaxy.getCreatorId().equals(userId) &&
+                !KnowledgeGalaxyService.isMember(galaxyId, userId)) {
+            return ResponseMessage.error("您没有权限添加星球到此星系");
+        }
+
+        try {
+            // Fetch the planet object
+            KnowledgePlanet planet = planetService.findByPlanetId(planetId);
+            if (planet == null) {
+                return ResponseMessage.error("星球不存在");
+            }
+
+            // Check if user owns the planet or has permission to add it
+            if (!planet.getUserId().equals(userId)) {
+                return ResponseMessage.error("您没有权限操作此星球");
+            }
+
+            // Add the planet to the galaxy
+            KnowledgeGalaxyService.addPlanet(galaxyId, planet);
+            return ResponseMessage.success("星球成功加入星系");
+        } catch (Exception e) {
+            return ResponseMessage.error("添加星球失败：" + e.getMessage());
+        }
     }
 
-    //将星球移出星系
-    @PostMapping("/removePlanet/{galaxyId}/{knowledgePlanet}")
-    public ResponseMessage<String> removePlanet(@PathVariable Integer galaxyId, @PathVariable String knowledgePlanet) {
+    @PostMapping("/removePlanet/{galaxyId}/{planetId}")
+    public ResponseMessage<String> removePlanet(@PathVariable Integer galaxyId,
+                                                @PathVariable String planetId) {
+        // Get the current user from ThreadLocal
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
 
+        // Check if galaxy exists
         KnowledgeGalaxy galaxy = KnowledgeGalaxyService.findById(galaxyId);
         if (galaxy == null) {
-        return ResponseMessage.error("星系为空，移除失败");
+            return ResponseMessage.error("星系不存在");
         }
-        return ResponseMessage.success("星系移除成功");
-    }
 
+        // Check if user has permission (e.g., is the creator)
+        if (!galaxy.getCreatorId().equals(userId)) {
+            return ResponseMessage.error("只有星系创建者可以移除星球");
+        }
+
+        try {
+            // Fetch the planet object
+            KnowledgePlanet planet = planetService.findByPlanetId(planetId);
+            if (planet == null) {
+                return ResponseMessage.error("星球不存在");
+            }
+
+            // Remove the planet from the galaxy
+            KnowledgeGalaxyService.removePlanet(galaxyId, planet);
+            return ResponseMessage.success("星球已从星系中移除");
+        } catch (Exception e) {
+            return ResponseMessage.error("移除星球失败：" + e.getMessage());
+        }
+    }
     // 搜索公开星系
     @GetMapping("/search")
     public ResponseMessage<List<knowledgeGalaxyDto>> search(@RequestParam String keyword) {
