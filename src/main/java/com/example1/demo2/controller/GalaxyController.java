@@ -1,6 +1,7 @@
 package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.pojo.dto.knowledgeGalaxyDto;
 import com.example1.demo2.service.KnowledgeGalaxyService;
@@ -27,7 +28,7 @@ public class GalaxyController {
     public ResponseMessage<String> create(@Valid @RequestBody knowledgeGalaxyDto galaxyDto) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
-        Integer userId = (Integer) map.get("userId");
+        User userId = (User) map.get("userId");
 
         // 检查星系名称是否已存在
         KnowledgeGalaxy existingGalaxy = KnowledgeGalaxyService.findByName(galaxyDto.getName());
@@ -35,7 +36,7 @@ public class GalaxyController {
             return ResponseMessage.error("星系名称已存在，请重新输入");
         }
 
-        galaxyDto.setCreatorId(userId);
+        galaxyDto.setCreator(userId);
         KnowledgeGalaxyService.create(galaxyDto);
         return ResponseMessage.success("星系\"" + galaxyDto.getName() + "\"创建成功");
     }
@@ -73,7 +74,7 @@ public class GalaxyController {
             return ResponseMessage.error("星系不存在");
         }
 
-        if (!galaxy.getCreatorId().equals(userId)) {
+        if (!galaxy.getCreator().equals(userId)) {
             return ResponseMessage.error("只有创建者可以修改星系信息");
         }
 
@@ -141,7 +142,7 @@ public class GalaxyController {
             return ResponseMessage.error("星系不存在");
         }
 
-        if (galaxy.getCreatorId().equals(userId)) {
+        if (galaxy.getCreator().equals(userId)) {
             return ResponseMessage.error("创建者不能退出自己的星系");
         }
 
@@ -164,12 +165,38 @@ public class GalaxyController {
             return ResponseMessage.error("星系不存在或已被删除");
         }
 
-        if (!galaxy.getCreatorId().equals(userId)) {
+        if (!galaxy.getCreator().equals(userId)) {
             return ResponseMessage.error("只有创建者可以删除星系");
         }
 
         KnowledgeGalaxyService.delete(galaxyId);
         return ResponseMessage.success("星系\"" + galaxy.getName() + "\"已成功删除");
+    }
+
+    //将星球加入星系
+    @PostMapping("/addPlanet/{galaxyId}/{knowledgePlanet}")
+    public ResponseMessage<String> addPlanet(@PathVariable Integer galaxyId, @PathVariable String knowledgePlanet) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+
+        KnowledgeGalaxy galaxy = KnowledgeGalaxyService.findById(galaxyId);
+        if (galaxy == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+        return ResponseMessage.success("星系创建成功");
+    }
+
+    //将星球移出星系
+    @PostMapping("/removePlanet/{galaxyId}/{knowledgePlanet}")
+    public ResponseMessage<String> removePlanet(@PathVariable Integer galaxyId, @PathVariable String knowledgePlanet) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+
+        KnowledgeGalaxy galaxy = KnowledgeGalaxyService.findById(galaxyId);
+        if (galaxy == null) {
+        return ResponseMessage.error("星系为空，移除失败");
+        }
+        return ResponseMessage.success("星系移除成功");
     }
 
     // 搜索公开星系

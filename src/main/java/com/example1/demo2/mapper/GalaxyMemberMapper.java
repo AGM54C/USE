@@ -1,6 +1,8 @@
 package com.example1.demo2.mapper;
 
 import com.example1.demo2.pojo.GalaxyMember;
+import com.example1.demo2.pojo.KnowledgePlanet;
+import com.example1.demo2.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -11,150 +13,142 @@ public interface GalaxyMemberMapper {
 
     // ==================== 基础查询操作 ====================
 
-    // 根据成员ID查询
-    @Select("select * from tab_galaxy_member where member_id = #{memberId}")
+    @Select("SELECT * FROM tab_galaxy_member WHERE member_id = #{memberId} AND status = 0")
     GalaxyMember findById(Integer memberId);
 
-    // 根据星系ID和用户ID查询成员信息
-    @Select("select * from tab_galaxy_member where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Select("SELECT * FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND user_id = #{userId} AND status = 0")
     GalaxyMember findByGalaxyIdAndUserId(@Param("galaxyId") Integer galaxyId, @Param("userId") Integer userId);
 
-    // 分页查询星系成员列表
-    @Select("select * from tab_galaxy_member where galaxy_id = #{galaxyId} " +
-            "order by role_type desc, join_time asc " +
-            "limit #{pageSize} offset #{offset}")
+    @Select("SELECT * FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND status = 0 " +
+            "ORDER BY role_type DESC, join_time ASC " +
+            "LIMIT #{pageSize} OFFSET #{offset}")
     List<GalaxyMember> findByGalaxyIdWithPaging(@Param("galaxyId") Integer galaxyId,
                                                 @Param("offset") Integer offset,
                                                 @Param("pageSize") Integer pageSize);
 
-    // 根据用户ID查询所有成员关系
-    @Select("select * from tab_galaxy_member where user_id = #{userId} " +
-            "order by join_time desc")
+    @Select("SELECT * FROM tab_galaxy_member WHERE user_id = #{userId} AND status = 0 " +
+            "ORDER BY join_time DESC")
     List<GalaxyMember> findByUserId(Integer userId);
 
-    // 根据星系ID和角色类型查询成员列表
-    @Select("select * from tab_galaxy_member where galaxy_id = #{galaxyId} and role_type = #{roleType} " +
-            "order by join_time asc")
+    @Select("SELECT * FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND role_type = #{roleType} AND status = 0 " +
+            "ORDER BY join_time ASC")
     List<GalaxyMember> findByGalaxyIdAndRoleType(@Param("galaxyId") Integer galaxyId,
                                                  @Param("roleType") Integer roleType);
 
     // ==================== 统计查询操作 ====================
 
-    // 统计星系成员总数
-    @Select("select count(*) from tab_galaxy_member where galaxy_id = #{galaxyId}")
+    @Select("SELECT COUNT(*) FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND status = 0")
     Integer countByGalaxyId(Integer galaxyId);
 
-    // 统计星系中特定角色的成员数量
-    @Select("select count(*) from tab_galaxy_member where galaxy_id = #{galaxyId} and role_type = #{roleType}")
+    @Select("SELECT COUNT(*) FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND role_type = #{roleType} AND status = 0")
     Integer countByGalaxyIdAndRoleType(@Param("galaxyId") Integer galaxyId,
                                        @Param("roleType") Integer roleType);
 
-    // 统计活跃成员数量（基于最后活动时间）
-    @Select("select count(*) from tab_galaxy_member " +
-            "where galaxy_id = #{galaxyId} and update_time > #{sinceDate}")
+    @Select("SELECT COUNT(*) FROM tab_galaxy_member " +
+            "WHERE galaxy_id = #{galaxyId} AND status = 0 AND update_time > #{sinceDate}")
     Integer countActiveMembers(@Param("galaxyId") Integer galaxyId,
                                @Param("sinceDate") Date sinceDate);
 
     // ==================== 成员管理操作 ====================
 
-    // 添加成员
-    @Insert("insert into tab_galaxy_member(galaxy_id, user_id, role_type, join_time, " +
+    @Insert("INSERT INTO tab_galaxy_member(galaxy_id, user_id, role_type, role_desc, join_time, " +
             "operation_permissions, status, create_time, update_time) " +
-            "values(#{galaxyId}, #{userId}, #{roleType}, #{joinTime}, " +
-            "#{operationPermissions}, #{status}, now(), now())")
+            "VALUES(#{galaxyId}, #{user.userId}, #{roleType}, #{roleDesc}, NOW(), " +
+            "#{operationPermissions}, #{status}, NOW(), NOW())")
     @Options(useGeneratedKeys = true, keyProperty = "memberId")
     void insert(GalaxyMember member);
 
-    // 添加成员（简化版本，用于创建星系时自动添加创建者）
-    @Insert("insert into tab_galaxy_member(galaxy_id, user_id, role_type, join_time, " +
+    @Insert("INSERT INTO tab_galaxy_member(galaxy_id, user_id, role_type, role_desc, join_time, " +
             "operation_permissions, status, create_time, update_time) " +
-            "values(#{galaxyId}, #{userId}, 2, now(), " +
-            "'[\"ALL_PERMISSIONS\"]', 0, now(), now())")
+            "VALUES(#{galaxyId}, #{userId.userId}, 2, #{roleDesc}, NOW(), " +
+            "'[\"ALL_PERMISSIONS\"]', 1, NOW(), NOW())")
     void addMember(@Param("galaxyId") Integer galaxyId,
-                   @Param("userId") Integer userId,
+                   @Param("userId") User userId,
                    @Param("roleDesc") String roleDesc);
 
-    // 删除单个成员
-    @Delete("delete from tab_galaxy_member where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Delete("DELETE FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     void deleteByGalaxyIdAndUserId(@Param("galaxyId") Integer galaxyId,
                                    @Param("userId") Integer userId);
 
-    // 删除星系的所有成员（用于删除星系时的级联删除）
-    @Delete("delete from tab_galaxy_member where galaxy_id = #{galaxyId}")
+    @Delete("DELETE FROM tab_galaxy_member WHERE galaxy_id = #{galaxyId}")
     void deleteByGalaxyId(Integer galaxyId);
 
-    // 移除成员（软删除方式，仅更新状态）
-    @Update("update tab_galaxy_member set status = 2, update_time = now() " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Update("UPDATE tab_galaxy_member SET status = 2, update_time = NOW() " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId.userId}")
     void removeMember(@Param("galaxyId") Integer galaxyId,
-                      @Param("userId") Integer userId);
+                      @Param("userId") User userId);
+
+    // ==================== 星球相关操作 ====================
+
+    @Insert("INSERT INTO tab_planet_member(galaxy_id, planet_id, user_id, role_type, join_time, " +
+            "status, create_time, update_time) " +
+            "VALUES(#{galaxyId}, #{planet.planetId}, #{userId}, 1, NOW(), 1, NOW(), NOW())")
+    void addPlanet(@Param("galaxyId") Integer galaxyId,
+                   @Param("planet") KnowledgePlanet knowledgePlanet,
+                   @Param("roleDesc") String roleDesc);
+
+    @Delete("DELETE FROM tab_planet_member WHERE galaxy_id = #{galaxyId} AND planet_id = #{planet.planetId}")
+    void removePlanet(@Param("galaxyId") Integer galaxyId,
+                      @Param("planet") KnowledgePlanet knowledgePlanet);
 
     // ==================== 角色和权限管理 ====================
 
-    // 更新成员角色和默认权限
-    @Update("update tab_galaxy_member set role_type = #{roleType}, " +
-            "operation_permissions = #{permissions}, update_time = now() " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Update("UPDATE tab_galaxy_member SET role_type = #{roleType}, " +
+            "operation_permissions = #{permissions}, update_time = NOW() " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     void updateRole(@Param("galaxyId") Integer galaxyId,
                     @Param("userId") Integer userId,
                     @Param("roleType") Integer roleType,
                     @Param("permissions") String permissions);
 
-    // 更新成员权限
-    @Update("update tab_galaxy_member set operation_permissions = #{permissions}, " +
-            "update_time = now() " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Update("UPDATE tab_galaxy_member SET operation_permissions = #{permissions}, " +
+            "update_time = NOW() " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     void updatePermissions(@Param("galaxyId") Integer galaxyId,
                            @Param("userId") Integer userId,
                            @Param("permissions") String permissions);
 
     // ==================== 状态管理操作 ====================
 
-    // 更新成员状态
-    @Update("update tab_galaxy_member set status = #{status}, update_time = now() " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Update("UPDATE tab_galaxy_member SET status = #{status}, update_time = NOW() " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     void updateStatus(@Param("galaxyId") Integer galaxyId,
                       @Param("userId") Integer userId,
                       @Param("status") Integer status);
 
-    // 更新成员最后活动时间
-    @Update("update tab_galaxy_member set update_time = #{activityTime} " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId}")
+    @Update("UPDATE tab_galaxy_member SET update_time = #{activityTime} " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     void updateLastActivityTime(@Param("galaxyId") Integer galaxyId,
                                 @Param("userId") Integer userId,
                                 @Param("activityTime") Date activityTime);
 
     // ==================== 工具查询操作 ====================
 
-    // 检查用户是否为星系成员
-    @Select("select exists(select 1 from tab_galaxy_member " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId} and status = 0)")
+    @Select("SELECT EXISTS(SELECT 1 FROM tab_galaxy_member " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId} AND status = 1)")
     boolean isMember(@Param("galaxyId") Integer galaxyId,
                      @Param("userId") Integer userId);
 
-    // 获取用户在特定星系的角色类型
-    @Select("select role_type from tab_galaxy_member " +
-            "where galaxy_id = #{galaxyId} and user_id = #{userId} and status = 0")
+    @Select("SELECT role_type FROM tab_galaxy_member " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId} AND status = 1")
     Integer getUserRoleType(@Param("galaxyId") Integer galaxyId,
                             @Param("userId") Integer userId);
 
     // ==================== 批量操作支持 ====================
 
-    // 批量插入成员（用于批量邀请）
     @Insert("<script>" +
-            "insert into tab_galaxy_member(galaxy_id, user_id, role_type, join_time, " +
-            "operation_permissions, status, create_time, update_time) values " +
+            "INSERT INTO tab_galaxy_member(galaxy_id, user_id, role_type, role_desc, join_time, " +
+            "operation_permissions, status, create_time, update_time) VALUES " +
             "<foreach collection='members' item='member' separator=','>" +
-            "(#{member.galaxyId}, #{member.userId}, #{member.roleType}, #{member.joinTime}, " +
-            "#{member.operationPermissions}, #{member.status}, now(), now())" +
+            "(#{member.galaxyId}, #{member.userId}, #{member.roleType}, #{member.roleDesc}, NOW(), " +
+            "#{member.operationPermissions}, #{member.status}, NOW(), NOW())" +
             "</foreach>" +
             "</script>")
     void batchInsert(@Param("members") List<GalaxyMember> members);
 
-    // 批量更新状态（用于批量禁用/启用）
     @Update("<script>" +
-            "update tab_galaxy_member set status = #{status}, update_time = now() " +
-            "where galaxy_id = #{galaxyId} and user_id in " +
+            "UPDATE tab_galaxy_member SET status = #{status}, update_time = NOW() " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id IN " +
             "<foreach collection='userIds' item='userId' open='(' separator=',' close=')'>" +
             "#{userId}" +
             "</foreach>" +

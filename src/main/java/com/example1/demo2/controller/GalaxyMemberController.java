@@ -101,7 +101,7 @@ public class GalaxyMemberController {
         }
 
         // 创建者权限最高
-        boolean isCreator = galaxy.getCreatorId().equals(userId);
+        boolean isCreator = galaxy.getCreator().equals(userId);
         boolean isAdmin = currentMember.getRoleType() == 1;
 
         if (!isCreator && !isAdmin) {
@@ -109,7 +109,7 @@ public class GalaxyMemberController {
         }
 
         // 不能修改创建者的角色
-        if (galaxy.getCreatorId().equals(targetUserId)) {
+        if (galaxy.getCreator().equals(targetUserId)) {
             return ResponseMessage.error("不能修改创建者的角色");
         }
 
@@ -147,7 +147,7 @@ public class GalaxyMemberController {
         }
 
         // 只有创建者可以修改权限配置
-        if (!galaxy.getCreatorId().equals(userId)) {
+        if (!galaxy.getCreator().equals(userId)) {
             return ResponseMessage.error("只有创建者可以修改成员权限");
         }
 
@@ -183,7 +183,7 @@ public class GalaxyMemberController {
         }
 
         GalaxyMember currentMember = galaxyMemberService.getMember(galaxyId, userId);
-        boolean isCreator = galaxy.getCreatorId().equals(userId);
+        boolean isCreator = galaxy.getCreator().equals(userId);
         boolean isAdmin = currentMember != null && currentMember.getRoleType() == 1;
 
         if (!isCreator && !isAdmin) {
@@ -191,7 +191,7 @@ public class GalaxyMemberController {
         }
 
         // 不能禁用创建者
-        if (galaxy.getCreatorId().equals(targetUserId)) {
+        if (galaxy.getCreator().equals(targetUserId)) {
             return ResponseMessage.error("不能禁用创建者");
         }
 
@@ -229,7 +229,7 @@ public class GalaxyMemberController {
 
         GalaxyMember currentMember = galaxyMemberService.getMember(galaxyId, userId);
         if (currentMember == null ||
-                (currentMember.getRoleType() == 0 && !galaxy.getCreatorId().equals(userId))) {
+                (currentMember.getRoleType() == 0 && !galaxy.getCreator().equals(userId))) {
             return ResponseMessage.error("只有创建者和管理员可以邀请新成员");
         }
 
@@ -255,12 +255,12 @@ public class GalaxyMemberController {
         }
 
         // 不能移除创建者
-        if (galaxy.getCreatorId().equals(targetUserId)) {
+        if (galaxy.getCreator().equals(targetUserId)) {
             return ResponseMessage.error("不能移除星系创建者");
         }
 
         GalaxyMember currentMember = galaxyMemberService.getMember(galaxyId, userId);
-        boolean isCreator = galaxy.getCreatorId().equals(userId);
+        boolean isCreator = galaxy.getCreator().equals(userId);
         boolean isAdmin = currentMember != null && currentMember.getRoleType() == 1;
 
         if (!isCreator && !isAdmin) {

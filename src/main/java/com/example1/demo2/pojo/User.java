@@ -98,6 +98,8 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginTime;
 
+
+
     // JPA回调方法，插入前自动设置创建时间和更新时间
     @PrePersist
     protected void onCreate() {

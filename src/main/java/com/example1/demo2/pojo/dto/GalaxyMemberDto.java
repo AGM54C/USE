@@ -2,10 +2,10 @@ package com.example1.demo2.pojo.dto;
 
 import jakarta.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 
 public class GalaxyMemberDto {
 
-    @NotNull
     private Integer memberId;
 
     @NotNull(message = "星系ID不能为空")
@@ -21,7 +21,6 @@ public class GalaxyMemberDto {
     @Max(value = 2, message = "角色类型值不能大于2")
     private Integer roleType;
 
-    @NotNull(message = "加入时间不能为空")
     @PastOrPresent(message = "加入时间不能是未来时间")
     private Date joinTime;
 
@@ -31,13 +30,16 @@ public class GalaxyMemberDto {
     )
     private String operationPermissions;
 
-    @NotNull(message = "状态不能为空")
     @Min(value = 0, message = "状态值不能小于0")
     @Max(value = 1, message = "状态值不能大于1")
     private Integer status;
 
+
     private Date createTime;
     private Date updateTime;
+
+
+    private List<Integer> createdPlanetIds;
 
     // Getters and Setters
     public Integer getMemberId() {
@@ -120,6 +122,14 @@ public class GalaxyMemberDto {
         this.updateTime = lastActivityTime;
     }
 
+    public List<Integer> getCreatedPlanetIds() {
+        return createdPlanetIds;
+    }
+
+    public void setCreatedPlanetIds(List<Integer> createdPlanetIds) {
+        this.createdPlanetIds = createdPlanetIds;
+    }
+
     @Override
     public String toString() {
         return "GalaxyMemberDto{" +
@@ -132,7 +142,26 @@ public class GalaxyMemberDto {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", createdPlanetIds=" + createdPlanetIds +
                 '}';
+    }
+
+    /**
+     * 角色类型常量定义
+     * 便于在业务逻辑中使用
+     */
+    public static class RoleType {
+        public static final int MEMBER = 0;    // 普通成员
+        public static final int ADMIN = 1;     // 管理员
+        public static final int CREATOR = 2;   // 创建者
+    }
+
+    /**
+     * 状态常量定义
+     */
+    public static class Status {
+        public static final int NORMAL = 0;    // 正常
+        public static final int DISABLED = 1;  // 禁用
     }
 
     /**
@@ -141,7 +170,9 @@ public class GalaxyMemberDto {
      */
     public boolean isValidRoleType() {
         return roleType != null &&
-                (roleType == 0 || roleType == 1 || roleType == 2);
+                (roleType == RoleType.MEMBER ||
+                        roleType == RoleType.ADMIN ||
+                        roleType == RoleType.CREATOR);
     }
 
     /**
@@ -150,6 +181,24 @@ public class GalaxyMemberDto {
      */
     public boolean isValidStatus() {
         return status != null &&
-                (status == 0 || status == 1);
+                (status == Status.NORMAL ||
+                        status == Status.DISABLED);
+    }
+
+    /**
+     * 检查是否为管理员或创建者
+     * @return true if the member has admin or creator role
+     */
+    public boolean hasAdminPrivileges() {
+        return roleType != null &&
+                (roleType == RoleType.ADMIN || roleType == RoleType.CREATOR);
+    }
+
+    /**
+     * 检查是否为创建者
+     * @return true if the member is a creator
+     */
+    public boolean isCreator() {
+        return roleType != null && roleType == RoleType.CREATOR;
     }
 }

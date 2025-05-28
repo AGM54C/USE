@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "tab_galaxy_member")
 public class GalaxyMember {
-
     /**
      * 成员ID，自增主键
      */

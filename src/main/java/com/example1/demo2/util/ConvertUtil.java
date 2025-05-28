@@ -172,7 +172,7 @@ public class ConvertUtil {
         dto.setPermissionType(galaxy.getPermissionType());
 
         // 创建者 ID - 指向创建此星系的用户
-        dto.setCreatorId(galaxy.getCreatorId());
+        dto.setCreator(galaxy.getCreator());
 
         // 成员数量 - 当前加入此星系的用户总数
         dto.setMemberCount(galaxy.getMemberCount());
@@ -214,7 +214,7 @@ public class ConvertUtil {
         galaxy.setPermissionType(dto.getPermissionType());
 
         // 创建者 ID - 建立用户关联关系
-        galaxy.setCreatorId(dto.getCreatorId());
+        galaxy.setCreator(dto.getCreator());
 
         // 成员数量 - 如果未设置，@PrePersist会自动设置为1
         galaxy.setMemberCount(dto.getMemberCount());

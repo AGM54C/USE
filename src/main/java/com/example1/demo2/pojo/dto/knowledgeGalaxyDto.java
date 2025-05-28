@@ -1,11 +1,14 @@
 package com.example1.demo2.pojo.dto;
 
+import com.example1.demo2.pojo.KnowledgePlanet;
+import com.example1.demo2.pojo.User;
 import jakarta.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 
 public class knowledgeGalaxyDto {
 
-    @NotNull
+    // 星系ID，创建时自动生成，前端无需传入
     private Integer galaxyId;
 
     @NotBlank(message = "星系名称不能为空")
@@ -13,7 +16,7 @@ public class knowledgeGalaxyDto {
     private String name;
 
     @Pattern(
-            regexp = "^\\[.*\\]$",
+            regexp = "^(\\[.*\\])?$",  // 允许为空或JSON数组格式
             message = "主题标签必须是JSON数组格式"
     )
     private String themeTags;
@@ -21,17 +24,21 @@ public class knowledgeGalaxyDto {
     @NotNull(message = "权限类型不能为空")
     @Min(value = 0, message = "权限类型值不能小于0")
     @Max(value = 1, message = "权限类型值不能大于1")
-    private Integer permissionType;
+    private Integer permissionType = 0; // 默认公开
 
-    @NotNull(message = "创建者ID不能为空")
-    private Integer creatorId;
+    @NotNull(message = "创建者不能为空")
+    private User creator; // 改为与实体类一致的字段名
 
     @Min(value = 0, message = "成员数量不能为负数")
-    private Integer memberCount;
+    private Integer memberCount = 1; // 默认1个成员(创建者)
 
+    // 以下字段由后端自动维护，前端无需传入
     private Date lastActivityTime;
     private Date createTime;
     private Date updateTime;
+
+    // 包含的知识星球列表
+    private List<KnowledgePlanet> knowledgePlanets;
 
     // Getters and Setters
     public Integer getGalaxyId() {
@@ -66,12 +73,12 @@ public class knowledgeGalaxyDto {
         this.permissionType = permissionType;
     }
 
-    public Integer getCreatorId() {
-        return creatorId;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public Integer getMemberCount() {
@@ -106,6 +113,14 @@ public class knowledgeGalaxyDto {
         this.updateTime = updateTime;
     }
 
+    public List<KnowledgePlanet> getKnowledgePlanets() {
+        return knowledgePlanets;
+    }
+
+    public void setKnowledgePlanets(List<KnowledgePlanet> knowledgePlanets) {
+        this.knowledgePlanets = knowledgePlanets;
+    }
+
     @Override
     public String toString() {
         return "KnowledgeGalaxyDto{" +
@@ -113,11 +128,12 @@ public class knowledgeGalaxyDto {
                 ", name='" + name + '\'' +
                 ", themeTags='" + themeTags + '\'' +
                 ", permissionType=" + permissionType +
-                ", creatorId=" + creatorId +
+                ", creator=" + (creator != null ? creator.getUserId() : null) +
                 ", memberCount=" + memberCount +
                 ", lastActivityTime=" + lastActivityTime +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", knowledgePlanets=" + (knowledgePlanets != null ? knowledgePlanets.size() : 0) +
                 '}';
     }
 }

@@ -1,5 +1,7 @@
 package com.example1.demo2.pojo.dto;
 
+import com.example1.demo2.pojo.GalaxyMember;
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
@@ -30,26 +32,29 @@ public class KnowledgePlanetDto implements Serializable {
     @Positive(message = "主题分类ID必须为正整数")
     private Integer themeId;
 
-    //@NotBlank(message = "展示模型不能为空")
     @Min(value = 0, message = "展示模型取值范围为0-2")
     @Max(value = 2, message = "展示模型取值范围为0-2")
-    private Integer modelType;
+    private Integer modelType = 0; // 默认值0
 
     @Size(max = 20, message = "颜色方案长度不能超过20字符")
     private String colorScheme;
 
-    //@NotBlank(message = "可见性不能为空")
     @Min(value = 0, message = "可见性取值范围为0-2")
     @Max(value = 2, message = "可见性取值范围为0-2")
-    private Integer visibility;
+    private Integer visibility = 1; // 默认值1
+
+    @NotNull(message = "所属知识星系不能为空")
+    private KnowledgeGalaxy knowledgeGalaxy;
+
+    private GalaxyMember creatorMember;
 
     // 自动计算，前端无需传入
-    private Integer fuelValue;
-    private Integer brightness;
-    private Integer visitCount;
+    private Integer fuelValue = 0; // 默认值0
+    private Integer brightness = 0; // 默认值0
+    private Integer visitCount = 0; // 默认值0
 
     // 自动维护，前端无需传入
-    private Integer status;
+    private Integer status = 0; // 默认值0
     private Date createTime;
     private Date updateTime;
 
@@ -72,6 +77,10 @@ public class KnowledgePlanetDto implements Serializable {
     public void setColorScheme(String colorScheme) { this.colorScheme = colorScheme; }
     public Integer getVisibility() { return visibility; }
     public void setVisibility(Integer visibility) { this.visibility = visibility; }
+    public KnowledgeGalaxy getKnowledgeGalaxy() { return knowledgeGalaxy; }
+    public void setKnowledgeGalaxy(KnowledgeGalaxy knowledgeGalaxy) { this.knowledgeGalaxy = knowledgeGalaxy; }
+    public GalaxyMember getCreatorMember() { return creatorMember; }
+    public void setCreatorMember(GalaxyMember creatorMember) { this.creatorMember = creatorMember; }
     public Integer getFuelValue() { return fuelValue; }
     public void setFuelValue(Integer fuelValue) { this.fuelValue = fuelValue; }
     public Integer getBrightness() { return brightness; }
@@ -87,7 +96,7 @@ public class KnowledgePlanetDto implements Serializable {
 
     @Override
     public String toString() {
-        return "PlanetDto{" +
+        return "KnowledgePlanetDto{" +
                 "planetId='" + planetId + '\'' +
                 ", userId=" + userId +
                 ", title='" + title + '\'' +
@@ -97,6 +106,8 @@ public class KnowledgePlanetDto implements Serializable {
                 ", modelType=" + modelType +
                 ", colorScheme='" + colorScheme + '\'' +
                 ", visibility=" + visibility +
+                ", knowledgeGalaxy=" + (knowledgeGalaxy != null ? knowledgeGalaxy.getGalaxyId() : null) +
+                ", creatorMember=" + (creatorMember != null ? creatorMember.getMemberId() : null) +
                 ", fuelValue=" + fuelValue +
                 ", brightness=" + brightness +
                 ", visitCount=" + visitCount +

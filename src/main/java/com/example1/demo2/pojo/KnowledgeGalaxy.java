@@ -38,8 +38,9 @@ public class KnowledgeGalaxy {
     /**
      * 创建者ID（外键）
      */
-    @Column(name = "creator_id", nullable = false)
-    private Integer creatorId;
+    @ManyToOne
+    @JoinColumn(name = "creator_id", referencedColumnName = "user_id", nullable = false)
+    private User creator;
 
     /**
      * 成员数量
@@ -124,13 +125,12 @@ public class KnowledgeGalaxy {
     public void setPermissionType(Integer permissionType) {
         this.permissionType = permissionType;
     }
-
-    public Integer getCreatorId() {
-        return creatorId;
+    public User getCreator() {
+        return creator;
     }
-
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
+    
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public Integer getMemberCount() {
@@ -180,7 +180,7 @@ public class KnowledgeGalaxy {
                 ", name='" + name + '\'' +
                 ", themeTags='" + themeTags + '\'' +
                 ", permissionType=" + permissionType +
-                ", creatorId=" + creatorId +
+                ", creator=" + creator +
                 ", memberCount=" + memberCount +
                 ", lastActivityTime=" + lastActivityTime +
                 ", createTime=" + createTime +
@@ -188,4 +188,5 @@ public class KnowledgeGalaxy {
                 ", knowledgePlanets=" + knowledgePlanets +
                 '}';
     }
+    
 }
