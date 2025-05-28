@@ -1,6 +1,7 @@
 package com.example1.demo2.pojo;
 
 import java.util.Date;
+import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
@@ -97,9 +98,9 @@ public class User {
     private Date lastLoginTime;
 
     /**
-     *推进燃料
+     * 推进燃料
      */
-    @Column(name="fuel_value")
+    @Column(name = "fuel_value")
     private Integer fuelValue;
 
     /**
@@ -108,11 +109,53 @@ public class User {
     @Column(name = "knowledge_dust")
     private Integer knowledgeDust;
 
+    /**
+     * 创建的星系（一对多关联星系表）
+     */
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    private List<KnowledgeGalaxy> createdGalaxies;
+
+    /**
+     * 管理员角色（一对多关联管理员表）
+     */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<GalaxyAdministrator> adminRoles;
+
+    /**
+     * 用户评论（一对多关联评论表）
+     */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<GalaxyComment> comments;
 
     // JPA回调方法，插入前自动设置创建时间和更新时间
     @PrePersist
     protected void onCreate() {
-        this.createTime = this.updateTime = new Date();
+        Date now = new Date();
+        this.createTime = now;
+        this.updateTime = now;
+    }
+
+    // JPA回调方法，更新前自动设置更新时间
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateTime = new Date();
+    }
+
+    // Getters and Setters
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getTokenVersion() {
+        return tokenVersion;
+    }
+
+    public void setTokenVersion(Integer tokenVersion) {
+        this.tokenVersion = tokenVersion;
     }
 
     public String getEmail() {
@@ -121,14 +164,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getMobile() {
@@ -219,20 +254,6 @@ public class User {
         this.lastLoginTime = lastLoginTime;
     }
 
-    // JPA回调方法，更新前自动设置更新时间
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateTime = new Date();
-    }
-
-    public Integer getTokenVersion() {
-        return tokenVersion;
-    }
-
-    public void setTokenVersion(Integer tokenVersion) {
-        this.tokenVersion = tokenVersion;
-    }
-
     public Integer getFuelValue() {
         return fuelValue;
     }
@@ -247,6 +268,30 @@ public class User {
 
     public void setKnowledgeDust(Integer knowledgeDust) {
         this.knowledgeDust = knowledgeDust;
+    }
+
+    public List<KnowledgeGalaxy> getCreatedGalaxies() {
+        return createdGalaxies;
+    }
+
+    public void setCreatedGalaxies(List<KnowledgeGalaxy> createdGalaxies) {
+        this.createdGalaxies = createdGalaxies;
+    }
+
+    public List<GalaxyAdministrator> getAdminRoles() {
+        return adminRoles;
+    }
+
+    public void setAdminRoles(List<GalaxyAdministrator> adminRoles) {
+        this.adminRoles = adminRoles;
+    }
+
+    public List<GalaxyComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<GalaxyComment> comments) {
+        this.comments = comments;
     }
 
     @Override
@@ -271,5 +316,3 @@ public class User {
                 '}';
     }
 }
-
-

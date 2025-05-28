@@ -2,7 +2,6 @@ package com.example1.demo2.pojo;
 
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "galaxy_admins")
@@ -18,17 +17,19 @@ public class GalaxyAdministrator {
 
     /**
      * 关联的知识星系ID（外键）
+     * 多对一关系：多个管理员可以管理同一个星系
      */
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "galaxy_id", referencedColumnName = "galaxy_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "galaxy_id", nullable = false)
     private KnowledgeGalaxy knowledgeGalaxy;
 
     /**
      * 用户ID（外键关联用户表）
+     * 多对一关系：多个管理员记录可以对应同一个用户（用户可以是多个星系的管理员）
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private List<User> users;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     /**
      * 角色类型(0 创建者 1 其他管理员)
@@ -68,10 +69,14 @@ public class GalaxyAdministrator {
         if (this.status == null) {
             this.status = 0; // 默认状态正常
         }
+        if (this.appointTime == null) {
+            this.appointTime = new Date(); // 设置任命时间
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
+        // 可以在这里添加更新时的逻辑
     }
 
     // Getters and Setters
@@ -83,20 +88,20 @@ public class GalaxyAdministrator {
         this.adminId = adminId;
     }
 
-    public KnowledgeGalaxy getGalaxy() {
+    public KnowledgeGalaxy getKnowledgeGalaxy() {
         return knowledgeGalaxy;
     }
 
-    public void setGalaxy(KnowledgeGalaxy knowledgeGalaxy) {
+    public void setKnowledgeGalaxy(KnowledgeGalaxy knowledgeGalaxy) {
         this.knowledgeGalaxy = knowledgeGalaxy;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getRoleType() {
@@ -141,11 +146,11 @@ public class GalaxyAdministrator {
 
     @Override
     public String toString() {
-        return "GalaxyAdmin{" +
+        return "GalaxyAdministrator{" +
                 "adminId=" + adminId +
                 ", knowledgeGalaxy=" + knowledgeGalaxy +
-                ", users=" + users +
-                ", roleType='" + roleType + '\'' +
+                ", user=" + user +
+                ", roleType=" + roleType +
                 ", permissions='" + permissions + '\'' +
                 ", appointedBy=" + appointedBy +
                 ", appointTime=" + appointTime +

@@ -1,7 +1,8 @@
 package com.example1.demo2.pojo;
+
 import jakarta.persistence.*;
 import java.util.Date;
-import java.util.List;
+
 @Entity
 @Table(name = "tab_galaxy_comment")
 public class GalaxyComment {
@@ -17,8 +18,15 @@ public class GalaxyComment {
      * 创建者ID,关联用户表
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", referencedColumnName = "user_id",nullable = false)
+    @JoinColumn(name = "creator_id", referencedColumnName = "user_id", nullable = false)
     private User user;
+
+    /**
+     * 星系ID，关联星系表
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "galaxy_id", referencedColumnName = "galaxy_id", nullable = false)
+    private KnowledgeGalaxy knowledgeGalaxy;
 
     /**
      * 发布时间
@@ -28,16 +36,9 @@ public class GalaxyComment {
     private Date createTime = new Date();
 
     /**
-     * 星系ID，关联星系表
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "galaxy_id", referencedColumnName = "galaxy_id",nullable = false)
-    private KnowledgeGalaxy knowledgeGalaxy;
-
-    /**
      * 评论内容
      */
-    @Column(name = "content", columnDefinition = "text", length=500,nullable = false)
+    @Column(name = "content", columnDefinition = "text", length = 500, nullable = false)
     private String content;
 
     /**
@@ -82,10 +83,19 @@ public class GalaxyComment {
     @Column(name = "report_count", columnDefinition = "int default 0")
     private Integer reportCount = 0;
 
-    //getters and setters
+    // JPA回调方法
+    @PrePersist
+    protected void onCreate() {
+        if (this.createTime == null) {
+            this.createTime = new Date();
+        }
+    }
+
+    // Getters and Setters
     public Integer getGalaxyCommentId() {
         return galaxyCommentId;
     }
+
     public void setGalaxyCommentId(Integer galaxyCommentId) {
         this.galaxyCommentId = galaxyCommentId;
     }
@@ -98,20 +108,20 @@ public class GalaxyComment {
         this.user = user;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
     public KnowledgeGalaxy getKnowledgeGalaxy() {
         return knowledgeGalaxy;
     }
 
     public void setKnowledgeGalaxy(KnowledgeGalaxy knowledgeGalaxy) {
         this.knowledgeGalaxy = knowledgeGalaxy;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public String getContent() {
@@ -183,8 +193,8 @@ public class GalaxyComment {
         return "GalaxyComment{" +
                 "galaxyCommentId=" + galaxyCommentId +
                 ", user=" + user +
-                ", createTime=" + createTime +
                 ", knowledgeGalaxy=" + knowledgeGalaxy +
+                ", createTime=" + createTime +
                 ", content='" + content + '\'' +
                 ", level=" + level +
                 ", parentId=" + parentId +

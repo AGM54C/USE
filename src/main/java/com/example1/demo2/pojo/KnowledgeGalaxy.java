@@ -3,6 +3,7 @@ package com.example1.demo2.pojo;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
+
 @Entity
 @Table(name = "tab_knowledge_galaxy")
 public class KnowledgeGalaxy {
@@ -15,13 +16,13 @@ public class KnowledgeGalaxy {
     private Integer galaxyId;
 
     /**
-     * 星系名称
+     * 创建者用户ID
      */
-    @Column(name = "user_id",length = 20, nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     /**
-     * 星系标签
+     * 星系标签/名称
      */
     @Column(name = "label", length = 100, nullable = false)
     private String label;
@@ -46,44 +47,51 @@ public class KnowledgeGalaxy {
     private Date createTime = new Date();
 
     /**
-     * 最后登录时间
+     * 更新时间
      */
     @Column(name = "update_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime = new Date();
 
     /**
-     * 创建者（外键，关联用户表）
+     * 创建者（多对一关联用户表）
      */
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User creator;
 
     /**
-     *所包含的知识星球ID（外键，关联知识星球表）
+     *所包含的知识星球（一对多关联知识星球表）
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "planet_id", referencedColumnName = "planet_id", insertable = false, updatable = false)
+    @OneToMany(mappedBy = "galaxyId", fetch = FetchType.LAZY)
     private List<KnowledgePlanet> planets;
 
     /**
-     *所包含的评论
+     *所包含的评论（一对多关联评论表）
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", referencedColumnName = "comment_id", insertable = false, updatable = false)
+    @OneToMany(mappedBy = "knowledgeGalaxy", fetch = FetchType.LAZY)
     private List<GalaxyComment> comments;
 
     /**
-     *登录角色（0 创建者 1 管理员 2 普通成员）
+     * 星系管理员（一对多关联管理员表）
      */
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "login_user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private List<User> users;
+    @OneToMany(mappedBy = "knowledgeGalaxy", fetch = FetchType.LAZY)
+    private List<GalaxyAdministrator> administrators;
 
+    // JPA回调方法
+    @PrePersist
+    protected void onCreate() {
+        Date now = new Date();
+        this.createTime = now;
+        this.updateTime = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateTime = new Date();
+    }
 
     // Getters and Setters
-
-
     public Integer getGalaxyId() {
         return galaxyId;
     }
@@ -164,12 +172,12 @@ public class KnowledgeGalaxy {
         this.comments = comments;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<GalaxyAdministrator> getAdministrators() {
+        return administrators;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setAdministrators(List<GalaxyAdministrator> administrators) {
+        this.administrators = administrators;
     }
 
     @Override
@@ -182,10 +190,6 @@ public class KnowledgeGalaxy {
                 ", inviteCode='" + inviteCode + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", creator=" + creator +
-                ", planets=" + planets +
-                ", comments=" + comments +
-                ", users=" + users +
                 '}';
     }
 }

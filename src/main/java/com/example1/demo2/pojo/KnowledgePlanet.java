@@ -95,6 +95,12 @@ public class KnowledgePlanet {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
+    /**
+     *知识星系Id
+     */
+    @Column(name = "galaxy_id")
+    private Integer galaxyId;
+
 
     @Override
     public String toString() {
@@ -257,6 +263,14 @@ public class KnowledgePlanet {
 
     public Date getUpdateTime() {
         return updateTime;
+    }
+
+    public Integer getGalaxyId() {
+        return galaxyId;
+    }
+
+    public void setGalaxyId(Integer galaxyId) {
+        this.galaxyId = galaxyId;
     }
 
 }
