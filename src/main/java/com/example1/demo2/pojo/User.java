@@ -15,8 +15,6 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
-
-
     /**
      * JWT令牌版本
      */
