@@ -17,15 +17,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         //登录注册不拦截
-        registry.addInterceptor(logininterceptor).excludePathPatterns("/user/register","/user/login");
+        registry.addInterceptor(logininterceptor).excludePathPatterns("/user/register","/user/login","/**/OPTIONS" )
+                .addPathPatterns("/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // 精确匹配前端地址
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 显式声明允许的方法
                 .allowedHeaders("*")
+                .exposedHeaders("Authorization") // 暴露自定义 Header
                 .allowCredentials(true)
                 .maxAge(3600);
     }

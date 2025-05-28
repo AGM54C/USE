@@ -8,6 +8,7 @@ import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.Map;
@@ -20,6 +21,14 @@ public class Logininterceptor implements HandlerInterceptor {
     @Override
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
+        // 确保拦截器放行 OPTIONS 方法
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+            response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+            response.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization,Content-Type");
+            response.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
         //令牌认证
         String token=request.getHeader("Authorization");
         //验证Token
