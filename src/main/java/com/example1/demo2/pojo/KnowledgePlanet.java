@@ -17,9 +17,9 @@ public class KnowledgePlanet {
     private String planetId;
 
     /**
-     * 虚拟的 userId（不持久化到数据库）
+     * 创建者ID（外键，关联用户表）
      */
-    @Transient
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     /**
@@ -101,20 +101,12 @@ public class KnowledgePlanet {
     @Column(name = "galaxy_id")
     private Integer galaxyId;
 
-    /**
-     * 创建者（多对一关联用户表）
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private User creator;
-
 
     @Override
     public String toString() {
         return "KnowledgePlanet{" +
                 "planetId='" + planetId + '\'' +
-                ",creator=" + creator +
-                ", galaxyId=" + galaxyId +
+                ", userId=" + userId +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", coverUrl='" + coverUrl + '\'' +
@@ -169,19 +161,12 @@ public class KnowledgePlanet {
         this.planetId = planetId;
     }
 
-    /**
-     * 通过 User 对象设置关联的 userId
-     */
-    public void setUserId(User creator) {
-        this.creator = creator; // 设置关联对象
-        this.userId = creator != null ? creator.getUserId() : null; // 更新虚拟字段
+    public Integer getUserId() {
+        return userId;
     }
 
-    /**
-     * 获取 userId（动态从 creator 关联对象中提取）
-     */
-    public Integer getUserId() {
-        return creator != null ? creator.getUserId() : userId;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getTitle() {
@@ -286,14 +271,6 @@ public class KnowledgePlanet {
 
     public void setGalaxyId(Integer galaxyId) {
         this.galaxyId = galaxyId;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
     }
 
 }
