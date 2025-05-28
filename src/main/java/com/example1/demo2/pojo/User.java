@@ -116,13 +116,19 @@ public class User {
     private List<KnowledgeGalaxy> createdGalaxies;
 
     /**
+     * 创建的星球（一对多关联星球表）
+     */
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    private List<KnowledgePlanet> createdPlanets;
+
+    /**
      * 管理员角色（一对多关联管理员表）
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<GalaxyAdministrator> adminRoles;
 
     /**
-     * 用户评论（一对多关联评论表）
+     * 用户星系评论（一对多关联评论表）
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<GalaxyComment> comments;
@@ -276,6 +282,14 @@ public class User {
 
     public void setCreatedGalaxies(List<KnowledgeGalaxy> createdGalaxies) {
         this.createdGalaxies = createdGalaxies;
+    }
+
+    public List<KnowledgePlanet> getCreatedPlanets() {
+        return createdPlanets;
+    }
+
+    public void setCreatedPlanets(List<KnowledgePlanet> createdPlanets) {
+        this.createdPlanets = createdPlanets;
     }
 
     public List<GalaxyAdministrator> getAdminRoles() {
