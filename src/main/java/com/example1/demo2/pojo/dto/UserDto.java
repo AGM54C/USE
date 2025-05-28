@@ -55,7 +55,6 @@ public class UserDto implements Serializable {
     private Date updateTime;
     private Date lastLoginTime;
 
-    // Getters and Setters
     public Integer getUserId() {
         return userId;
     }
@@ -64,7 +63,6 @@ public class UserDto implements Serializable {
         this.userId = userId;
     }
 
-    // 其他字段的getter/setter保持不变...
     public String getEmail() {
         return email;
     }

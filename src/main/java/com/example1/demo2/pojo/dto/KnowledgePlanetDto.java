@@ -30,26 +30,25 @@ public class KnowledgePlanetDto implements Serializable {
     @Positive(message = "主题分类ID必须为正整数")
     private Integer themeId;
 
-    //@NotBlank(message = "展示模型不能为空")
     @Min(value = 0, message = "展示模型取值范围为0-2")
     @Max(value = 2, message = "展示模型取值范围为0-2")
-    private Integer modelType;
+    private Integer modelType = 0; // 默认值0
 
     @Size(max = 20, message = "颜色方案长度不能超过20字符")
     private String colorScheme;
 
-    //@NotBlank(message = "可见性不能为空")
     @Min(value = 0, message = "可见性取值范围为0-2")
     @Max(value = 2, message = "可见性取值范围为0-2")
-    private Integer visibility;
+    private Integer visibility = 1; // 默认值1
+
 
     // 自动计算，前端无需传入
-    private Integer fuelValue;
-    private Integer brightness;
-    private Integer visitCount;
+    private Integer fuelValue = 0; // 默认值0
+    private Integer brightness = 0; // 默认值0
+    private Integer visitCount = 0; // 默认值0
 
     // 自动维护，前端无需传入
-    private Integer status;
+    private Integer status = 0; // 默认值0
     private Date createTime;
     private Date updateTime;
 
@@ -87,7 +86,7 @@ public class KnowledgePlanetDto implements Serializable {
 
     @Override
     public String toString() {
-        return "PlanetDto{" +
+        return "KnowledgePlanetDto{" +
                 "planetId='" + planetId + '\'' +
                 ", userId=" + userId +
                 ", title='" + title + '\'' +

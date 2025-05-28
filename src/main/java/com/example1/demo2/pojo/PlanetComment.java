@@ -17,9 +17,6 @@ public class PlanetComment {
     @Column(name = "planet_id", length = 20, nullable = false)
     private String planetId;
 
-    /** 关联内容ID（可选） */
-    @Column(name = "content_id")
-    private Integer contentId;
 
     /** 评论用户ID（必填） */
     @Column(name = "user_id", nullable = false)
@@ -59,6 +56,12 @@ public class PlanetComment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
+    // 所属的星球内容
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id", nullable = false)
+    private  PlanetContent planetContent;
+
+
     // JPA 回调方法：自动设置时间
     @PrePersist
     protected void onCreate() {
@@ -78,8 +81,6 @@ public class PlanetComment {
     public String getPlanetId() { return planetId; }
 
     public void setPlanetId(String planetId) { this.planetId = planetId; }
-    public Integer getContentId() { return contentId; }
-    public void setContentId(Integer contentId) { this.contentId = contentId; }
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
     public Long getParentId() { return parentId; }
@@ -100,7 +101,6 @@ public class PlanetComment {
         return "PlanetComment{" +
                 "commentId=" + commentId +
                 ", planetId='" + planetId + '\'' +
-                ", contentId=" + contentId +
                 ", userId=" + userId +
                 ", parentId=" + parentId +
                 ", level=" + level +
@@ -110,6 +110,7 @@ public class PlanetComment {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", planetContent=" + planetContent +
                 '}';
     }
 
@@ -128,4 +129,8 @@ public class PlanetComment {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public PlanetContent getPlanetContent() {return planetContent;}
+
+    public void setPlanetContent(PlanetContent planetContent) {this.planetContent = planetContent;}
 }

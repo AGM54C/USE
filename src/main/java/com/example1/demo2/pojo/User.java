@@ -98,6 +98,19 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginTime;
 
+    /**
+     *推进燃料
+     */
+    @Column(name="fuel_value")
+    private Integer fuelValue;
+
+    /**
+     * 知识星云
+     */
+    @Column(name = "knowledge_dust")
+    private Integer knowledgeDust;
+
+
     // JPA回调方法，插入前自动设置创建时间和更新时间
     @PrePersist
     protected void onCreate() {
@@ -222,6 +235,22 @@ public class User {
         this.tokenVersion = tokenVersion;
     }
 
+    public Integer getFuelValue() {
+        return fuelValue;
+    }
+
+    public void setFuelValue(Integer fuelValue) {
+        this.fuelValue = fuelValue;
+    }
+
+    public Integer getKnowledgeDust() {
+        return knowledgeDust;
+    }
+
+    public void setKnowledgeDust(Integer knowledgeDust) {
+        this.knowledgeDust = knowledgeDust;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -239,6 +268,8 @@ public class User {
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", lastLoginTime=" + lastLoginTime +
+                ", fuelValue=" + fuelValue +
+                ", knowledgeDust=" + knowledgeDust +
                 '}';
     }
 }

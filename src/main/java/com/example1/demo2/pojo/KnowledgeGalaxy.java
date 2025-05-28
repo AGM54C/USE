@@ -1,12 +1,11 @@
 package com.example1.demo2.pojo;
 
-import java.util.Date;
 import jakarta.persistence.*;
-
+import java.util.Date;
+import java.util.List;
 @Entity
 @Table(name = "tab_knowledge_galaxy")
 public class KnowledgeGalaxy {
-
     /**
      * 星系ID，自增主键
      */
@@ -18,73 +17,27 @@ public class KnowledgeGalaxy {
     /**
      * 星系名称
      */
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
+    @Column(name = "user_id",length = 20, nullable = false)
+    private Integer userId;
 
     /**
-     * 主题标签（JSON格式）
+     * 星系标签
      */
-    @Column(name = "theme_tags", columnDefinition = "TEXT")
-    private String themeTags;
+    @Column(name = "label", length = 100, nullable = false)
+    private String label;
 
     /**
-     * 权限类型：0-公开 1-私有
+     * 星系权限(0 私有  1公开）
      */
-    @Column(name = "permission_type", nullable = false, columnDefinition = "tinyint(1) default 0")
-    private Integer permissionType;
+    @Column(name = "permission", nullable = false, columnDefinition = "tinyint default 1")
+    private Integer permission;
 
     /**
-     * 创建者ID（外键）
+     * 星系邀请码
      */
-    @Column(name = "creator_id", nullable = false)
-    private Integer creatorId;
+    @Column(name = "invite_code", length = 20, unique = true)
+    private String inviteCode;
 
-    /**
-     * 成员数量
-     */
-    @Column(name = "member_count", nullable = false, columnDefinition = "int default 1")
-    private Integer memberCount;
-
-    /**
-     * 最近活动时间
-     */
-    @Column(name = "last_activity_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastActivityTime;
-
-    /**
-     * 创建时间
-     */
-    @Column(name = "create_time", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    @Column(name = "update_time", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
-
-    // JPA回调方法，插入前自动设置创建时间和更新时间
-    @PrePersist
-    protected void onCreate() {
-        this.createTime = this.updateTime = new Date();
-        if (this.memberCount == null) {
-            this.memberCount = 1;
-        }
-        if (this.lastActivityTime == null) {
-            this.lastActivityTime = new Date();
-        }
-    }
-
-    // JPA回调方法，更新前自动设置更新时间
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateTime = new Date();
-    }
-
-    // Getters and Setters
     public Integer getGalaxyId() {
         return galaxyId;
     }
@@ -93,82 +46,11 @@ public class KnowledgeGalaxy {
         this.galaxyId = galaxyId;
     }
 
-    public String getName() {
-        return name;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getThemeTags() {
-        return themeTags;
-    }
-
-    public void setThemeTags(String themeTags) {
-        this.themeTags = themeTags;
-    }
-
-    public Integer getPermissionType() {
-        return permissionType;
-    }
-
-    public void setPermissionType(Integer permissionType) {
-        this.permissionType = permissionType;
-    }
-
-    public Integer getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(Integer creatorId) {
-        this.creatorId = creatorId;
-    }
-
-    public Integer getMemberCount() {
-        return memberCount;
-    }
-
-    public void setMemberCount(Integer memberCount) {
-        this.memberCount = memberCount;
-    }
-
-    public Date getLastActivityTime() {
-        return lastActivityTime;
-    }
-
-    public void setLastActivityTime(Date lastActivityTime) {
-        this.lastActivityTime = lastActivityTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    @Override
-    public String toString() {
-        return "KnowledgeGalaxy{" +
-                "galaxyId=" + galaxyId +
-                ", name='" + name + '\'' +
-                ", themeTags='" + themeTags + '\'' +
-                ", permissionType=" + permissionType +
-                ", creatorId=" + creatorId +
-                ", memberCount=" + memberCount +
-                ", lastActivityTime=" + lastActivityTime +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

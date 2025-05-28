@@ -95,6 +95,7 @@ public class KnowledgePlanet {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
+
     @Override
     public String toString() {
         return "KnowledgePlanet{" +
@@ -257,4 +258,5 @@ public class KnowledgePlanet {
     public Date getUpdateTime() {
         return updateTime;
     }
+
 }
