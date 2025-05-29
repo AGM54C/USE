@@ -2,7 +2,7 @@ package com.example1.demo2.interceptors;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example1.demo2.pojo.User;
-import com.example1.demo2.service.UserService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.JWTUtil;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +16,7 @@ import java.util.Map;
 @Component
 public class Logininterceptor implements HandlerInterceptor {
     @Autowired
-    private UserService userService;
+    private IUserService userService;
     @Override
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{

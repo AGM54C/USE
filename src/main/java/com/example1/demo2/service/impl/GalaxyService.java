@@ -3,18 +3,17 @@ package com.example1.demo2.service.impl;
 import com.example1.demo2.mapper.GalaxyMapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
-import com.example1.demo2.service.GalaxyService;
+import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-public class IGalaxyService implements GalaxyService {
+public class GalaxyService implements IGalaxyService {
     @Autowired
     private GalaxyMapper galaxyMapper;
 

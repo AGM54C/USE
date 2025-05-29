@@ -3,7 +3,7 @@ package com.example1.demo2.service.impl;
 import com.example1.demo2.mapper.UserMapper;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.UserDto;
-import com.example1.demo2.service.UserService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.BCryptUtil;
 import com.example1.demo2.util.ConvertUtil;
 import com.example1.demo2.util.ThreadLocalUtil;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 
 @Service
-public class IUserService implements UserService {
+public class UserService implements IUserService {
     @Autowired
     private UserMapper userMapper;
 

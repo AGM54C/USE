@@ -3,7 +3,7 @@ package com.example1.demo2.service;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 
-public interface GalaxyService {
+public interface IGalaxyService {
     /**
      * 按名字搜索星系
      * @param name 星系名称

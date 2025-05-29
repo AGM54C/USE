@@ -3,7 +3,7 @@ package com.example1.demo2.service;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import java.util.List;
 
-public interface GalaxyCommentService {
+public interface IGalaxyCommentService {
 
     /**
      * 发布评论

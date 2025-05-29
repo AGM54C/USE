@@ -2,7 +2,7 @@ package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.GalaxyCommentService;
+import com.example1.demo2.service.IGalaxyCommentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
 public class GalaxyCommentController {
 
     @Autowired
-    private GalaxyCommentService commentService;
+    private IGalaxyCommentService commentService;
 
     /**
      * 发布评论接口

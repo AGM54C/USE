@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.pojo.dto.UserDto;
 import com.example1.demo2.pojo.dto.updatePasswordDto;
-import com.example1.demo2.service.UserService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.BCryptUtil;
 import com.example1.demo2.util.ConvertUtil;
 import com.example1.demo2.util.JWTUtil;
@@ -24,7 +24,7 @@ import java.util.Objects;
 @Validated
 public class UserController {
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     //用户注册（必要参数：用户名，密码,返回值：用户ID）
     @PostMapping("/register")         //localhost:8081/user/register

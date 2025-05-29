@@ -3,7 +3,7 @@ package com.example1.demo2.controller;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.PlanetService;
+import com.example1.demo2.service.IPlanetService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Objects;
 @Validated
 public class PlanetController {
     @Autowired
-    private PlanetService planetService;
+    private IPlanetService planetService;
 
     //知识星球创建（必要参数为创建者ID，星球名，星球主题类型，返回值：星球id）
     @PostMapping("/create")         //localhost:8081/planet/create

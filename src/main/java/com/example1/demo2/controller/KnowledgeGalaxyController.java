@@ -3,7 +3,7 @@ package com.example1.demo2.controller;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.GalaxyService;
+import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class KnowledgeGalaxyController {
 
     @Autowired
-    private GalaxyService galaxyService;
+    private IGalaxyService galaxyService;
 
     /**
      * 创建知识星系接口

@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.PlanetComment;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import jakarta.validation.Valid;
 
-public interface CommentService {
+public interface ICommentService {
     void create(@Valid PlanetCommentDto comment);
 
     PlanetComment findByParentId(Long parentId);

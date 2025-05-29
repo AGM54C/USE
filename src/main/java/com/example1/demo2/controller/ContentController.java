@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.PlanetContent;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.PlanetContentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.ContentService;
+import com.example1.demo2.service.IContentService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Objects;
 @Validated
 public class ContentController {
     @Autowired
-    private ContentService contentService;
+    private IContentService contentService;
 
     //知识创建（必要参数：所属星球ID，知识标题，知识类型，知识简介,返回值：知识ID）
     @PostMapping("/create")         //localhost:8081/planet/create

@@ -7,7 +7,7 @@ import com.example1.demo2.pojo.GalaxyComment;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
-import com.example1.demo2.service.GalaxyCommentService;
+import com.example1.demo2.service.IGalaxyCommentService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class IGalaxyCommentService implements GalaxyCommentService {
+public class GalaxyCommentService implements IGalaxyCommentService {
 
     @Autowired
     private GalaxyCommentMapper commentMapper;
