@@ -42,7 +42,7 @@ public interface GalaxyMapper {
      * 删除星系
      */
     @Delete("delete from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
-    void delete(Integer galaxyId);
+    void delete(String galaxyId);
 
     /**
      * 根据邀请码查找星系

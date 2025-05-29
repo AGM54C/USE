@@ -20,7 +20,7 @@ public class GalaxyCommentDto implements Serializable {
 
     // 星系ID
     @NotNull(groups = {Create.class}, message = "星系ID不能为空")
-    private Integer galaxyId;
+    private String galaxyId;
 
     // 星系名称（用于展示）
     private String galaxyName;
@@ -97,11 +97,11 @@ public class GalaxyCommentDto implements Serializable {
         this.username = username;
     }
 
-    public Integer getGalaxyId() {
+    public String getGalaxyId() {
         return galaxyId;
     }
 
-    public void setGalaxyId(Integer galaxyId) {
+    public void setGalaxyId(String galaxyId) {
         this.galaxyId = galaxyId;
     }
 

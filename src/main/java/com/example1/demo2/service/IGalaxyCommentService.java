@@ -20,7 +20,7 @@ public interface IGalaxyCommentService {
      * @param userId 当前用户ID（可选，用于判断点赞状态）
      * @return 评论列表
      */
-    List<GalaxyCommentDto> getCommentList(Integer galaxyId, int page, int size, Integer userId);
+    List<GalaxyCommentDto> getCommentList(String galaxyId, int page, int size, Integer userId);
 
     /**
      * 点赞/取消点赞

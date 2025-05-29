@@ -241,7 +241,7 @@ public class ConvertUtil {
                 // 尝试将字符串ID转换为整数
                 // 如果是"GLXY-20250101-ABCD"格式，则提取数字部分
                 // 如果是纯数字字符串，则直接转换
-                galaxy.setGalaxyId(Integer.parseInt(dto.getGalaxyId()));
+                galaxy.setGalaxyId(dto.getGalaxyId());
             } catch (NumberFormatException e) {
                 // 如果无法转换为数字，说明可能是格式化的ID
                 // 这种情况下galaxyId应该由数据库自动生成，所以不设置
