@@ -13,7 +13,7 @@ public class KnowledgeGalaxy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "galaxy_id")
-    private Integer galaxyId;
+    private String galaxyId;
 
     /**
      * 创建者用户ID
@@ -98,11 +98,11 @@ public class KnowledgeGalaxy {
     }
 
     // Getters and Setters
-    public Integer getGalaxyId() {
+    public String getGalaxyId() {
         return galaxyId;
     }
 
-    public void setGalaxyId(Integer galaxyId) {
+    public void setGalaxyId(String galaxyId) {
         this.galaxyId = galaxyId;
     }
 

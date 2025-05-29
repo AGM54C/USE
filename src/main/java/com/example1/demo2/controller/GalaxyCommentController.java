@@ -55,7 +55,7 @@ public class GalaxyCommentController {
      * 返回值：评论列表（分页，树形结构）
      */
     @GetMapping("/list/{galaxyId}")
-    public ResponseMessage getCommentList(@PathVariable @NotNull Integer galaxyId,
+    public ResponseMessage getCommentList(@PathVariable @NotNull String galaxyId,
                                           @RequestParam(defaultValue = "1") int page,
                                           @RequestParam(defaultValue = "20") int size,
                                           @RequestParam(required = false) Integer userId) {

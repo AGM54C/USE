@@ -34,7 +34,7 @@ public interface IGalaxyService {
      * 删除星系
      * @param galaxyId 要删除的星系ID
      */
-    void deleteGalaxy(Integer galaxyId);
+    void deleteGalaxy(String galaxyId);
 
     /**
      * 添加知识星球到星系

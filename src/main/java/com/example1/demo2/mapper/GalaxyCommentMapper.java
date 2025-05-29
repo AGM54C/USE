@@ -1,6 +1,5 @@
 package com.example1.demo2.mapper;
 
-import com.example1.demo2.pojo.GalaxyCommentLike;
 import com.example1.demo2.pojo.GalaxyComment;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
@@ -52,7 +51,7 @@ public interface GalaxyCommentMapper {
             @Result(property = "createTime", column = "release_time"),
             @Result(property = "updateTime", column = "update_time")
     })
-    List<GalaxyComment> getFirstLevelComments(@Param("galaxyId") Integer galaxyId,
+    List<GalaxyComment> getFirstLevelComments(@Param("galaxyId") String galaxyId,
                                               @Param("offset") int offset,
                                               @Param("size") int size);
 
@@ -134,5 +133,5 @@ public interface GalaxyCommentMapper {
             "WHEN EXISTS(SELECT 1 FROM tab_galaxy_administrator WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}) THEN 1 " +
             "ELSE 2 END " +
             "FROM tab_knowledge_galaxy kg WHERE kg.galaxy_id = #{galaxyId}")
-    Integer getUserRoleInGalaxy(@Param("userId") Integer userId, @Param("galaxyId") Integer galaxyId);
+    Integer getUserRoleInGalaxy(@Param("userId") Integer userId, @Param("galaxyId") String galaxyId);
 }

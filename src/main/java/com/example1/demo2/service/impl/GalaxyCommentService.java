@@ -92,7 +92,7 @@ public class GalaxyCommentService implements IGalaxyCommentService {
     }
 
     @Override
-    public List<GalaxyCommentDto> getCommentList(Integer galaxyId, int page, int size, Integer userId) {
+    public List<GalaxyCommentDto> getCommentList(String galaxyId, int page, int size, Integer userId) {
         // 计算偏移量
         int offset = (page - 1) * size;
 

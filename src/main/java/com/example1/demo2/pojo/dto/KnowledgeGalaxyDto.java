@@ -1,6 +1,5 @@
 package com.example1.demo2.pojo.dto;
 
-import com.example1.demo2.pojo.GalaxyComment;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;

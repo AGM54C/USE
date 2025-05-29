@@ -60,7 +60,7 @@ public class GalaxyService implements IGalaxyService {
 
     @Override
     @Transactional
-    public void deleteGalaxy(Integer galaxyId) {
+    public void deleteGalaxy(String galaxyId) {
         galaxyMapper.delete(galaxyId);
     }
 
