@@ -60,13 +60,6 @@ public class KnowledgeGalaxy {
     private Date updateTime = new Date();
 
     /**
-     * 创建者（多对一关联用户表）
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private User creator;
-
-    /**
      *所包含的知识星球（一对多关联知识星球表）
      */
     @OneToMany(mappedBy = "galaxyId", fetch = FetchType.LAZY)
@@ -160,14 +153,6 @@ public class KnowledgeGalaxy {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
     }
 
     public List<KnowledgePlanet> getPlanets() {

@@ -119,7 +119,7 @@ public class User {
     /**
      * 创建的星系（一对多关联星系表）
      */
-    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
     private List<KnowledgeGalaxy> createdGalaxies;
 
     /**
