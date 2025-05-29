@@ -3,7 +3,7 @@ package com.example1.demo2.service.impl;
 import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
-import com.example1.demo2.service.PlanetService;
+import com.example1.demo2.service.IPlanetService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Service
-public class IPlanetService implements PlanetService {
+public class PlanetService implements IPlanetService {
     @Autowired
     private PlanetMapper planetMapper;
 

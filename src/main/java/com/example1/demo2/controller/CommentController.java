@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.PlanetComment;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.CommentService;
+import com.example1.demo2.service.ICommentService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.Objects;
 @Validated
 public class CommentController {
         @Autowired
-        private CommentService commentService;
+        private ICommentService commentService;
 
         //评论创建（必要参数：评论用户id，所属星球id，关联知识id，评论内容，父级评论id,返回值：评论id）
         @PostMapping("/create")         //localhost:8081/planet/create

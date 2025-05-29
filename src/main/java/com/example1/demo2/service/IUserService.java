@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.UserDto;
 import jakarta.validation.Valid;
 
-public interface UserService {
+public interface IUserService {
 
     //根据用户名查询用户
     User findByNickname(String nickname);

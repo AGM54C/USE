@@ -4,7 +4,7 @@ import com.example1.demo2.pojo.PlanetContent;
 import com.example1.demo2.pojo.dto.PlanetContentDto;
 import jakarta.validation.Valid;
 
-public interface ContentService {
+public interface IContentService {
 
     void update(@Valid PlanetContentDto content);
 
