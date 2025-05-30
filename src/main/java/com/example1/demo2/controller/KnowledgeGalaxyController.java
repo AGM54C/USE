@@ -60,6 +60,7 @@ public class KnowledgeGalaxyController {
      * }
      * 返回值：成功返回星系完整信息，失败返回错误信息
      */
+
     @GetMapping("/galaxyinfo")
     public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 根据星系名查询
