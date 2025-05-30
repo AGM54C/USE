@@ -55,4 +55,27 @@ public interface IGalaxyService {
      * @return 权限值，0为私有，1为公开
      */
     Integer getPermission(String galaxyId);
+
+    /**
+     * 更新星系名字
+     * @param galaxyId 星系ID
+     * @param newName 新的星系名称
+     */
+    void updateGalaxyName(String galaxyId, String newName);
+
+    /**
+     * 更新星系标签
+     * @param galaxyId 星系ID
+     * @param newLabel 新的星系标签
+     */
+    void updateGalaxyLabel(String galaxyId, String newLabel);
+
+    /**
+     * 更新星系权限
+     * @param galaxyId 星系ID
+     * @param newPermission 新的权限值
+     */
+    void updateGalaxyPermission(String galaxyId, Integer newPermission);
+
+
 }
