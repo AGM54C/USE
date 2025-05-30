@@ -14,7 +14,7 @@ public interface IUserService {
     User findByNickname(String nickname);
 
     //注册用户
-    void register(String nickname, String password);
+    void register(String nickname, String password,String email);
 
     //根据邮箱查询用户
     User findByEmail(String email);

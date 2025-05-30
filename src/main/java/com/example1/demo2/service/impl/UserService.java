@@ -91,11 +91,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void register(String nickname, String password) {
+    public void register(String nickname, String password,String email) {
         //加密处理
         String passwordHash= BCryptUtil.hashPassword(password);
         //添加
-        userMapper.add(nickname,passwordHash);
+        userMapper.add(nickname,passwordHash,email);
     }
 
 
