@@ -15,10 +15,18 @@ public class updatePasswordDto implements Serializable {
             regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
             message = "密码至少8位，需包含字母、数字和特殊字符"
     )
-
     private String newpassword;
 
     private String repassword;
+
+    @Override
+    public String toString() {
+        return "updatePasswordDto{" +
+                "oldpassword='" + oldpassword + '\'' +
+                ", newpassword='" + newpassword + '\'' +
+                ", repassword='" + repassword + '\'' +
+                '}';
+    }
 
     // Getters and Setters
     public String getOldpassword() {

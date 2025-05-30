@@ -17,22 +17,10 @@ public class User {
     private Integer userId;
 
     /**
-     * JWT令牌版本
-     */
-    @Column(name = "token_version")
-    private Integer tokenVersion; // 初始值为0
-
-    /**
      * 邮箱地址
      */
     @Column(name = "email", unique = true, length = 100)
     private String email;
-
-    /**
-     * 手机号
-     */
-    @Column(name = "mobile", unique = true, length = 20)
-    private String mobile;
 
     /**
      * 密码
@@ -71,12 +59,6 @@ public class User {
     private Integer emailVerified;
 
     /**
-     * 手机验证状态：0-未验证 1-已验证
-     */
-    @Column(name = "mobile_verified", nullable = false, columnDefinition = "tinyint(1) default 0")
-    private Integer mobileVerified;
-
-    /**
      * 创建时间
      */
     @Column(name = "create_time", nullable = false, updatable = false)
@@ -112,14 +94,17 @@ public class User {
     /**
      * 创建的星球（一对多关联星球表）
      */
-    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnowledgePlanet> createdPlanets;
 
+    /** 最喜欢的星球ID */
+    @Column(name = "favorite_planet_id", length = 20)
+    private String favoritePlanetId;
 
     /**
      * 创建的星系（一对多关联星系表）
      */
-    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnowledgeGalaxy> createdGalaxies;
 
     /**
@@ -129,10 +114,16 @@ public class User {
     private List<GalaxyAdministrator> adminRoles;
 
     /**
-     * 用户评论（一对多关联评论表）
+     * 用户星系评论（一对多关联评论表）
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<GalaxyComment> comments;
+    private List<GalaxyComment> Gcomments;
+
+    /**
+     * 用户星球评论（一对多关联）
+     */
+    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanetComment> Pcomments;
 
     // JPA回调方法，插入前自动设置创建时间和更新时间
     @PrePersist
@@ -157,28 +148,12 @@ public class User {
         this.userId = userId;
     }
 
-    public Integer getTokenVersion() {
-        return tokenVersion;
-    }
-
-    public void setTokenVersion(Integer tokenVersion) {
-        this.tokenVersion = tokenVersion;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
     }
 
     public String getPassword() {
@@ -229,14 +204,6 @@ public class User {
         this.emailVerified = emailVerified;
     }
 
-    public Integer getMobileVerified() {
-        return mobileVerified;
-    }
-
-    public void setMobileVerified(Integer mobileVerified) {
-        this.mobileVerified = mobileVerified;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -265,9 +232,7 @@ public class User {
         return fuelValue;
     }
 
-    public void setFuelValue(Integer fuelValue) {
-        this.fuelValue = fuelValue;
-    }
+    public void setFuelValue(Integer fuelValue) {this.fuelValue = fuelValue;}
 
     public Integer getKnowledgeDust() {
         return knowledgeDust;
@@ -301,33 +266,52 @@ public class User {
         this.adminRoles = adminRoles;
     }
 
-    public List<GalaxyComment> getComments() {
-        return comments;
+    public String getFavoritePlanetId() {
+        return favoritePlanetId;
     }
 
-    public void setComments(List<GalaxyComment> comments) {
-        this.comments = comments;
+    public void setFavoritePlanetId(String favoritePlanetId) {
+        this.favoritePlanetId = favoritePlanetId;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", tokenVersion=" + tokenVersion +
                 ", email='" + email + '\'' +
-                ", mobile='" + mobile + '\'' +
                 ", password='" + password + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", avatarUrl='" + avatarUrl + '\'' +
                 ", bio='" + bio + '\'' +
                 ", status=" + status +
                 ", emailVerified=" + emailVerified +
-                ", mobileVerified=" + mobileVerified +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", lastLoginTime=" + lastLoginTime +
                 ", fuelValue=" + fuelValue +
                 ", knowledgeDust=" + knowledgeDust +
+                ", createdPlanets=" + createdPlanets +
+                ", favoritePlanetId='" + favoritePlanetId + '\'' +
+                ", createdGalaxies=" + createdGalaxies +
+                ", adminRoles=" + adminRoles +
+                ", Gcomments=" + Gcomments +
+                ", Pcomments=" + Pcomments +
                 '}';
+    }
+
+    public void setPcomments(List<PlanetComment> pcomments) {
+        Pcomments = pcomments;
+    }
+
+    public void setGcomments(List<GalaxyComment> gcomments) {
+        Gcomments = gcomments;
+    }
+
+    public List<GalaxyComment> getGcomments() {
+        return Gcomments;
+    }
+
+    public List<PlanetComment> getPcomments() {
+        return Pcomments;
     }
 }

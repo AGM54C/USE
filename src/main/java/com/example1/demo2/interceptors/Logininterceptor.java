@@ -27,15 +27,7 @@ public class Logininterceptor implements HandlerInterceptor {
             Map<String,Object> claims= JWTUtil.ParseToken(token);
 
             Integer userId = (Integer) claims.get("userId");
-            Integer tokenVersion = (Integer) claims.get("tokenVersion"); // 从claims中获取
 
-            // 查询数据库中的最新版本
-            User u = userService.findById(userId);
-
-            //验证版本是否一致
-            if (u == null || !u.getTokenVersion().equals(tokenVersion)) {
-             throw new JWTVerificationException("Token已过期，请重新登录");
-           }
             //将业务数据存储到Threadlocal中，多线程运行
             ThreadLocalUtil.set(claims);
 
