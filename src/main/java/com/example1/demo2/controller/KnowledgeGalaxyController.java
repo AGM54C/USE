@@ -48,20 +48,22 @@ public class KnowledgeGalaxyController {
         }
     }
 
+
+
     /**
      * 查看星系信息接口
      * 前端请求方式：GET
      * 请求URL：localhost:8081/galaxy/galaxyinfo
      * 请求参数（JSON格式）：
      * {
-     *   "name": "人工智能"    // 星系名称（必填）
+     *   "galaxyId": 1    // 星系ID（必填）
      * }
      * 返回值：成功返回星系完整信息，失败返回错误信息
      */
     @GetMapping("/galaxyinfo")
     public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 根据星系名查询
-        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyByName(galaxy.getName());
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
         if (g == null) {
             return ResponseMessage.error("星系不存在");
         }
