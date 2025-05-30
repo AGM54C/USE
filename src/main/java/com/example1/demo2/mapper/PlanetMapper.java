@@ -37,10 +37,7 @@ public interface PlanetMapper {
     @Select("select * from tab_knowledge_planet where user_id = #{userId}")
     List<KnowledgePlanet> selectAll(Integer userId);
 
-    // 根据关键词搜索用户创建的星球ID
-    @Select("select planet_id from tab_knowledge_planet " +
-            "where (title like concat('%', #{keyword}, '%') " +
-            "or description like concat('%', #{keyword}, '%')) " +
-            "and user_id = #{userId} ")
+    // 根据关键词搜索用户创建的星球ID(模糊查询)
+    @Select("select planet_id from tab_knowledge_planet where title like CONCAT('%', #{keyword}, '%') and user_id = #{userId}")
     List<String> searchIdsByKeyword(String keyword, Integer userId);
 }

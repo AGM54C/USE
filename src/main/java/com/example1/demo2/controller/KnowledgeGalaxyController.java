@@ -62,7 +62,7 @@ public class KnowledgeGalaxyController {
      */
     @GetMapping("/galaxyinfo")
     public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
-        // 根据星系名查询
+        // 根据星系ID查询
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
         if (g == null) {
             return ResponseMessage.error("星系不存在");

@@ -100,13 +100,28 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public KnowledgeGalaxy GetGalaxyById(String galaxyId) {
-        return galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+    public KnowledgeGalaxy GetGalaxyByName(String name) {
+        //模糊搜索星系名字
+        List<KnowledgeGalaxy> galaxies = galaxyMapper.searchByName(name);
+        if (galaxies != null && !galaxies.isEmpty()) {
+            return galaxies.get(0); // 返回第一个匹配的星系
+        }
+        return null; // 返回null表示没有找到匹配的星系
     }
 
     @Override
     public void updateFavoriteGalaxy(Integer userId, String galaxyId) {
         userMapper.updateFavoriteGalaxy(userId, galaxyId);
+    }
+
+    @Override
+    public List<KnowledgeGalaxy> GetGalaxiesByNameAndCreatorId(String name, Integer userId) {
+        return galaxyMapper.searchByNameAndCreatorId(name, userId);
+    }
+
+    @Override
+    public List<KnowledgeGalaxy> GetGalaxiesByNameExcludeUser(String name, Integer userId) {
+        return galaxyMapper.searchByNameExcludeUser(name, userId);
     }
 
     @Override
