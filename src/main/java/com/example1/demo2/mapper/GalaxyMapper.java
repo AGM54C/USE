@@ -3,8 +3,14 @@ package com.example1.demo2.mapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface GalaxyMapper {
+    @Select("select * from tab_knowledge_galaxy where user_id=#{userId} order by create_time desc")
+    List<KnowledgeGalaxy> selectAll(Integer userId);
+
+
     /**
      * 根据星系名查找星系
      */
