@@ -427,15 +427,15 @@ public class UserController {
     /**
      * 根据星系ID获取星系信息
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/user/galaxyinfo
+     * 请求URL：localhost:8081/user/selectgalaxy
      * 请求参数（JSON格式）：
      * {
      *   "galaxyId": String             // 星系ID（必填）
      * }
      * 返回值：星系信息
      */
-    @GetMapping("/galaxyinfo")
-    public ResponseMessage<KnowledgeGalaxyDto> galaxyinfo(@RequestParam("galaxyId") String galaxyId) {
+    @GetMapping("/selectgalaxyinfo")
+    public ResponseMessage<KnowledgeGalaxyDto> selectgalaxyinfo(@RequestParam("galaxyId") String galaxyId) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
