@@ -6,6 +6,7 @@ import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,27 +52,22 @@ public class KnowledgeGalaxyController {
 
 
     /**
-     * 查看星系信息接口
-     * 前端请求方式：POST
-     * 请求URL：localhost:8081/galaxy/galaxyinfo
-     * 请求参数（JSON格式）：
-     * {
-     *   "galaxyId": 1    // 星系ID（必填）
-     * }
+     * 查看星系信息接口（RESTful风格）
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/21  （其中21是星系ID）
      * 返回值：成功返回星系完整信息，失败返回错误信息
      */
-    @PostMapping("/galaxyinfo")
-    public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
-        // 根据星系ID查询
-        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
+    @GetMapping("/{galaxyId}")
+    public ResponseMessage<KnowledgeGalaxyDto> getGalaxyInfo(
+            @PathVariable @Positive(message = "星系ID必须为正数") Integer galaxyId) {
+
+        // 根据ID查找星系
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
         if (g == null) {
             return ResponseMessage.error("星系不存在");
         }
-        if(g.getPermission()==0)
-        {
-            return ResponseMessage.error("星系为私有，无法查看");
-        }
-        // 转化为dto
+
+        // 转换为DTO返回
         KnowledgeGalaxyDto dto = ConvertUtil.convertKnowledgeGalaxyToDto(g);
         return ResponseMessage.success(dto);
     }
@@ -150,7 +146,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回成功信息，失败返回错误信息
      */
     @PostMapping("/addplanet")
-    public ResponseMessage addPlanet(@RequestParam String galaxyId, @RequestParam String planetId) {
+    public ResponseMessage addPlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
         // 检查星系是否存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
         if (g == null) {
@@ -173,7 +169,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回成功信息，失败返回错误信息
      */
     @DeleteMapping("/deleteplanet")
-    public ResponseMessage deletePlanet(@RequestParam String galaxyId, @RequestParam String planetId) {
+    public ResponseMessage deletePlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
         // 检查星系是否存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
         if (g == null) {
@@ -196,7 +192,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新名字，失败返回错误信息
      */
     @PutMapping("/updateName")
-    public ResponseMessage updateGalaxyName(@RequestParam String galaxyId, @RequestParam String newName) {
+    public ResponseMessage updateGalaxyName(@RequestParam Integer galaxyId, @RequestParam String newName) {
         // 更新星系名称
         galaxyService.updateGalaxyName(galaxyId, newName);
         return ResponseMessage.success("星系名称已更新为：" + newName);
@@ -213,7 +209,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新标签，失败返回错误信息
      */
     @PutMapping("/updateLabel")
-    public ResponseMessage updateGalaxyLabel(@RequestParam String galaxyId, @RequestParam String newLabel) {
+    public ResponseMessage updateGalaxyLabel(@RequestParam Integer galaxyId, @RequestParam String newLabel) {
         // 更新星系标签
         galaxyService.updateGalaxyLabel(galaxyId, newLabel);
         return ResponseMessage.success("星系标签已更新为：" + newLabel);
@@ -231,7 +227,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新权限，失败返回错误信息
      */
     @PutMapping("/updatePermission")
-    public ResponseMessage updateGalaxyPermission(@RequestParam String galaxyId, @RequestParam Integer newPermission) {
+    public ResponseMessage updateGalaxyPermission(@RequestParam Integer galaxyId, @RequestParam Integer newPermission) {
         // 更新星系权限
         galaxyService.updateGalaxyPermission(galaxyId, newPermission);
         return ResponseMessage.success("星系权限已更新为：" + (newPermission == 0 ? "私有" : "公开"));

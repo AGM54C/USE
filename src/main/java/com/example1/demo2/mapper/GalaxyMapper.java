@@ -21,7 +21,7 @@ public interface GalaxyMapper {
      * 根据星系ID查找星系
      */
     @Select("select * from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
-    KnowledgeGalaxy getKnowledgeGalaxyById(String galaxyId);
+    KnowledgeGalaxy getKnowledgeGalaxyById(Integer galaxyId);
 
     /**
      * 创建星系
@@ -48,7 +48,7 @@ public interface GalaxyMapper {
      * 删除星系
      */
     @Delete("delete from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
-    void delete(String galaxyId);
+    void delete(Integer galaxyId);
 
     /**
      * 根据邀请码查找星系
@@ -60,13 +60,13 @@ public interface GalaxyMapper {
      * 更新星球的星系ID（将星球加入星系）
      */
     @Update("update tab_knowledge_planet set galaxy_id=#{galaxyId} where planet_id=#{planetId}")
-    void addPlanetToGalaxy(@Param("galaxyId") String galaxyId, @Param("planetId") String planetId);
+    void addPlanetToGalaxy(@Param("galaxyId") Integer galaxyId, @Param("planetId") String planetId);
 
     /**
      * 从星系中移除星球
      */
     @Update("update tab_knowledge_planet set galaxy_id=null where planet_id=#{planetId}")
-    void removePlanetFromGalaxy(@Param("galaxyId") String galaxyId, @Param("planetId") String planetId);
+    void removePlanetFromGalaxy(@Param("galaxyId") Integer galaxyId, @Param("planetId") String planetId);
 
     /**
      * 查询星系权限

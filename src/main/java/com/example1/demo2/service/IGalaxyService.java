@@ -16,7 +16,7 @@ public interface IGalaxyService {
      * @param galaxyId 星系ID
      * @return 返回找到的星系实体，如果未找到返回null
      */
-    KnowledgeGalaxy getKnowledgeGalaxyById(String galaxyId);
+    KnowledgeGalaxy getKnowledgeGalaxyById(Integer galaxyId);
 
     /**
      * 创建星系
@@ -34,21 +34,21 @@ public interface IGalaxyService {
      * 删除星系
      * @param galaxyId 要删除的星系ID
      */
-    void deleteGalaxy(String galaxyId);
+    void deleteGalaxy(Integer galaxyId);
 
     /**
      * 添加知识星球到星系
      * @param galaxyId 星系ID
      * @param planetId 星球ID
      */
-    void addKnowledgePlanetToGalaxy(String galaxyId, String planetId);
+    void addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId);
 
     /**
      * 从知识星系移除知识星球
      * @param galaxyId 星系ID
      * @param planetId 星球ID
      */
-    void removeKnowledgePlanetFromGalaxy(String galaxyId, String planetId);
+    void removeKnowledgePlanetFromGalaxy(Integer galaxyId, String planetId);
 
     /**
      * 获取权限
@@ -61,21 +61,21 @@ public interface IGalaxyService {
      * @param galaxyId 星系ID
      * @param newName 新的星系名称
      */
-    void updateGalaxyName(String galaxyId, String newName);
+    void updateGalaxyName(Integer galaxyId, String newName);
 
     /**
      * 更新星系标签
      * @param galaxyId 星系ID
      * @param newLabel 新的星系标签
      */
-    void updateGalaxyLabel(String galaxyId, String newLabel);
+    void updateGalaxyLabel(Integer galaxyId, String newLabel);
 
     /**
      * 更新星系权限
      * @param galaxyId 星系ID
      * @param newPermission 新的权限值
      */
-    void updateGalaxyPermission(String galaxyId, Integer newPermission);
+    void updateGalaxyPermission(Integer galaxyId, Integer newPermission);
 
 
 }
