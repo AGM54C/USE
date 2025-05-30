@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController //接口返回对象，转化为json文本
 @RequestMapping("/user")  //localhost:8081/user/**
@@ -347,17 +348,17 @@ public class UserController {
     }
 
     /**
-     * 搜索星球
+     * 搜索星球(模糊搜索)
      * 前端请求方式：GET
      * 请求URL：localhost:8081/user/selectplanet
-     * 请求参数（JSON格式）：
+     * 请求参数（Param格式）：
      * {
-     *   "keyword":String             //搜索关键词
+     *   "title":String             //搜索关键词
      * }
-     * 返回值：星球ID列表
+     * 返回值：星球列表
      */
     @GetMapping("/selectplanet")
-    public ResponseMessage<List<String>> select(@RequestParam("keyword") String keyword) {
+    public ResponseMessage<List<String>> selectplanet(@RequestParam("title") String keyword) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
@@ -370,7 +371,9 @@ public class UserController {
         if (StringUtils.isBlank(keyword)) {
             return ResponseMessage.error("搜索关键词不能为空");
         }
-        List<String> planetIds = userService.searchPlanetIds(keyword,userId);
+
+        // 搜索星球ID列表
+        List<String> planetIds = userService.searchPlanetIds(keyword, userId);
         return ResponseMessage.success(planetIds);
     }
 
@@ -425,35 +428,98 @@ public class UserController {
     }
 
     /**
-     * 根据星系ID获取星系信息
+     * 搜索当前用户创建的星系（模糊搜索）
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/user/selectgalaxy
-     * 请求参数（JSON格式）：
+     * 请求URL：localhost:8081/user/selectmygalaxy
+     * 请求参数（Param格式）：
      * {
-     *   "galaxyId": String             // 星系ID（必填）
+     *   "name": String             // 星系名称（必填）
      * }
-     * 返回值：星系信息
+     * 返回值：用户自己的星系信息列表
      */
-    @GetMapping("/selectgalaxyinfo")
-    public ResponseMessage<KnowledgeGalaxyDto> selectgalaxyinfo(@RequestParam("galaxyId") String galaxyId) {
+    @GetMapping("/selectmygalaxy")
+    public ResponseMessage<List<KnowledgeGalaxyDto>> selectMyGalaxy(@RequestParam("name") String name) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
-        User u=userService.findById(userId);
-        if(u==null) {
-            //用户不存在
+        User u = userService.findById(userId);
+
+        // 验证用户存在性
+        if (u == null) {
             return ResponseMessage.error("用户不存在");
         }
 
-        // 根据星系ID查询星系信息
-        KnowledgeGalaxy galaxy = userService.GetGalaxyById(galaxyId);
-        if (galaxy == null) {
-            return ResponseMessage.error("星系不存在");
+        // 验证参数
+        if (StringUtils.isBlank(name)) {
+            return ResponseMessage.error("星系名称不能为空");
         }
 
-        // 转化为dto
-        KnowledgeGalaxyDto dto = ConvertUtil.convertKnowledgeGalaxyToDto(galaxy);
-        return ResponseMessage.success(dto);
+        // 根据星系名称和用户ID获取用户创建的星系列表
+        // 这里假设有一个方法可以根据名称和创建者ID进行模糊搜索
+        List<KnowledgeGalaxy> myGalaxies = userService.GetGalaxiesByNameAndCreatorId(name, userId);
+
+        if (myGalaxies == null || myGalaxies.isEmpty()) {
+            return ResponseMessage.error("未找到您创建的相关星系");
+        }
+
+        // 转换为DTO列表
+        List<KnowledgeGalaxyDto> galaxyDtoList = myGalaxies.stream()
+                .map(galaxy -> ConvertUtil.convertKnowledgeGalaxyToDto(galaxy))
+                .collect(Collectors.toList());
+
+        return ResponseMessage.success(galaxyDtoList);
+    }
+
+    /**
+     * 搜索他人公开的星系（模糊搜索）
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/user/selectothersgalaxy
+     * 请求参数（Param格式）：
+     * {
+     *   "name": String             // 星系名称（必填）
+     * }
+     * 返回值：他人公开的星系信息列表
+     */
+    @GetMapping("/selectothersgalaxy")
+    public ResponseMessage<List<KnowledgeGalaxyDto>> selectOthersGalaxy(@RequestParam("name") String name) {
+        // 获取当前用户ID（用于排除自己的星系）
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+        User u = userService.findById(userId);
+
+        // 验证用户存在性
+        if (u == null) {
+            return ResponseMessage.error("用户不存在");
+        }
+
+        // 验证参数
+        if (StringUtils.isBlank(name)) {
+            return ResponseMessage.error("星系名称不能为空");
+        }
+
+        // 根据星系名称获取所有匹配的星系（排除当前用户创建的）
+        // 这里假设有一个方法可以进行模糊搜索并排除特定用户的星系
+        List<KnowledgeGalaxy> othersGalaxies = userService.GetGalaxiesByNameExcludeUser(name, userId);
+
+        if (othersGalaxies == null || othersGalaxies.isEmpty()) {
+            return ResponseMessage.error("未找到其他用户的相关星系");
+        }
+
+        // 过滤出公开的星系（permission != 0）
+        List<KnowledgeGalaxy> publicGalaxies = othersGalaxies.stream()
+                .filter(galaxy -> galaxy.getPermission() != 0)
+                .collect(Collectors.toList());
+
+        if (publicGalaxies.isEmpty()) {
+            return ResponseMessage.error("未找到其他用户的公开星系");
+        }
+
+        // 转换为DTO列表
+        List<KnowledgeGalaxyDto> galaxyDtoList = publicGalaxies.stream()
+                .map(galaxy -> ConvertUtil.convertKnowledgeGalaxyToDto(galaxy))
+                .collect(Collectors.toList());
+
+        return ResponseMessage.success(galaxyDtoList);
     }
 
     /**

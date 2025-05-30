@@ -54,7 +54,11 @@ public interface IUserService {
     List<KnowledgeGalaxy> GetAllGalaxies(Integer userId);
 
     //搜索星系
-    KnowledgeGalaxy GetGalaxyById(String galaxyId);
+    KnowledgeGalaxy GetGalaxyByName(String name);
 
     void updateFavoriteGalaxy(Integer userId, String galaxyId);
+
+    List<KnowledgeGalaxy> GetGalaxiesByNameAndCreatorId(String name, Integer userId);
+
+    List<KnowledgeGalaxy> GetGalaxiesByNameExcludeUser(String name, Integer userId);
 }

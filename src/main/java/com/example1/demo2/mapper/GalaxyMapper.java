@@ -73,4 +73,27 @@ public interface GalaxyMapper {
      */
     @Select("select permission from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
     Integer getGalaxyPermissionById(String galaxyId);
+
+    /**
+     * 模糊搜索星系名字
+     * @param name 星系名称
+     */
+    @Select("select * from tab_knowledge_galaxy where name like concat('%', #{name}, '%')")
+    List<KnowledgeGalaxy> searchByName(String name);
+
+    /**
+     * 根据星系名称和创建者ID查询星系
+     * @param name 星系名称
+     * @param userId 创建者用户ID
+     */
+    @Select("select * from tab_knowledge_galaxy where name like concat('%', #{name}, '%') and user_id=#{userId}")
+    List<KnowledgeGalaxy> searchByNameAndCreatorId(String name, Integer userId);
+
+    /**
+     * 根据星系名称排除特定用户的星系
+     * @param name 星系名称
+     * @param userId 排除的用户ID
+     */
+    @Select("select * from tab_knowledge_galaxy where name like concat('%', #{name}, '%') and user_id != #{userId}")
+    List<KnowledgeGalaxy> searchByNameExcludeUser(String name, Integer userId);
 }
