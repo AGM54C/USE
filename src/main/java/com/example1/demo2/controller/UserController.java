@@ -43,7 +43,7 @@ public class UserController {
      * 返回值：成功返回成功信息，失败返回错误信息
      */
     @PostMapping("/register")
-    public ResponseMessage<String> register(@Valid @RequestBody UserDto user,String repassword) {
+    public ResponseMessage<String> register(@Valid @RequestBody UserDto user) {
         //查询用户
         User u=userService.findByNickname(user.getNickname());
         if(u!=null) {
@@ -52,10 +52,6 @@ public class UserController {
         }
         else{
             //没有占用
-            //验证二次输入密码和新密码
-            if(!user.getPassword().equals(repassword)){
-                return ResponseMessage.error("两次输入的密码不相同！");
-            }
             userService.register(user.getNickname(),user.getPassword());
             return ResponseMessage.success("用户"+user.getNickname()+"成功注册！");
         }
