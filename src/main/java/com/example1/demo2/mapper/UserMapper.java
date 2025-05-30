@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface UserMapper {
     //添加
-    @Insert("insert into tab_user(nickname,password,create_time,update_time)"+" values(#{nickname},#{passwordHash},now(),now())")
-    void add(String nickname, String passwordHash) ;
+    @Insert("insert into tab_user(nickname,password,email,create_time,update_time)"+" values(#{nickname},#{passwordHash},#{email},now(),now())")
+    void add(String nickname, String passwordHash,String email) ;
 
     //根据用户名查询用户
     @Select("select * from tab_user where nickname=#{nickname}")
