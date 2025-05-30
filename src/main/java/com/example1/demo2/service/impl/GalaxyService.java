@@ -17,6 +17,8 @@ public class GalaxyService implements IGalaxyService {
     @Autowired
     private GalaxyMapper galaxyMapper;
 
+    private final Object createLock = new Object();
+
     @Override
     public KnowledgeGalaxy getKnowledgeGalaxyByName(String name) {
         return galaxyMapper.getKnowledgeGalaxyByName(name);
@@ -30,22 +32,24 @@ public class GalaxyService implements IGalaxyService {
     @Override
     @Transactional
     public void createGalaxy(KnowledgeGalaxyDto galaxyDto) {
-        // 设置星系ID格式（虽然在数据库中是自增整数，但DTO中保留了字符串格式的ID）
-        galaxyDto.setGalaxyId(generateGalaxyId());
+        synchronized (createLock) {
+            // 设置星系ID格式（虽然在数据库中是自增整数，但DTO中保留了字符串格式的ID）
+            galaxyDto.setGalaxyId(generateGalaxyId());
 
-        // 如果没有提供邀请码，则自动生成一个
-        if (galaxyDto.getInviteCode() == null || galaxyDto.getInviteCode().isEmpty()) {
-            galaxyDto.setInviteCode(generateInviteCode());
+            // 如果没有提供邀请码，则自动生成一个
+            if (galaxyDto.getInviteCode() == null || galaxyDto.getInviteCode().isEmpty()) {
+                galaxyDto.setInviteCode(generateInviteCode());
+            }
+
+            // 将DTO转换为实体对象
+            KnowledgeGalaxy galaxy = ConvertUtil.convertDtoToKnowledgeGalaxy(galaxyDto);
+
+            // 调用mapper插入数据
+            galaxyMapper.add(galaxy);
+
+            // 将生成的galaxyId回写到DTO中（数据库自增ID）
+            galaxyDto.setGalaxyId(String.valueOf(galaxy.getGalaxyId()));
         }
-
-        // 将DTO转换为实体对象
-        KnowledgeGalaxy galaxy = ConvertUtil.convertDtoToKnowledgeGalaxy(galaxyDto);
-
-        // 调用mapper插入数据
-        galaxyMapper.add(galaxy);
-
-        // 将生成的galaxyId回写到DTO中（数据库自增ID）
-        galaxyDto.setGalaxyId(String.valueOf(galaxy.getGalaxyId()));
     }
 
     @Override
