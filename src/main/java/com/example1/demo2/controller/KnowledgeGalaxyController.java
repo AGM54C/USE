@@ -52,7 +52,7 @@ public class KnowledgeGalaxyController {
 
     /**
      * 查看星系信息接口
-     * 前端请求方式：GET
+     * 前端请求方式：POST
      * 请求URL：localhost:8081/galaxy/galaxyinfo
      * 请求参数（JSON格式）：
      * {
@@ -60,7 +60,7 @@ public class KnowledgeGalaxyController {
      * }
      * 返回值：成功返回星系完整信息，失败返回错误信息
      */
-    @GetMapping("/galaxyinfo")
+    @PostMapping("/galaxyinfo")
     public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 根据星系ID查询
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
