@@ -19,7 +19,7 @@ public class User {
     /**
      * 邮箱地址
      */
-    @Column(name = "email", unique = true, length = 100)
+    @Column(name = "email", nullable = false,unique = true, length = 100)
     private String email;
 
 

@@ -38,7 +38,7 @@ public class UserController {
      * {
      *   "nickname": String               // 用户昵称（必填）
      *   "password": String               // 原始密码（必填）
-     *   "repassword":String              //二次输入密码（必填）
+     *   "email":String              //邮箱（必填）
      * }
      * 返回值：成功返回成功信息，失败返回错误信息
      */
@@ -52,7 +52,7 @@ public class UserController {
         }
         else{
             //没有占用
-            userService.register(user.getNickname(),user.getPassword());
+            userService.register(user.getNickname(),user.getPassword(),user.getEmail());
             return ResponseMessage.success("用户"+user.getNickname()+"成功注册！");
         }
     }
