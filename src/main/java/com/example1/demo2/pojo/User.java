@@ -22,6 +22,7 @@ public class User {
     @Column(name = "email", unique = true, length = 100)
     private String email;
 
+
     /**
      * 密码
      */
@@ -80,15 +81,15 @@ public class User {
     private Date lastLoginTime;
 
     /**
-     * 推进燃料
+     * 推进燃料，默认为0
      */
-    @Column(name = "fuel_value")
+    @Column(name = "fuel_value", nullable = false, columnDefinition = "int default 0")
     private Integer fuelValue;
 
     /**
-     * 知识星云
+     * 知识星云，默认为0
      */
-    @Column(name = "knowledge_dust")
+    @Column(name = "knowledge_dust", nullable = false, columnDefinition = "int default 0")
     private Integer knowledgeDust;
 
     /**
