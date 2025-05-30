@@ -60,13 +60,16 @@ public class KnowledgeGalaxyController {
      * }
      * 返回值：成功返回星系完整信息，失败返回错误信息
      */
-
     @GetMapping("/galaxyinfo")
     public ResponseMessage galaxyinfo(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 根据星系名查询
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
         if (g == null) {
             return ResponseMessage.error("星系不存在");
+        }
+        if(g.getPermission()==0)
+        {
+            return ResponseMessage.error("星系为私有，无法查看");
         }
         // 转化为dto
         KnowledgeGalaxyDto dto = ConvertUtil.convertKnowledgeGalaxyToDto(g);

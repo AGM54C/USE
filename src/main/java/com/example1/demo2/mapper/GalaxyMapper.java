@@ -61,4 +61,10 @@ public interface GalaxyMapper {
      */
     @Update("update tab_knowledge_planet set galaxy_id=null where planet_id=#{planetId}")
     void removePlanetFromGalaxy(@Param("galaxyId") String galaxyId, @Param("planetId") String planetId);
+
+    /**
+     * 查询星系权限
+     */
+    @Select("select permission from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
+    Integer getGalaxyPermissionById(String galaxyId);
 }
