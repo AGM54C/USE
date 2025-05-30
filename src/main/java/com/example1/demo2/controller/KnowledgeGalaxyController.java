@@ -184,6 +184,58 @@ public class KnowledgeGalaxyController {
         galaxyService.removeKnowledgePlanetFromGalaxy(galaxyId, planetId);
         return ResponseMessage.success("成功移除星球从星系");
     }
+
+    /**
+     * 用户更改星系名称接口
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/updateName
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": 1    // 星系ID（必填）
+     * }
+     * 返回值：成功返回新名字，失败返回错误信息
+     */
+    @PutMapping("/updateName")
+    public ResponseMessage updateGalaxyName(@RequestParam String galaxyId, @RequestParam String newName) {
+        // 更新星系名称
+        galaxyService.updateGalaxyName(galaxyId, newName);
+        return ResponseMessage.success("星系名称已更新为：" + newName);
+    }
+
+    /**
+     * 用户更改星系标签接口
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/updateLabel
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": 1    // 星系ID（必填）
+     * }
+     * 返回值：成功返回新标签，失败返回错误信息
+     */
+    @PutMapping("/updateLabel")
+    public ResponseMessage updateGalaxyLabel(@RequestParam String galaxyId, @RequestParam String newLabel) {
+        // 更新星系标签
+        galaxyService.updateGalaxyLabel(galaxyId, newLabel);
+        return ResponseMessage.success("星系标签已更新为：" + newLabel);
+    }
+
+    /**
+     * 用户更改星系权限接口
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/updatePermission
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": 1,    // 星系ID（必填）
+     *   "newPermission": 0 // 新权限：0私有，1公开（必填）
+     * }
+     * 返回值：成功返回新权限，失败返回错误信息
+     */
+    @PutMapping("/updatePermission")
+    public ResponseMessage updateGalaxyPermission(@RequestParam String galaxyId, @RequestParam Integer newPermission) {
+        // 更新星系权限
+        galaxyService.updateGalaxyPermission(galaxyId, newPermission);
+        return ResponseMessage.success("星系权限已更新为：" + (newPermission == 0 ? "私有" : "公开"));
+    }
 }
 
 

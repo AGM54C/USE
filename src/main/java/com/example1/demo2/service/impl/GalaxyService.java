@@ -83,6 +83,42 @@ public class GalaxyService implements IGalaxyService {
         return galaxyMapper.getGalaxyPermissionById(galaxyId);
     }
 
+    @Override
+    public void updateGalaxyName(String galaxyId, String newName) {
+        // 更新星系名称
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy != null) {
+            galaxy.setName(newName);
+            galaxyMapper.update(galaxy);
+        } else {
+            throw new IllegalArgumentException("Galaxy with ID " + galaxyId + " does not exist.");
+        }
+    }
+
+    @Override
+    public void updateGalaxyLabel(String galaxyId, String newLabel) {
+        // 更新星系标签
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy != null) {
+            galaxy.setLabel(newLabel);
+            galaxyMapper.update(galaxy);
+        } else {
+            throw new IllegalArgumentException("Galaxy with ID " + galaxyId + " does not exist.");
+        }
+    }
+
+    @Override
+    public void updateGalaxyPermission(String galaxyId, Integer newPermission) {
+        // 更新星系权限
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy != null) {
+            galaxy.setPermission(newPermission);
+            galaxyMapper.update(galaxy);
+        } else {
+            throw new IllegalArgumentException("Galaxy with ID " + galaxyId + " does not exist.");
+        }
+    }
+
     /**
      * 生成星系ID格式字符串
      * 格式：GLXY-YYYYMMDD-XXXX
