@@ -1,106 +1,170 @@
 package com.example1.demo2.pojo;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-
 import java.util.Date;
+import java.util.List;
 
+/**
+ * 知识星球实体类
+ * 对应数据库表：tab_knowledge_planet
+ * 关联关系：
+ * - 多对一关联用户（User），外键：user_id
+ * - 一对多关联知识内容（PlanetContent）
+ */
 @Entity
 @Table(name = "tab_knowledge_planet")
 public class KnowledgePlanet {
 
-    /**
-     * 星球ID(格式:PLNT-YYYYMMDD-XXXX)
-     */
+    /** 星球ID(格式:PLNT-YYYYMMDD-XXXX) */
     @Id
     @Column(name = "planet_id", length = 20, nullable = false, unique = true)
     private String planetId;
 
-    /**
-     * 创建者ID（外键，关联用户表）
-     */
+
+    /** 创建者ID（关联用户表） */
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    /**
-     * 星球标题（不超过100字，非空）
-     */
+    /** 星球标题（不超过100字，非空） */
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    /**
-     * 星球描述（文本类型，可空）
-     */
+    /** 星球描述 */
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    /**
-     * 封面URL（不超过255字）
-     */
+    /** 封面URL */
     @Column(name = "cover_url", length = 255)
     private String coverUrl;
 
-    /**
-     * 主题分类ID（非空）
-     */
+    /** 主题分类ID（非空） */
     @Column(name = "theme_id", nullable = false)
     private Integer themeId;
 
-    /**
-     * 展示模型（0-文档型，1-图谱型，2-时间轴型，默认0）
-     */
+    /** 展示模型：0-文档型，1-图谱型，2-时间轴型 */
     @Column(name = "model_type", nullable = false, columnDefinition = "tinyint default 0")
     private Integer modelType;
 
-    /**
-     * 颜色方案（不超过20字）
-     */
+    /** 颜色方案（不超过20字） */
     @Column(name = "color_scheme", length = 20)
     private String colorScheme;
 
-    /**
-     * 可见性（0-私有，1-公开，2-邀请制，默认1）
-     */
+    /** 可见性：0-私有，1-公开，2-邀请制 */
     @Column(name = "visibility", nullable = false, columnDefinition = "tinyint default 1")
     private Integer visibility;
 
-    /**
-     * 燃料值（默认0）
-     */
+    /** 燃料值 */
     @Column(name = "fuel_value", nullable = false, columnDefinition = "int default 0")
     private Integer fuelValue;
 
-    /**
-     * 亮度值（默认0）
-     */
+    /** 亮度值 */
     @Column(name = "brightness", nullable = false, columnDefinition = "int default 0")
     private Integer brightness;
 
-    /**
-     * 访问量（默认0）
-     */
+    /** 访问量 */
     @Column(name = "visit_count", nullable = false, columnDefinition = "int default 0")
     private Integer visitCount;
 
-    /**
-     * 状态（0-草稿，1-已发布，2-已删除，默认0）
-     */
+    /** 状态：0-草稿，1-已发布，2-已删除 */
     @Column(name = "status", nullable = false, columnDefinition = "tinyint default 0")
     private Integer status;
 
-    /**
-     * 创建时间（自动生成，不可更新）
-     */
+    /** 创建时间 */
     @Column(name = "create_time", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
-    /**
-     *知识星系Id
-     */
-    @Column(name = "galaxy_id")
-    private Integer galaxyId;
+    /** 更新时间 */
+    @Column(name = "update_time", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
 
+    /** 知识内容列表（一对多关联） */
+    @OneToMany(mappedBy = "planetId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanetContent> contents;
+
+    /** 所属星系ID */
+    @Column(name = "galaxy_id")
+    private String galaxyId;
+
+
+
+    // JPA回调方法：自动设置时间
+    @PrePersist
+    protected void onCreate() {
+        Date now = new Date();
+        this.createTime = now;
+        this.updateTime = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateTime = new Date();
+    }
+
+    // Getter 和 Setter
+    public String getPlanetId() { return planetId; }
+    public void setPlanetId(String planetId) { this.planetId = planetId; }
+
+
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getCoverUrl() { return coverUrl; }
+    public void setCoverUrl(String coverUrl) { this.coverUrl = coverUrl; }
+
+    public Integer getThemeId() { return themeId; }
+    public void setThemeId(Integer themeId) { this.themeId = themeId; }
+
+    public Integer getModelType() { return modelType; }
+    public void setModelType(Integer modelType) { this.modelType = modelType; }
+
+    public String getColorScheme() { return colorScheme; }
+    public void setColorScheme(String colorScheme) { this.colorScheme = colorScheme; }
+
+    public Integer getVisibility() { return visibility; }
+    public void setVisibility(Integer visibility) { this.visibility = visibility; }
+
+    public Integer getFuelValue() { return fuelValue; }
+    public void setFuelValue(Integer fuelValue) { this.fuelValue = fuelValue; }
+
+    public Integer getBrightness() { return brightness; }
+    public void setBrightness(Integer brightness) { this.brightness = brightness; }
+
+    public Integer getVisitCount() { return visitCount; }
+    public void setVisitCount(Integer visitCount) { this.visitCount = visitCount; }
+
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
+
+    public Date getCreateTime() { return createTime; }
+    public void setCreateTime(Date createTime) { this.createTime = createTime; }
+
+    public Date getUpdateTime() { return updateTime; }
+    public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+
+    public List<PlanetContent> getContents() { return contents; }
+    public void setContents(List<PlanetContent> contents) { this.contents = contents; }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getGalaxyId() {
+        return galaxyId;
+    }
+
+    public void setGalaxyId(String galaxyId) {
+        this.galaxyId = galaxyId;
+    }
 
     @Override
     public String toString() {
@@ -120,157 +184,8 @@ public class KnowledgePlanet {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", contents=" + contents +
+                ", galaxyId='" + galaxyId + '\'' +
                 '}';
     }
-
-    /**
-     * 更新时间（自动更新）
-     */
-    @Column(name = "update_time", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    // JPA 回调方法：插入前自动设置时间
-    @PrePersist
-    protected void onCreate() {
-        Date now = new Date();
-        this.createTime = now;
-        this.updateTime = now;
-    }
-
-    // JPA 回调方法：更新前自动更新时间
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateTime = new Date();
-    }
-
-    // Getter 和 Setter 方法
-    public String getPlanetId() {
-        return planetId;
-    }
-
-    public void setPlanetId(String planetId) {
-        this.planetId = planetId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCoverUrl() {
-        return coverUrl;
-    }
-
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
-    }
-
-    public Integer getThemeId() {
-        return themeId;
-    }
-
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId;
-    }
-
-    public Integer getModelType() {
-        return modelType;
-    }
-
-    public void setModelType(Integer modelType) {
-        this.modelType = modelType;
-    }
-
-    public String getColorScheme() {
-        return colorScheme;
-    }
-
-    public void setColorScheme(String colorScheme) {
-        this.colorScheme = colorScheme;
-    }
-
-    public Integer getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(Integer visibility) {
-        this.visibility = visibility;
-    }
-
-    public Integer getFuelValue() {
-        return fuelValue;
-    }
-
-    public void setFuelValue(Integer fuelValue) {
-        this.fuelValue = fuelValue;
-    }
-
-    public Integer getBrightness() {
-        return brightness;
-    }
-
-    public void setBrightness(Integer brightness) {
-        this.brightness = brightness;
-    }
-
-    public Integer getVisitCount() {
-        return visitCount;
-    }
-
-    public void setVisitCount(Integer visitCount) {
-        this.visitCount = visitCount;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public Integer getGalaxyId() {
-        return galaxyId;
-    }
-
-    public void setGalaxyId(Integer galaxyId) {
-        this.galaxyId = galaxyId;
-    }
-
 }
