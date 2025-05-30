@@ -77,6 +77,12 @@ public class GalaxyService implements IGalaxyService {
         galaxyMapper.removePlanetFromGalaxy(galaxyId, planetId);
     }
 
+    @Override
+    public Integer getPermission(String galaxyId) {
+        // 获取星系的权限
+        return galaxyMapper.getGalaxyPermissionById(galaxyId);
+    }
+
     /**
      * 生成星系ID格式字符串
      * 格式：GLXY-YYYYMMDD-XXXX

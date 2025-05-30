@@ -20,7 +20,7 @@ public class GalaxyComment {
      * 创建者ID,关联用户表
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
     /**

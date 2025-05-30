@@ -49,4 +49,10 @@ public interface IGalaxyService {
      * @param planetId 星球ID
      */
     void removeKnowledgePlanetFromGalaxy(String galaxyId, String planetId);
+
+    /**
+     * 获取权限
+     * @return 权限值，0为私有，1为公开
+     */
+    Integer getPermission(String galaxyId);
 }

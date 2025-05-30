@@ -1,5 +1,6 @@
 package com.example1.demo2.service;
 
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.UserDto;
@@ -48,4 +49,12 @@ public interface IUserService {
     List<String> searchPlanetIds(String keyword, Integer userId);
 
     void updateFavoritePlanet(Integer userId, String planetId);
+
+    // 列出星系列表
+    List<KnowledgeGalaxy> GetAllGalaxies(Integer userId);
+
+    //搜索星系
+    KnowledgeGalaxy GetGalaxyById(String galaxyId);
+
+    void updateFavoriteGalaxy(Integer userId, String galaxyId);
 }

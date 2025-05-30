@@ -3,6 +3,7 @@ package com.example1.demo2.controller;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
+import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.pojo.dto.UserDto;
 import com.example1.demo2.pojo.dto.updatePasswordDto;
@@ -323,14 +324,14 @@ public class UserController {
     /**
      * 加载所有星球数据接口
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/user/loading
+     * 请求URL：localhost:8081/user/loadingplanets
      * 请求参数（JSON格式）：
      * {
      *   无
      * }
      * 返回值：星球列表
      */
-    @GetMapping("/loading")
+    @GetMapping("/loadingplanets")
     public ResponseMessage<List<KnowledgePlanet>> loading() {
         //通过id查询用户
         Map<String,Object> map = ThreadLocalUtil.get();
@@ -348,14 +349,14 @@ public class UserController {
     /**
      * 搜索星球
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/user/select
+     * 请求URL：localhost:8081/user/selectplanet
      * 请求参数（JSON格式）：
      * {
      *   "keyword":String             //搜索关键词
      * }
      * 返回值：星球ID列表
      */
-    @GetMapping("/select")
+    @GetMapping("/selectplanet")
     public ResponseMessage<List<String>> select(@RequestParam("keyword") String keyword) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
@@ -376,16 +377,16 @@ public class UserController {
     /**
      * 选择最喜欢星球
      * 前端请求方式：PUT
-     * 请求URL：localhost:8081/user/setfavor
+     * 请求URL：localhost:8081/user/setfavorplanet
      * 请求参数（JSON格式）：
      * {
      *   "planetId":String             //星球id
      * }
      * 返回
-     * 返回值：星球ID
+     * 返回值：成功返回星球ID，失败返回错误信息
      */
-    @PutMapping("/setfavor")
-    public ResponseMessage<String> setfavor(@RequestParam("planetId") String planetId) {
+    @PutMapping("/setfavorplanet")
+    public ResponseMessage<String> setfavorplanet(@RequestParam("planetId") String planetId) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
@@ -395,15 +396,89 @@ public class UserController {
             return ResponseMessage.error("用户不存在");
         }
 
-        // 验证星球是否存在
-        KnowledgePlanet planet = planetService.findByPlanetId(planetId);
-        if (planet == null) {
-            return ResponseMessage.error("星球不存在");
+        // 更新用户的最喜欢星球
+        userService.updateFavoritePlanet(userId, planetId);
+        return ResponseMessage.success(planetId);
+    }
+
+    /**
+     * 加载所有星系
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/user/loadinggalaxies
+     * 请求参数（JSON格式）：无
+     * 返回值：星系列表
+     */
+    @GetMapping("/loadinggalaxies")
+    public ResponseMessage<List<KnowledgeGalaxy>> loadinggalaxies() {
+        // 获取当前用户ID
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            //用户不存在
+            return ResponseMessage.error("用户不存在");
         }
 
-        // 更新用户最喜欢的星球
-        userService.updateFavoritePlanet(userId, planetId);
+        // 获取所有星系
+        List<KnowledgeGalaxy> galaxies = userService.GetAllGalaxies(userId);
+        return ResponseMessage.success(galaxies);
+    }
 
-        return ResponseMessage.success(planetId);
+    /**
+     * 根据星系ID获取星系信息
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/user/galaxyinfo
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": String             // 星系ID（必填）
+     * }
+     * 返回值：星系信息
+     */
+    @GetMapping("/galaxyinfo")
+    public ResponseMessage<KnowledgeGalaxyDto> galaxyinfo(@RequestParam("galaxyId") String galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            //用户不存在
+            return ResponseMessage.error("用户不存在");
+        }
+
+        // 根据星系ID查询星系信息
+        KnowledgeGalaxy galaxy = userService.GetGalaxyById(galaxyId);
+        if (galaxy == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 转化为dto
+        KnowledgeGalaxyDto dto = ConvertUtil.convertKnowledgeGalaxyToDto(galaxy);
+        return ResponseMessage.success(dto);
+    }
+
+    /**
+     * 选择最喜欢的星系
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/user/setfavorgalaxy
+     * 请求参数（JSON格式）
+     * {
+     *     "galaxyId": String             // 星系ID（必填）
+     * }
+     * 返回值：成功返回星系ID，失败返回错误信息
+     */
+    @PutMapping("/setfavorgalaxy")
+    public ResponseMessage<String> setfavorgalaxy(@RequestParam("galaxyId") String galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            //用户不存在
+            return ResponseMessage.error("用户不存在");
+        }
+
+        // 更新用户的最喜欢星系
+        userService.updateFavoriteGalaxy(userId, galaxyId);
+        return ResponseMessage.success(galaxyId);
     }
 }

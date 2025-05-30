@@ -3,8 +3,14 @@ package com.example1.demo2.mapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface GalaxyMapper {
+    @Select("select * from tab_knowledge_galaxy where user_id=#{userId} order by create_time desc")
+    List<KnowledgeGalaxy> selectAll(Integer userId);
+
+
     /**
      * 根据星系名查找星系
      */
@@ -61,4 +67,10 @@ public interface GalaxyMapper {
      */
     @Update("update tab_knowledge_planet set galaxy_id=null where planet_id=#{planetId}")
     void removePlanetFromGalaxy(@Param("galaxyId") String galaxyId, @Param("planetId") String planetId);
+
+    /**
+     * 查询星系权限
+     */
+    @Select("select permission from tab_knowledge_galaxy where galaxy_id=#{galaxyId}")
+    Integer getGalaxyPermissionById(String galaxyId);
 }

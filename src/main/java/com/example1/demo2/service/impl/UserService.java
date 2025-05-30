@@ -1,7 +1,9 @@
 package com.example1.demo2.service.impl;
 
+import com.example1.demo2.mapper.GalaxyMapper;
 import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.mapper.UserMapper;
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.UserDto;
@@ -22,6 +24,8 @@ public class UserService implements IUserService {
     private UserMapper userMapper;
     @Autowired
     private PlanetMapper planetMapper;
+    @Autowired
+    private GalaxyMapper galaxyMapper;
 
     @Override
     public User findByNickname(String nickname) {
@@ -88,6 +92,21 @@ public class UserService implements IUserService {
     @Override
     public void updateFavoritePlanet(Integer userId, String planetId) {
         userMapper.updateFavoritePlanet(userId, planetId);
+    }
+
+    @Override
+    public List<KnowledgeGalaxy> GetAllGalaxies(Integer userId) {
+        return galaxyMapper.selectAll(userId);
+    }
+
+    @Override
+    public KnowledgeGalaxy GetGalaxyById(String galaxyId) {
+        return galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+    }
+
+    @Override
+    public void updateFavoriteGalaxy(Integer userId, String galaxyId) {
+        userMapper.updateFavoriteGalaxy(userId, galaxyId);
     }
 
     @Override
