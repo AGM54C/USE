@@ -1,7 +1,5 @@
 package com.example1.demo2.service;
 
-import com.example1.demo2.pojo.PlanetContent;
-import com.example1.demo2.pojo.dto.PlanetContentDto;
 import jakarta.validation.Valid;
 
 public interface IContentService {

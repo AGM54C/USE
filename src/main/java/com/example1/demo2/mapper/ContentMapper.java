@@ -1,6 +1,5 @@
 package com.example1.demo2.mapper;
 
-import com.example1.demo2.pojo.PlanetContent;
 import org.apache.ibatis.annotations.*;
 
 @Mapper

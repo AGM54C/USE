@@ -1,10 +1,7 @@
 package com.example1.demo2.controller;
 
-import com.example1.demo2.pojo.PlanetContent;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
-import com.example1.demo2.pojo.dto.PlanetContentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.IContentService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
