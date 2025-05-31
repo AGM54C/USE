@@ -96,4 +96,11 @@ public interface GalaxyMapper {
      */
     @Select("select * from tab_knowledge_galaxy where name like concat('%', #{name}, '%') and user_id != #{userId}")
     List<KnowledgeGalaxy> searchByNameExcludeUser(String name, Integer userId);
+
+    /**
+     * 获取最大星系ID
+     * return 返回当前最大的星系ID，如果没有星系则返回null
+     */
+    @Select("select max(galaxy_id) from tab_knowledge_galaxy")
+    Integer getMaxGalaxyId();
 }

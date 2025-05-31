@@ -45,7 +45,7 @@ public class GalaxyCommentController {
 
     /**
      * 获取星系评论列表接口
-     * 前端请求方式：GET
+     * 前端请求方式：POST
      * 请求URL：localhost:8081/galaxy/comment/list/{galaxyId}
      * 路径参数：galaxyId - 星系ID
      * 查询参数：
@@ -55,7 +55,7 @@ public class GalaxyCommentController {
      * 返回值：评论列表（分页，树形结构）
      */
     @GetMapping("/list/{galaxyId}")
-    public ResponseMessage getCommentList(@PathVariable @NotNull String galaxyId,
+    public ResponseMessage getCommentList(@PathVariable @NotNull Integer galaxyId,
                                           @RequestParam(defaultValue = "1") int page,
                                           @RequestParam(defaultValue = "20") int size,
                                           @RequestParam(required = false) Integer userId) {

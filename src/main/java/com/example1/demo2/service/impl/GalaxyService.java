@@ -8,9 +8,6 @@ import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 @Service
 public class GalaxyService implements IGalaxyService {
@@ -33,7 +30,7 @@ public class GalaxyService implements IGalaxyService {
     @Transactional
     public void createGalaxy(KnowledgeGalaxyDto galaxyDto) {
         synchronized (createLock) {
-            // 设置星系ID格式（虽然在数据库中是自增整数，但DTO中保留了字符串格式的ID）
+            // 设置星系ID
             galaxyDto.setGalaxyId(generateGalaxyId());
 
             // 如果没有提供邀请码，则自动生成一个
@@ -49,6 +46,17 @@ public class GalaxyService implements IGalaxyService {
 
             // 将生成的galaxyId回写到DTO中（数据库自增ID）
             galaxyDto.setGalaxyId(Integer.valueOf(galaxy.getGalaxyId()));
+        }
+    }
+    @Override
+    @Transactional
+    public Integer generateGalaxyId() {
+        // 生成一个新的星系ID
+        Integer maxId = galaxyMapper.getMaxGalaxyId();
+        if (maxId == null) {
+            return 1; // 如果没有记录，则从1开始
+        } else {
+            return maxId + 1; // 否则在最大ID基础上加1
         }
     }
 
@@ -121,18 +129,6 @@ public class GalaxyService implements IGalaxyService {
         } else {
             throw new IllegalArgumentException("Galaxy with ID " + galaxyId + " does not exist.");
         }
-    }
-
-    /**
-     * 生成星系ID格式字符串
-     * 格式：GLXY-YYYYMMDD-XXXX
-     */
-    private Integer generateGalaxyId() {
-        LocalDate currentDate = LocalDate.now();
-        String datePart = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-        String idString="GLXY-" + datePart + "-" + randomPart;
-        return Integer.valueOf(idString);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.example1.demo2.mapper;
 
 import com.example1.demo2.pojo.GalaxyComment;
+import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 
@@ -9,8 +10,9 @@ public interface GalaxyCommentMapper {
 
     /**
      * 插入评论
+     * 修正：将 creator_id 改为 user_id，与数据库表结构保持一致
      */
-    @Insert("INSERT INTO tab_galaxy_comment(creator_id, galaxy_id, content, level, parent_comment_id, " +
+    @Insert("INSERT INTO tab_galaxy_comment(user_id, galaxy_id, content, level, parent_comment_id, " +
             "reply_to_user_id, creator_role, release_time, update_time) " +
             "VALUES(#{user.userId}, #{knowledgeGalaxy.galaxyId}, #{content}, #{level}, #{parentId}, " +
             "#{replyToUserId}, #{creatorRole}, now(), now())")
@@ -19,11 +21,12 @@ public interface GalaxyCommentMapper {
 
     /**
      * 根据ID查询评论
+     * 修正：将 creator_id 改为 user_id
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
-            @Result(property = "user", column = "creator_id",
+            @Result(property = "user", column = "user_id",
                     one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
@@ -36,13 +39,14 @@ public interface GalaxyCommentMapper {
 
     /**
      * 查询星系的一级评论（分页）
+     * 修正：将 creator_id 改为 user_id
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE galaxy_id = #{galaxyId} " +
             "AND parent_comment_id = 0 AND status = 0 " +
             "ORDER BY release_time DESC LIMIT #{offset}, #{size}")
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
-            @Result(property = "user", column = "creator_id",
+            @Result(property = "user", column = "user_id",
                     one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
@@ -51,18 +55,19 @@ public interface GalaxyCommentMapper {
             @Result(property = "createTime", column = "release_time"),
             @Result(property = "updateTime", column = "update_time")
     })
-    List<GalaxyComment> getFirstLevelComments(@Param("galaxyId") String galaxyId,
+    List<GalaxyComment> getFirstLevelComments(@Param("galaxyId") @NotNull Integer galaxyId,
                                               @Param("offset") int offset,
                                               @Param("size") int size);
 
     /**
      * 查询评论的所有回复
+     * 修正：将 creator_id 改为 user_id
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE parent_comment_id = #{parentId} " +
             "AND status = 0 ORDER BY release_time ASC")
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
-            @Result(property = "user", column = "creator_id",
+            @Result(property = "user", column = "user_id",
                     one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
