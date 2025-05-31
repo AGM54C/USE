@@ -26,7 +26,7 @@ public class PlanetAccessController {
     public ResponseMessage<KnowledgePlanetDto> search(@Valid @RequestBody KnowledgePlanetDto planet) {
 
         //根据星球名查询
-        KnowledgePlanet p = planetAccessService.findByTitle(planet.getTitle());
+        KnowledgePlanet p = planetAccessService.findByTitle(planet.getContentTitle());
         if(p==null) {
             return ResponseMessage.error("星球不存在");
         }

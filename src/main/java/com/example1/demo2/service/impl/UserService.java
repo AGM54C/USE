@@ -6,16 +6,12 @@ import com.example1.demo2.mapper.UserMapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
-import com.example1.demo2.pojo.dto.UserDto;
 import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.BCryptUtil;
-import com.example1.demo2.util.ConvertUtil;
-import com.example1.demo2.util.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -110,7 +106,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void updateFavoriteGalaxy(Integer userId, String galaxyId) {
+    public void updateFavoriteGalaxy(Integer userId, Integer galaxyId) {
         userMapper.updateFavoriteGalaxy(userId, galaxyId);
     }
 

@@ -528,12 +528,12 @@ public class UserController {
      * 请求URL：localhost:8081/user/setfavorgalaxy
      * 请求参数（JSON格式）
      * {
-     *     "galaxyId": String             // 星系ID（必填）
+     *     "galaxyId": Integer             // 星系ID（必填）
      * }
      * 返回值：成功返回星系ID，失败返回错误信息
      */
     @PutMapping("/setfavorgalaxy")
-    public ResponseMessage<String> setfavorgalaxy(@RequestParam("galaxyId") String galaxyId) {
+    public ResponseMessage<String> setfavorgalaxy(@RequestParam("galaxyId") Integer galaxyId) {
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");

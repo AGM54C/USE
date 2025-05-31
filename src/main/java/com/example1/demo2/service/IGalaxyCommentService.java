@@ -1,6 +1,8 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public interface IGalaxyCommentService {
@@ -20,15 +22,15 @@ public interface IGalaxyCommentService {
      * @param userId 当前用户ID（可选，用于判断点赞状态）
      * @return 评论列表
      */
-    List<GalaxyCommentDto> getCommentList(String galaxyId, int page, int size, Integer userId);
+    List<GalaxyCommentDto> getCommentList(@NotNull Integer galaxyId, int page, int size, Integer userId);
 
     /**
      * 点赞/取消点赞
      * @param userId 用户ID
-     * @param commentId 评论ID
+     * @param galaxyCommentId 评论ID
      * @return true-点赞，false-取消点赞
      */
-    boolean toggleLike(Integer userId, Integer commentId);
+    boolean toggleLike(Integer userId, Integer galaxyCommentId);
 
     /**
      * 删除评论

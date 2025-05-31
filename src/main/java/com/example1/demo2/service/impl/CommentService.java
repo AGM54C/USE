@@ -8,6 +8,8 @@ import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentService implements ICommentService {
     @Autowired
@@ -17,7 +19,6 @@ public class CommentService implements ICommentService {
     public void create(PlanetCommentDto comment) {
         PlanetComment c= ConvertUtil.convertDtoToPlanetComment(comment);
         commentMapper.add(c);
-        comment.setPlanetId(c.getPlanetId());
     }
 
     @Override
@@ -35,6 +36,27 @@ public class CommentService implements ICommentService {
     @Override
     public void delete(Long commentId) {
         commentMapper.delete(commentId);
+    }
+
+    @Override
+    public void updateLikeCount(Long commentId, Integer likeCount) {
+        commentMapper.updateLikeCount(commentId, likeCount);
+    }
+
+    @Override
+    public void updateStatus(Long commentId, Integer status) {
+        commentMapper.updateStatus(commentId, status);
+    }
+
+    @Override
+    public List<PlanetComment> listByPlanetId(String planetId, Integer page, Integer size) {
+        int offset = (page - 1) * size;
+        return commentMapper.listByPlanetId(planetId, offset, size);
+    }
+
+    @Override
+    public void deleteByPlanetId(String planetId) {
+        commentMapper.deleteByPlanetId(planetId);
     }
 
     @Override

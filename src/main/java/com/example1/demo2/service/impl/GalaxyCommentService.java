@@ -8,7 +8,7 @@ import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import com.example1.demo2.service.IGalaxyCommentService;
-import com.example1.demo2.util.ConvertUtil;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,7 +92,7 @@ public class GalaxyCommentService implements IGalaxyCommentService {
     }
 
     @Override
-    public List<GalaxyCommentDto> getCommentList(String galaxyId, int page, int size, Integer userId) {
+    public List<GalaxyCommentDto> getCommentList(@NotNull Integer galaxyId, int page, int size, Integer userId) {
         // 计算偏移量
         int offset = (page - 1) * size;
 
@@ -112,25 +112,25 @@ public class GalaxyCommentService implements IGalaxyCommentService {
 
     @Override
     @Transactional
-    public boolean toggleLike(Integer userId, Integer commentId) {
+    public boolean toggleLike(Integer userId, Integer galaxyCommentId) {
         // 验证评论是否存在
-        GalaxyComment comment = commentMapper.getCommentById(commentId);
+        GalaxyComment comment = commentMapper.getCommentById(galaxyCommentId);
         if (comment == null || comment.getStatus() != 0) {
             throw new RuntimeException("评论不存在或已被删除");
         }
 
         // 检查是否已点赞
-        boolean isLiked = commentMapper.isLiked(userId, commentId);
+        boolean isLiked = commentMapper.isLiked(userId, galaxyCommentId);
 
         if (isLiked) {
             // 取消点赞
-            commentMapper.deleteLike(userId, commentId);
-            commentMapper.decreaseLikeCount(commentId);
+            commentMapper.deleteLike(userId, galaxyCommentId);
+            commentMapper.decreaseLikeCount(galaxyCommentId);
             return false;
         } else {
             // 点赞
-            commentMapper.insertLike(userId, commentId);
-            commentMapper.increaseLikeCount(commentId);
+            commentMapper.insertLike(userId, galaxyCommentId);
+            commentMapper.increaseLikeCount(galaxyCommentId);
             return true;
         }
     }

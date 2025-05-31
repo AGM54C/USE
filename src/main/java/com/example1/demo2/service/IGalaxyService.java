@@ -24,6 +24,8 @@ public interface IGalaxyService {
      */
     void createGalaxy(KnowledgeGalaxyDto galaxyDto);
 
+    Integer generateGalaxyId();
+
     /**
      * 更新星系信息
      * @param galaxyDto 星系DTO对象，包含需要更新的信息

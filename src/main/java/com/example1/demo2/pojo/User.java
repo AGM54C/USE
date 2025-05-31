@@ -102,6 +102,10 @@ public class User {
     @Column(name = "favorite_planet_id", length = 20)
     private String favoritePlanetId;
 
+    /** 最喜欢的星系ID */
+    @Column(name = "favorite_galaxy_id")
+    private String favoriteGalaxyId;
+
     /**
      * 创建的星系（一对多关联星系表）
      */
@@ -273,6 +277,14 @@ public class User {
 
     public void setFavoritePlanetId(String favoritePlanetId) {
         this.favoritePlanetId = favoritePlanetId;
+    }
+
+    public String getFavoriteGalaxyId() {
+        return favoriteGalaxyId;
+    }
+
+    public void setFavoriteGalaxyId(String favoriteGalaxyId) {
+        this.favoriteGalaxyId = favoriteGalaxyId;
     }
 
     @Override
