@@ -65,5 +65,5 @@ public interface UserMapper {
     //更新最喜欢星系
     @Update("update tab_user set favorite_galaxy_id=#{galaxyId} " +
             " where user_id=#{userId}")
-    void updateFavoriteGalaxy(Integer userId, String galaxyId);
+    void updateFavoriteGalaxy(Integer userId, Integer galaxyId);
 }

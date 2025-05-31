@@ -3,10 +3,7 @@ package com.example1.demo2.service;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
-import com.example1.demo2.pojo.dto.UserDto;
-import jakarta.validation.Valid;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IUserService {
@@ -56,7 +53,7 @@ public interface IUserService {
     //搜索星系
     KnowledgeGalaxy GetGalaxyByName(String name);
 
-    void updateFavoriteGalaxy(Integer userId, String galaxyId);
+    void updateFavoriteGalaxy(Integer userId, Integer galaxyId);
 
     List<KnowledgeGalaxy> GetGalaxiesByNameAndCreatorId(String name, Integer userId);
 

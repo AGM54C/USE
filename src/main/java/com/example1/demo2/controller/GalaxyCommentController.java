@@ -54,7 +54,7 @@ public class GalaxyCommentController {
      *   userId - 当前用户ID（用于判断是否已点赞）
      * 返回值：评论列表（分页，树形结构）
      */
-    @GetMapping("/list/{galaxyId}")
+    @PostMapping("/list/{galaxyId}")
     public ResponseMessage getCommentList(@PathVariable @NotNull Integer galaxyId,
                                           @RequestParam(defaultValue = "1") int page,
                                           @RequestParam(defaultValue = "20") int size,
