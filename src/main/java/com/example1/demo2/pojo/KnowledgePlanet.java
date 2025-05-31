@@ -25,9 +25,17 @@ public class KnowledgePlanet {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    /** 星球标题（不超过100字，非空） */
-    @Column(name = "title", length = 100, nullable = false)
-    private String title;
+    /**
+     * 知识标题（原内容标题）
+     */
+    @Column(name = "content_title", nullable = false, length = 100)
+    private String contentTitle;
+
+    /**
+     * 知识详情（原内容详情）
+     */
+    @Column(name = "content_detail", columnDefinition = "text")
+    private String contentDetail;
 
     /** 星球描述 */
     @Column(name = "description", columnDefinition = "text")
@@ -79,9 +87,12 @@ public class KnowledgePlanet {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
-    /** 知识内容列表（一对多关联） */
-    @OneToMany(mappedBy = "planetId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlanetContent> contents;
+    /**
+     * 星球评论（一对多关联）
+     */
+    @OneToMany(mappedBy = "planet", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanetComment> comments;
 
     /** 所属星系ID */
     @Column(name = "galaxy_id")
@@ -108,8 +119,8 @@ public class KnowledgePlanet {
 
 
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+
+
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
@@ -147,9 +158,6 @@ public class KnowledgePlanet {
     public Date getUpdateTime() { return updateTime; }
     public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
 
-    public List<PlanetContent> getContents() { return contents; }
-    public void setContents(List<PlanetContent> contents) { this.contents = contents; }
-
     public Integer getUserId() {
         return userId;
     }
@@ -166,12 +174,37 @@ public class KnowledgePlanet {
         this.galaxyId = galaxyId;
     }
 
+    public String getContentDetail() {
+        return contentDetail;
+    }
+
+    public void setContentDetail(String contentDetail) {
+        this.contentDetail = contentDetail;
+    }
+
+    public String getContentTitle() {
+        return contentTitle;
+    }
+
+    public void setContentTitle(String contentTitle) {
+        this.contentTitle = contentTitle;
+    }
+
+    public List<PlanetComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<PlanetComment> comments) {
+        this.comments = comments;
+    }
+
     @Override
     public String toString() {
         return "KnowledgePlanet{" +
                 "planetId='" + planetId + '\'' +
                 ", userId=" + userId +
-                ", title='" + title + '\'' +
+                ", contentTitle='" + contentTitle + '\'' +
+                ", contentDetail='" + contentDetail + '\'' +
                 ", description='" + description + '\'' +
                 ", coverUrl='" + coverUrl + '\'' +
                 ", themeId=" + themeId +
@@ -184,7 +217,7 @@ public class KnowledgePlanet {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", contents=" + contents +
+                ", comments=" + comments +
                 ", galaxyId='" + galaxyId + '\'' +
                 '}';
     }

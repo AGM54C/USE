@@ -13,9 +13,12 @@ public class PlanetComment {
     @Column(name = "comment_id", nullable = false)
     private Long commentId;
 
-    /** 星球ID（必填） */
-    @Column(name = "planet_id", length = 20, nullable = false)
-    private String planetId;
+    /**
+     * 所属星球（多对一关联）
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "planet_id", nullable = false)
+    private KnowledgePlanet planet;
 
 
     /** 评论用户ID（必填） */
@@ -56,12 +59,6 @@ public class PlanetComment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
-    // 所属的星球内容
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "content_id", nullable = false)
-    private  PlanetContent planetContent;
-
-
     // JPA 回调方法：自动设置时间
     @PrePersist
     protected void onCreate() {
@@ -78,10 +75,6 @@ public class PlanetComment {
     // Getter 和 Setter
     public Long getCommentId() { return commentId; }
     public void setCommentId(Long commentId) { this.commentId = commentId; }
-    public String getPlanetId() { return planetId; }
-
-    public void setPlanetId(String planetId) { this.planetId = planetId; }
-    public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
     public Long getParentId() { return parentId; }
     public void setParentId(Long parentId) { this.parentId = parentId; }
@@ -100,7 +93,7 @@ public class PlanetComment {
     public String toString() {
         return "PlanetComment{" +
                 "commentId=" + commentId +
-                ", planetId='" + planetId + '\'' +
+                ", planet=" + planet +
                 ", userId=" + userId +
                 ", parentId=" + parentId +
                 ", level=" + level +
@@ -110,7 +103,6 @@ public class PlanetComment {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", planetContent=" + planetContent +
                 '}';
     }
 
@@ -130,7 +122,15 @@ public class PlanetComment {
         this.content = content;
     }
 
-    public PlanetContent getPlanetContent() {return planetContent;}
+    public Integer getUserId() {
+        return userId;
+    }
 
-    public void setPlanetContent(PlanetContent planetContent) {this.planetContent = planetContent;}
+    public KnowledgePlanet getPlanet() {
+        return planet;
+    }
+
+    public void setPlanet(KnowledgePlanet planet) {
+        this.planet = planet;
+    }
 }

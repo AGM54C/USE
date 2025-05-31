@@ -9,7 +9,7 @@ public class KnowledgePlanetDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // 创建时自动生成，无需前端传入
-    @Pattern(regexp = "^PLNT-\\d{8}-\\d{4}$", message = "星球ID格式错误")
+    @Pattern(regexp = "^PLNT-\\d{8}-[A-Z0-9]{4}$", message = "星球ID格式错误")
     private String planetId;
 
     // 从认证信息获取，前端无需传入
@@ -18,7 +18,13 @@ public class KnowledgePlanetDto implements Serializable {
 
     @NotBlank(message = "星球标题不能为空")
     @Size(max = 100, message = "星球标题长度不能超过100字符")
-    private String title;
+    private String contentTitle;
+
+    /**
+     * 知识详情
+     */
+    @NotBlank(message = "知识详情不能为空")
+    private String contentDetail;
 
     @Size(max = 200, message = "星球描述长度不能超过200字符")
     private String description;
@@ -57,8 +63,6 @@ public class KnowledgePlanetDto implements Serializable {
     public void setPlanetId(String planetId) { this.planetId = planetId; }
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public String getCoverUrl() { return coverUrl; }
@@ -84,12 +88,29 @@ public class KnowledgePlanetDto implements Serializable {
     public Date getUpdateTime() { return updateTime; }
     public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
 
+    public String getContentTitle() {
+        return contentTitle;
+    }
+
+    public void setContentTitle(String contentTitle) {
+        this.contentTitle = contentTitle;
+    }
+
+    public String getContentDetail() {
+        return contentDetail;
+    }
+
+    public void setContentDetail(String contentDetail) {
+        this.contentDetail = contentDetail;
+    }
+
     @Override
     public String toString() {
         return "KnowledgePlanetDto{" +
                 "planetId='" + planetId + '\'' +
                 ", userId=" + userId +
-                ", title='" + title + '\'' +
+                ", contentTitle='" + contentTitle + '\'' +
+                ", contentDetail='" + contentDetail + '\'' +
                 ", description='" + description + '\'' +
                 ", coverUrl='" + coverUrl + '\'' +
                 ", themeId=" + themeId +

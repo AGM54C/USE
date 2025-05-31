@@ -15,13 +15,10 @@ public class PlanetCommentDto implements Serializable {
     // 星球ID（必填，格式校验）
     @NotBlank(message = "星球ID不能为空")
     @Pattern(
-            regexp = "^PLNT-\\d{8}-\\d{4}$",
+            regexp = "^PLNT-\\d{8}-[A-Z0-9]{4}$",
             message = "星球ID格式错误，需为PLNT-YYYYMMDD-XXXX"
     )
     private String planetId;
-
-    // 关联内容ID（可选）
-    private Integer contentId;
 
     // 用户ID（必填，从认证信息获取）
     @NotNull(message = "用户ID不能为空")
@@ -70,8 +67,6 @@ public class PlanetCommentDto implements Serializable {
     public void setCommentId(Long commentId) { this.commentId = commentId; }
     public String getPlanetId() { return planetId; }
     public void setPlanetId(String planetId) { this.planetId = planetId; }
-    public Integer getContentId() { return contentId; }
-    public void setContentId(Integer contentId) { this.contentId = contentId; }
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
     public Long getParentId() { return parentId; }
