@@ -114,24 +114,19 @@ public class KnowledgeGalaxyController {
      * 删除星系接口
      * 前端请求方式：DELETE
      * 请求URL：localhost:8081/galaxy/delete
-     * 请求参数（JSON格式）：
+     * 请求参数（Param格式）：
      * {
      *   "galaxyId": 1    // 星系ID（必填）
      * }
      * 返回值：成功返回被删除的星系ID，失败返回错误信息
      */
     @DeleteMapping("/delete")
-    public ResponseMessage delete(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
+    public ResponseMessage delete(@Valid @RequestParam Integer galaxyId) {
         // 通过ID查找星系
-        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
-        if (g == null) {
-            // 星系不存在
-            return ResponseMessage.error("星系不存在或已被删除");
-        } else {
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
             // 删除星系
             galaxyService.deleteGalaxy(g.getGalaxyId());
-            return ResponseMessage.success(galaxy.getGalaxyId());
-        }
+            return ResponseMessage.success(galaxyId);
     }
 
     /**
@@ -192,7 +187,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新名字，失败返回错误信息
      */
     @PutMapping("/updateName")
-    public ResponseMessage updateGalaxyName(@RequestParam Integer galaxyId, @RequestParam String newName) {
+    public ResponseMessage updateName(@RequestParam Integer galaxyId, @RequestParam String newName) {
         // 更新星系名称
         galaxyService.updateGalaxyName(galaxyId, newName);
         return ResponseMessage.success("星系名称已更新为：" + newName);
@@ -209,7 +204,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新标签，失败返回错误信息
      */
     @PutMapping("/updateLabel")
-    public ResponseMessage updateGalaxyLabel(@RequestParam Integer galaxyId, @RequestParam String newLabel) {
+    public ResponseMessage updateLabel(@RequestParam Integer galaxyId, @RequestParam String newLabel) {
         // 更新星系标签
         galaxyService.updateGalaxyLabel(galaxyId, newLabel);
         return ResponseMessage.success("星系标签已更新为：" + newLabel);
@@ -227,7 +222,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回新权限，失败返回错误信息
      */
     @PutMapping("/updatePermission")
-    public ResponseMessage updateGalaxyPermission(@RequestParam Integer galaxyId, @RequestParam Integer newPermission) {
+    public ResponseMessage updatePermission(@RequestParam Integer galaxyId, @RequestParam Integer newPermission) {
         // 更新星系权限
         galaxyService.updateGalaxyPermission(galaxyId, newPermission);
         return ResponseMessage.success("星系权限已更新为：" + (newPermission == 0 ? "私有" : "公开"));
