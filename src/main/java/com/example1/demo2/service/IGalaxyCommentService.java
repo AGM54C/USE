@@ -1,7 +1,9 @@
 package com.example1.demo2.service;
 
+import com.example1.demo2.pojo.GalaxyComment;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,4 +48,18 @@ public interface IGalaxyCommentService {
      * @return 评论详情
      */
     GalaxyCommentDto getCommentDetail(Integer commentId, Integer userId);
+
+    void handleReplyLogic(GalaxyComment comment,GalaxyCommentDto commentDto);
+
+    @Transactional(readOnly = true)
+    GalaxyCommentDto getReplyInfo(Integer commentId, Integer userId);
+
+    @Transactional
+    GalaxyCommentDto convertToDto(GalaxyComment comment, Integer currentUserId);
+
+    @Transactional
+    void loadReplies(GalaxyCommentDto comment, Integer currentUserId);
+
+    @Transactional
+    void deleteChildComments(Integer parentId);
 }

@@ -47,6 +47,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseMessage<String> register(@Valid @RequestBody UserDto user) {
         //查询用户
+        if(user.getNickname() == null || user.getPassword() == null || user.getEmail()==null) {
+            return ResponseMessage.error("缺少必要的参数！");
+        }
+
         User u=userService.findByNickname(user.getNickname());
         if(u!=null) {
             //用户名已经占用
@@ -142,6 +146,10 @@ public class UserController {
             return ResponseMessage.error("用户不存在");
         }
 
+        if(user.getNickname()==null){
+            return ResponseMessage.error("昵称不能为空！");
+        }
+
         //验证重复昵称
         User u2=userService.findByNickname(user.getNickname());
         if(u2!=null) {
@@ -150,7 +158,7 @@ public class UserController {
 
         //更新信息
         userService.updatenickname(user.getNickname(),userId);
-        return ResponseMessage.success("已更新用户信息，请重新登录！");
+        return ResponseMessage.success("已更新用户信息");
     }
 
     /**
@@ -175,13 +183,14 @@ public class UserController {
             return ResponseMessage.error("用户不存在");
         }
         // 判断用户信息是否有变化
-        if(u.getAvatarUrl().equals(user.getAvatarUrl())) {
-            return ResponseMessage.success("头像没有修改！");
+        if(u.getAvatarUrl()!=null) {
+            if (u.getAvatarUrl().equals(user.getAvatarUrl())) {
+                return ResponseMessage.success("头像没有修改！");
+            }
         }
-
         //更新信息
         userService.updateurl(user.getAvatarUrl(),userId);
-        return ResponseMessage.success("已更新用户信息，请重新登录！");
+        return ResponseMessage.success("已更新用户信息");
     }
 
     /**
@@ -206,13 +215,14 @@ public class UserController {
             return ResponseMessage.error("用户不存在");
         }
         // 判断用户信息是否有变化
-        if(u.getBio().equals(user.getBio())) {
-            return ResponseMessage.success("简介没有修改！");
+        if(u.getBio()!=null) {
+            if (u.getBio().equals(user.getBio())) {
+                return ResponseMessage.success("简介没有修改！");
+            }
         }
-
         //更新信息
         userService.updatebio(user.getBio(),userId);
-        return ResponseMessage.success("已更新用户信息，请重新登录！");
+        return ResponseMessage.success("已更新用户信息");
     }
 
     /**
@@ -292,7 +302,7 @@ public class UserController {
             return ResponseMessage.error("该邮箱已绑定其他用户！");
         }
         userService.updateemail(user.getEmail(),userId);
-        return ResponseMessage.success("已更新邮箱绑定，请重新登录！");
+        return ResponseMessage.success("已更新邮箱绑定");
     }
 
 

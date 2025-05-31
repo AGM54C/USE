@@ -27,14 +27,17 @@ public class PlanetController {
      * 请求参数（JSON格式）：
      * {
      *   "contentTitle": String,           // 星球标题（必填）
-     *   "coverUrl": String,        // 封面图片URL
-     *   "visibility": Integer,     // 可见性（0-私有，1-公开）
+     *   "userId": Integer,        // 用户id
+     *   "themeId": Integer,     // 类型（0-私有，1-公开）
      *   "description": String      // 星球描述
      * }
      * 返回值：成功返回星球id，失败返回错误信息
      */
     @PostMapping("/create")         //localhost:8081/planet/create
     public ResponseMessage<String> create(@Valid @RequestBody KnowledgePlanetDto planet) {
+        if(planet.getContentTitle() == null || planet.getThemeId() == null || planet.getUserId() == null||planet.getDescription()==null) {
+            return ResponseMessage.error("缺少必要参数！");
+        }
         //查询星球
         KnowledgePlanet p = planetService.findByTitle(planet.getContentTitle());
         if(p!=null) {
@@ -61,7 +64,7 @@ public class PlanetController {
     @GetMapping("/planetinfo")
     public ResponseMessage<KnowledgePlanetDto> planetinfo(@Valid @RequestBody KnowledgePlanetDto planet) {
         //根据星球名查询
-        KnowledgePlanet p = planetService.findByTitle(planet.getContentTitle());
+        KnowledgePlanet p = planetService.findByPlanetId(planet.getPlanetId());
         if(p==null) {
             return ResponseMessage.error("星球不存在");
         }
@@ -111,8 +114,10 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
-        if (Objects.equals(planet.getCoverUrl(), dto.getCoverUrl())) {
-            return ResponseMessage.success("封面URL未变更");
+        if(dto.getCoverUrl()!=null) {
+            if (Objects.equals(planet.getCoverUrl(), dto.getCoverUrl())) {
+                return ResponseMessage.success("封面URL未变更");
+            }
         }
         planetService.updateCoverUrl(dto.getPlanetId(), dto.getCoverUrl());
         return ResponseMessage.success("星球封面URL更新成功");
@@ -183,8 +188,10 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
-        if (planet.getContentDetail().equals(dto.getContentDetail())) {
-            return ResponseMessage.success("内容未变更");
+        if(dto.getContentTitle()!=null) {
+            if (planet.getContentDetail().equals(dto.getContentDetail())) {
+                return ResponseMessage.success("内容未变更");
+            }
         }
         planetService.updatedetail(dto.getPlanetId(), dto.getContentDetail());
         return ResponseMessage.success("星球内容更新成功");

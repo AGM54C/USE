@@ -19,9 +19,6 @@ public class UserDto implements Serializable {
     /** 用户ID（对应数据库user_id字段） */
     private Integer userId;
 
-    /** JWT令牌版本，用于实现令牌失效机制 */
-    private Integer tokenVersion;
-
     /**
      * 用户邮箱
      * - 格式校验：必须符合邮箱格式
@@ -36,7 +33,6 @@ public class UserDto implements Serializable {
      * - 安全校验：至少8位，包含字母、数字和特殊字符
      * - 访问控制：只允许写入，响应时自动忽略
      */
-    @NotBlank(message = "密码不能为空")
     @Pattern(
             regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
             message = "密码至少8位，需包含字母、数字和特殊字符"
@@ -49,7 +45,6 @@ public class UserDto implements Serializable {
      * - 非空校验：昵称不能为空
      * - 长度校验：最大长度50个字符（与数据库保持一致）
      */
-    @NotBlank(message = "昵称不能为空")
     @Size(max = 50, message = "昵称长度不能超过50个字符")
     private String nickname;
 

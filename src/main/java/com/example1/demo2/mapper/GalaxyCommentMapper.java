@@ -21,13 +21,13 @@ public interface GalaxyCommentMapper {
 
     /**
      * 根据ID查询评论
-     * 修正：将 creator_id 改为 user_id
+     * 修正：将方法引用改为正确的方法名
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
             @Result(property = "user", column = "user_id",
-                    one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
             @Result(property = "parentId", column = "parent_comment_id"),
@@ -39,7 +39,7 @@ public interface GalaxyCommentMapper {
 
     /**
      * 查询星系的一级评论（分页）
-     * 修正：将 creator_id 改为 user_id
+     * 修正：将方法引用改为正确的方法名
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE galaxy_id = #{galaxyId} " +
             "AND parent_comment_id = 0 AND status = 0 " +
@@ -47,7 +47,7 @@ public interface GalaxyCommentMapper {
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
             @Result(property = "user", column = "user_id",
-                    one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
             @Result(property = "parentId", column = "parent_comment_id"),
@@ -61,14 +61,14 @@ public interface GalaxyCommentMapper {
 
     /**
      * 查询评论的所有回复
-     * 修正：将 creator_id 改为 user_id
+     * 修正：将方法引用改为正确的方法名
      */
     @Select("SELECT * FROM tab_galaxy_comment WHERE parent_comment_id = #{parentId} " +
             "AND status = 0 ORDER BY release_time ASC")
     @Results({
             @Result(property = "galaxyCommentId", column = "galaxy_comment_id"),
             @Result(property = "user", column = "user_id",
-                    one = @One(select = "com.example1.demo2.mapper.UserMapper.getUserById")),
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
             @Result(property = "knowledgeGalaxy", column = "galaxy_id",
                     one = @One(select = "com.example1.demo2.mapper.GalaxyMapper.getKnowledgeGalaxyById")),
             @Result(property = "parentId", column = "parent_comment_id"),
