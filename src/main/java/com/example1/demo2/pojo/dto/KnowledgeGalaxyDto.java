@@ -8,8 +8,8 @@ public class KnowledgeGalaxyDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // 创建时自动生成，无需前端传入
-    @Pattern(regexp = "^GLXY-\\d{8}-\\d{4}$", message = "星系ID格式错误")
-    private String galaxyId;
+    @Positive(message = "星系ID必须为正整数")
+    private Integer galaxyId;
 
     // 从认证信息获取，前端无需传入
     @NotNull(message = "创建者用户ID不能为空")
@@ -38,11 +38,11 @@ public class KnowledgeGalaxyDto implements Serializable {
     private Date updateTime;
 
     // Getters and Setters
-    public String getGalaxyId() {
+    public Integer getGalaxyId() {
         return galaxyId;
     }
 
-    public void setGalaxyId(String galaxyId) {
+    public void setGalaxyId(Integer galaxyId) {
         this.galaxyId = galaxyId;
     }
 

@@ -25,7 +25,7 @@ public class GalaxyService implements IGalaxyService {
     }
 
     @Override
-    public KnowledgeGalaxy getKnowledgeGalaxyById(String galaxyId) {
+    public KnowledgeGalaxy getKnowledgeGalaxyById(Integer galaxyId) {
         return galaxyMapper.getKnowledgeGalaxyById(galaxyId);
     }
 
@@ -48,7 +48,7 @@ public class GalaxyService implements IGalaxyService {
             galaxyMapper.add(galaxy);
 
             // 将生成的galaxyId回写到DTO中（数据库自增ID）
-            galaxyDto.setGalaxyId(String.valueOf(galaxy.getGalaxyId()));
+            galaxyDto.setGalaxyId(Integer.valueOf(galaxy.getGalaxyId()));
         }
     }
 
@@ -64,19 +64,19 @@ public class GalaxyService implements IGalaxyService {
 
     @Override
     @Transactional
-    public void deleteGalaxy(String galaxyId) {
+    public void deleteGalaxy(Integer galaxyId) {
         galaxyMapper.delete(galaxyId);
     }
 
     @Override
     @Transactional
-    public void addKnowledgePlanetToGalaxy(String galaxyId, String planetId) {
+    public void addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId) {
         // 将星球添加到星系中（更新星球表中的galaxy_id字段）
         galaxyMapper.addPlanetToGalaxy(galaxyId, planetId);
     }
 
     @Override
-    public void removeKnowledgePlanetFromGalaxy(String galaxyId, String planetId) {
+    public void removeKnowledgePlanetFromGalaxy(Integer galaxyId, String planetId) {
         // 从星系中移除星球（更新星球表中的galaxy_id字段为null）
         galaxyMapper.removePlanetFromGalaxy(galaxyId, planetId);
     }
@@ -88,7 +88,7 @@ public class GalaxyService implements IGalaxyService {
     }
 
     @Override
-    public void updateGalaxyName(String galaxyId, String newName) {
+    public void updateGalaxyName(Integer galaxyId, String newName) {
         // 更新星系名称
         KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
         if (galaxy != null) {
@@ -100,7 +100,7 @@ public class GalaxyService implements IGalaxyService {
     }
 
     @Override
-    public void updateGalaxyLabel(String galaxyId, String newLabel) {
+    public void updateGalaxyLabel(Integer galaxyId, String newLabel) {
         // 更新星系标签
         KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
         if (galaxy != null) {
@@ -112,7 +112,7 @@ public class GalaxyService implements IGalaxyService {
     }
 
     @Override
-    public void updateGalaxyPermission(String galaxyId, Integer newPermission) {
+    public void updateGalaxyPermission(Integer galaxyId, Integer newPermission) {
         // 更新星系权限
         KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
         if (galaxy != null) {
@@ -127,11 +127,12 @@ public class GalaxyService implements IGalaxyService {
      * 生成星系ID格式字符串
      * 格式：GLXY-YYYYMMDD-XXXX
      */
-    private String generateGalaxyId() {
+    private Integer generateGalaxyId() {
         LocalDate currentDate = LocalDate.now();
         String datePart = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-        return "GLXY-" + datePart + "-" + randomPart;
+        String idString="GLXY-" + datePart + "-" + randomPart;
+        return Integer.valueOf(idString);
     }
 
     /**

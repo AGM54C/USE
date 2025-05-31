@@ -104,6 +104,31 @@ public class GalaxyComment {
     @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
     private List<GalaxyComment> replies;
 
+    /**
+     * 是否已删除（逻辑删除标志0 未删除 1 已删除）
+     */
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "tinyint default 0")
+    private Integer isDeleted;
+
+    /**
+     * 删除原因
+     */
+    @Column(name = "delete_reason", length = 255)
+    private String deleteReason;
+
+    /**
+     * 删除时间
+     */
+    @Column(name = "delete_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deleteTime;
+
+    /**
+     * 删除人ID
+     */
+    @Column(name = "deleted_by_user_id")
+    private Integer deletedByUserId;
+
     // JPA回调方法
     @PrePersist
     protected void onCreate() {
@@ -236,6 +261,38 @@ public class GalaxyComment {
 
     public void setReplies(List<GalaxyComment> replies) {
         this.replies = replies;
+    }
+
+    public Integer getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Integer isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getDeleteReason() {
+        return deleteReason;
+    }
+
+    public void setDeleteReason(String deleteReason) {
+        this.deleteReason = deleteReason;
+    }
+
+    public Date getDeletedTime() {
+        return deleteTime;
+    }
+
+    public void setDeletedTime(Date deleteTime) {
+        this.deleteTime = deleteTime;
+    }
+
+    public Integer getDeletedBy() {
+        return deletedByUserId;
+    }
+
+    public void setDeletedBy(Integer deletedByUserId) {
+        this.deletedByUserId = deletedByUserId;
     }
 
     @Override

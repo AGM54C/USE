@@ -33,7 +33,7 @@ public class GalaxyCommentService implements IGalaxyCommentService {
     @Transactional
     public GalaxyCommentDto publishComment(GalaxyCommentDto commentDto) {
         // 验证星系是否存在
-        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(String.valueOf(commentDto.getGalaxyId()));
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(Integer.valueOf(commentDto.getGalaxyId()));
         if (galaxy == null) {
             throw new RuntimeException("星系不存在");
         }

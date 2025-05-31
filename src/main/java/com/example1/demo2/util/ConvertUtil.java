@@ -184,7 +184,7 @@ public class ConvertUtil {
         // 主键ID转换：Integer -> String
         // 注意：这里需要将数据库的自增整数ID转换为字符串格式
         if (galaxy.getGalaxyId() != null) {
-            dto.setGalaxyId(galaxy.getGalaxyId().toString());
+            dto.setGalaxyId(galaxy.getGalaxyId());
         }
 
         // 创建者用户ID
@@ -227,7 +227,7 @@ public class ConvertUtil {
         // 主键ID转换：String -> Integer
         // 注意：创建新记录时galaxyId可能为null（数据库自增生成）
         // 更新记录时galaxyId是必需的
-        if (dto.getGalaxyId() != null && !dto.getGalaxyId().isEmpty()) {
+        if (dto.getGalaxyId() != null) {
             try {
                 // 尝试将字符串ID转换为整数
                 // 如果是"GLXY-20250101-ABCD"格式，则提取数字部分
