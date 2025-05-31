@@ -3,6 +3,9 @@ package com.example1.demo2.util;
 import com.example1.demo2.pojo.*;
 import com.example1.demo2.pojo.dto.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //实体类和Dto转换工具
 public class ConvertUtil {
     /**
@@ -62,7 +65,7 @@ public class ConvertUtil {
         KnowledgePlanetDto dto = new KnowledgePlanetDto();
         dto.setPlanetId(planet.getPlanetId());
         dto.setUserId(planet.getUserId());
-        dto.setTitle(planet.getTitle());
+        dto.setContentTitle(planet.getContentTitle());
         dto.setDescription(planet.getDescription());
         dto.setCoverUrl(planet.getCoverUrl());
         dto.setThemeId(planet.getThemeId());
@@ -86,7 +89,7 @@ public class ConvertUtil {
         KnowledgePlanet planet = new KnowledgePlanet();
         planet.setPlanetId(dto.getPlanetId());
         planet.setUserId(dto.getUserId());
-        planet.setTitle(dto.getTitle());
+        planet.setContentTitle(dto.getContentTitle());
         planet.setDescription(dto.getDescription());
         planet.setCoverUrl(dto.getCoverUrl());
         planet.setThemeId(dto.getThemeId());
@@ -101,49 +104,15 @@ public class ConvertUtil {
         return planet;
     }
 
-    /**
-     * PlanetContent 转 DTO
-     */
-    public static PlanetContentDto convertPlanetContentToDto(PlanetContent content) {
-        if (content == null) return null;
-        PlanetContentDto dto = new PlanetContentDto();
-        dto.setContentId(content.getContentId());
-        dto.setPlanetId(content.getPlanetId());
-        dto.setContentType(content.getContentType());
-        dto.setTitle(content.getTitle());
-        dto.setContent(content.getContent());
-        dto.setFileUrl(content.getFileUrl());
-        dto.setComment(content.getComment());
-        dto.setVersion(content.getVersion());
-        dto.setStatus(content.getStatus());
-        dto.setCreateTime(content.getCreateTime());
-        dto.setUpdateTime(content.getUpdateTime());
-        return dto;
-    }
 
-    /**
-     * PlanetContentDto 转实体
-     */
-    public static PlanetContent convertDtoToPlanetContent(PlanetContentDto dto) {
-        if (dto == null) return null;
-        PlanetContent content = new PlanetContent();
-        content.setContentId(dto.getContentId());
-        content.setPlanetId(dto.getPlanetId());
-        content.setContentType(dto.getContentType());
-        content.setTitle(dto.getTitle());
-        content.setContent(dto.getContent());
-        content.setFileUrl(dto.getFileUrl());
-        content.setComment(dto.getComment());
-        content.setVersion(dto.getVersion());
-        content.setStatus(dto.getStatus());
-        // 时间字段由数据库自动管理，此处可省略或按需设置
-        return content;
-    }
     //  PlanetComment转DTO
     public static PlanetCommentDto convertPlanetCommentToDto(PlanetComment comment) {
         PlanetCommentDto dto = new PlanetCommentDto();
         dto.setCommentId(comment.getCommentId());
-        dto.setPlanetId(comment.getPlanetId());
+        // 只提取星球ID
+        if (comment.getPlanet() != null) {
+            dto.setPlanetId(comment.getPlanet().getPlanetId());
+        }
         dto.setUserId(comment.getUserId());
         dto.setParentId(comment.getParentId());
         dto.setLevel(comment.getLevel());
@@ -160,7 +129,12 @@ public class ConvertUtil {
     public static PlanetComment convertDtoToPlanetComment(PlanetCommentDto dto) {
         PlanetComment comment = new PlanetComment();
         comment.setCommentId(dto.getCommentId());
-        comment.setPlanetId(dto.getPlanetId());
+        // 关键处理：根据planetId创建临时星球对象
+        if (dto.getPlanetId() != null) {
+            KnowledgePlanet planet = new KnowledgePlanet();
+            planet.setPlanetId(dto.getPlanetId());
+            comment.setPlanet(planet); // 设置关联对象
+        }
         comment.setUserId(dto.getUserId());
         comment.setParentId(dto.getParentId());
         comment.setLevel(dto.getLevel() != null ? dto.getLevel() : 1); // 默认层级1
@@ -284,6 +258,21 @@ public class ConvertUtil {
         comment.setUpdateTime(dto.getUpdateTime());
 
         return comment;
+    }
+
+    /**
+     * 将PlanetComment实体列表转换为DTO列表
+     */
+    public static List<PlanetCommentDto> convertPlanetCommentListToDto(List<PlanetComment> comments) {
+        if (comments == null || comments.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<PlanetCommentDto> dtos = new ArrayList<>();
+        for (PlanetComment comment : comments) {
+            dtos.add(convertPlanetCommentToDto(comment));
+        }
+        return dtos;
     }
 
 }
