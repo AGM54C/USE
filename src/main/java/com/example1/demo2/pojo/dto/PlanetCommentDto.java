@@ -13,7 +13,6 @@ public class PlanetCommentDto implements Serializable {
     private Long commentId;
 
     // 星球ID（必填，格式校验）
-    @NotBlank(message = "星球ID不能为空")
     @Pattern(
             regexp = "^PLNT-\\d{8}-[A-Z0-9]{4}$",
             message = "星球ID格式错误，需为PLNT-YYYYMMDD-XXXX"
@@ -21,7 +20,6 @@ public class PlanetCommentDto implements Serializable {
     private String planetId;
 
     // 用户ID（必填，从认证信息获取）
-    @NotNull(message = "用户ID不能为空")
     private Integer userId;
 
     // 父评论ID（默认0，表示一级评论）
@@ -33,7 +31,6 @@ public class PlanetCommentDto implements Serializable {
     private Integer level;
 
     // 评论内容（必填，长度校验）
-    @NotBlank(message = "评论内容不能为空")
     @Size(max = 2000, message = "评论内容不能超过2000字符")
     private String content;
 

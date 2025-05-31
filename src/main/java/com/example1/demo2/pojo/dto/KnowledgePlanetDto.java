@@ -13,17 +13,14 @@ public class KnowledgePlanetDto implements Serializable {
     private String planetId;
 
     // 从认证信息获取，前端无需传入
-    @NotNull(message = "创建者ID不能为空")
     private Integer userId;
 
-    @NotBlank(message = "星球标题不能为空")
     @Size(max = 100, message = "星球标题长度不能超过100字符")
     private String contentTitle;
 
     /**
      * 知识详情
      */
-    @NotBlank(message = "知识详情不能为空")
     private String contentDetail;
 
     @Size(max = 200, message = "星球描述长度不能超过200字符")
@@ -32,7 +29,6 @@ public class KnowledgePlanetDto implements Serializable {
     @Size(max = 255, message = "封面URL长度不能超过255字符")
     private String coverUrl;
 
-    @NotNull(message = "主题分类ID不能为空")
     @Positive(message = "主题分类ID必须为正整数")
     private Integer themeId;
 
