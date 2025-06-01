@@ -8,6 +8,7 @@ import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import com.example1.demo2.service.IGalaxyCommentService;
+import com.example1.demo2.service.INotificationService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class GalaxyCommentService implements IGalaxyCommentService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private INotificationService notificationService;
 
     @Override
     @Transactional
@@ -135,10 +139,49 @@ public class GalaxyCommentService implements IGalaxyCommentService {
      * 实际项目中，这里可以集成消息队列或通知服务
      */
     private void sendReplyNotification(GalaxyComment comment) {
-        // TODO: 实现通知逻辑
-        // 例如：发送站内信、推送通知等
-        System.out.println("用户 " + comment.getUser().getNickname() +
-                " 回复了用户ID为 " + comment.getReplyToUserId() + " 的评论");
+        // 使用我们新创建的通知服务来发送通知
+        // 这就像把信件交给邮局去投递
+
+        try {
+            // 发送评论回复通知
+            if (comment.getReplyToUserId() != null) {
+                // 如果是回复某个用户的评论
+                notificationService.sendCommentReplyNotification(
+                        comment.getUser().getUserId(),      // 发送者
+                        comment.getReplyToUserId(),         // 接收者
+                        comment.getGalaxyCommentId(),       // 评论ID
+                        comment.getContent()                // 评论内容
+                );
+            } else if (comment.getLevel() == 2) {
+                // 如果是二级评论（回复一级评论）
+                // 通知一级评论的作者
+                GalaxyComment parentComment = commentMapper.getCommentById(comment.getParentId());
+                if (parentComment != null && !parentComment.getUser().getUserId().equals(comment.getUser().getUserId())) {
+                    notificationService.sendCommentReplyNotification(
+                            comment.getUser().getUserId(),
+                            parentComment.getUser().getUserId(),
+                            comment.getGalaxyCommentId(),
+                            comment.getContent()
+                    );
+                }
+            }
+
+            // 如果评论者不是星系创建者，通知星系创建者
+            Integer galaxyOwnerId = comment.getKnowledgeGalaxy().getUserId();
+            if (!comment.getUser().getUserId().equals(galaxyOwnerId)) {
+                notificationService.sendGalaxyCommentNotification(
+                        comment.getUser().getUserId(),
+                        galaxyOwnerId,
+                        comment.getKnowledgeGalaxy().getGalaxyId(),
+                        comment.getKnowledgeGalaxy().getName()
+                );
+            }
+
+        } catch (Exception e) {
+            // 通知发送失败不应该影响评论的发布
+            // 这就像即使邮局出了问题，也不应该影响信件的书写
+            System.err.println("发送通知失败: " + e.getMessage());
+        }
     }
 
     @Override
@@ -181,6 +224,24 @@ public class GalaxyCommentService implements IGalaxyCommentService {
             // 点赞
             commentMapper.insertLike(userId, galaxyCommentId);
             commentMapper.increaseLikeCount(galaxyCommentId);
+
+            // 发送点赞通知
+            // 这就像给对方发送一个"赞"的贴纸
+            try {
+                // 不给自己的评论点赞发通知
+                if (!userId.equals(comment.getUser().getUserId())) {
+                    notificationService.sendLikeNotification(
+                            userId,                              // 点赞者
+                            comment.getUser().getUserId(),       // 被点赞者
+                            galaxyCommentId,                     // 评论ID
+                            comment.getContent()                 // 评论内容
+                    );
+                }
+            } catch (Exception e) {
+                // 通知发送失败不影响点赞功能
+                System.err.println("发送点赞通知失败: " + e.getMessage());
+            }
+
             return true;
         }
     }
@@ -236,8 +297,6 @@ public class GalaxyCommentService implements IGalaxyCommentService {
      * 获取可以回复的评论信息
      * 这个方法用于前端在用户点击"回复"时获取必要的信息
      */
-    @Transactional(readOnly = true)
-    @Override
     public GalaxyCommentDto getReplyInfo(Integer commentId, Integer userId) {
         GalaxyComment comment = commentMapper.getCommentById(commentId);
         if (comment == null || comment.getStatus() != 0) {
@@ -265,9 +324,8 @@ public class GalaxyCommentService implements IGalaxyCommentService {
      * 将评论实体转换为DTO
      * 这个方法负责将数据库实体转换为前端需要的数据传输对象
      */
-
-    @Transactional
     @Override
+    @Transactional
     public GalaxyCommentDto convertToDto(GalaxyComment comment, Integer currentUserId) {
         GalaxyCommentDto dto = new GalaxyCommentDto();
         dto.setGalaxyCommentId(comment.getGalaxyCommentId());
@@ -306,8 +364,8 @@ public class GalaxyCommentService implements IGalaxyCommentService {
      * 递归加载评论的所有回复
      * 这个方法会构建完整的评论树结构
      */
-    @Transactional
     @Override
+    @Transactional
     public void loadReplies(GalaxyCommentDto comment, Integer currentUserId) {
         List<GalaxyComment> replies = commentMapper.getRepliesByParentId(comment.getGalaxyCommentId());
         if (!replies.isEmpty()) {
@@ -332,9 +390,8 @@ public class GalaxyCommentService implements IGalaxyCommentService {
      * 递归删除子评论
      * 当删除一个评论时，其所有子评论也应该被删除
      */
-
-    @Transactional
     @Override
+    @Transactional
     public void deleteChildComments(Integer parentId) {
         List<GalaxyComment> children = commentMapper.getRepliesByParentId(parentId);
         for (GalaxyComment child : children) {
