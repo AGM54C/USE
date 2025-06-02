@@ -72,4 +72,14 @@ public interface PlanetMapper {
             "SET fuel_value = #{fuelValue}, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void updatefuelvalue(String planetId, Integer fuelValue);
+
+    @Update("UPDATE tab_knowledge_planet " +
+            "SET visit_count = visit_count+1, update_time = NOW() " +
+            "WHERE planet_id = #{planetId}")
+    void updatevisitCount(String planetId);
+
+    @Update("UPDATE tab_knowledge_planet " +
+            "SET status = 1, update_time = NOW() " +
+            "WHERE planet_id = #{planetId}")
+    void publish(String planetId);
 }

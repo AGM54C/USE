@@ -57,7 +57,7 @@ public class KnowledgePlanet {
     @Column(name = "color_scheme", length = 20)
     private String colorScheme;
 
-    /** 可见性：0-私有，1-公开，2-邀请制 */
+    /** 可见性：0-私有，1-公开 */
     @Column(name = "visibility", nullable = false, columnDefinition = "tinyint default 1")
     private Integer visibility;
 

@@ -104,6 +104,38 @@ public class PlanetService implements IPlanetService {
     }
 
     @Override
+    public KnowledgePlanet visitPlanet(String planetId, Integer userId) {
+        // 1. 校验星球存在
+        KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
+        if (planet == null) {
+            throw new IllegalArgumentException("星球不存在");
+        }
+
+        // 2. 校验可见性
+        Integer visibility = planet.getVisibility();
+        boolean isCreator = userId != null && userId.equals(planet.getUserId());
+
+        if (visibility == 0) { // 私有星球
+            if (!isCreator) {
+                throw new IllegalArgumentException("星球为私有，无访问权限");
+            }
+        }
+
+        // 3. 处理访问量统计（非创建者访问）
+        if (!isCreator) {
+            planetMapper.updatevisitCount(planetId);
+        }
+
+        // 4. 返回更新后的星球信息（包含最新访问量）
+        return planetMapper.findByPlanetId(planetId);
+    }
+
+    @Override
+    public void publish(KnowledgePlanetDto planet) {
+        planetMapper.publish(planet.getPlanetId());
+    }
+
+    @Override
     public KnowledgePlanet findByPlanetId(String planetId) {
         return planetMapper.findByPlanetId(planetId);
     }
