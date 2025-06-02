@@ -1,15 +1,19 @@
 package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.KnowledgePlanet;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPlanetService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.ConvertUtil;
+import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -20,6 +24,9 @@ public class PlanetController {
     @Autowired
     private IPlanetService planetService;
 
+    @Autowired
+    private IUserService userService;
+
     /**
      * 创建知识星球
      * 前端请求方式：POST
@@ -28,8 +35,9 @@ public class PlanetController {
      * {
      *   "contentTitle": String,           // 星球标题（必填）
      *   "userId": Integer,        // 用户id
-     *   "themeId": Integer,     // 类型（0-私有，1-公开）
+     *   "themeId": Integer,     // 类型(0-学习，1-游戏，2-生活)
      *   "description": String      // 星球描述
+     *   "modelType":Integer       //文章类型(选填）
      * }
      * 返回值：成功返回星球id，失败返回错误信息
      */
@@ -52,25 +60,58 @@ public class PlanetController {
     }
 
     /**
-     * 查看星球信息
-     * 前端请求方式：GET
-     * 请求URL：localhost:8081/planet/planetinfo
-     * 请求参数（Param格式）：
+     * 发布知识星球
+     * 前端请求方式：POST
+     * 请求URL：localhost:8081/planet/publish
+     * 请求参数（JSON格式）：
      * {
-     *   "planetId": String         // 星球ID（必填）
+     *    "planetId":String      //星球Id（必填）
      * }
-     * 返回值：成功返回星球Dto类，失败返回错误信息
+     * 返回值：成功返回星球id，失败返回错误信息
      */
-    @GetMapping("/planetinfo")
-    public ResponseMessage<KnowledgePlanetDto> planetinfo(@Valid @RequestBody KnowledgePlanetDto planet) {
-        //根据星球名查询
+    @PostMapping("/publish")
+    public ResponseMessage<String> publish(@Valid @RequestBody KnowledgePlanetDto planet) {
+        //查询星球
         KnowledgePlanet p = planetService.findByPlanetId(planet.getPlanetId());
         if(p==null) {
-            return ResponseMessage.error("星球不存在");
+            //星球不存在
+            return ResponseMessage.error("星球不存在或已被删除");
         }
-        //转化为dto
-        KnowledgePlanetDto dto =ConvertUtil.convertKnowledgePlanetToDto(p);
-        return ResponseMessage.success(dto);
+        else{
+            planetService.publish(planet);
+            return ResponseMessage.success(planet.getPlanetId());
+        }
+    }
+
+
+    /**
+     * 访问星球（带可见性校验和访问量统计）
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/planet/visit
+     * 请求参数（Param格式）：
+     *      * {
+     *      *   "planetId": String         // 星球ID（必填）
+     * }
+     * 返回值：成功返回星球信息，失败返回错误信息
+     */
+    @GetMapping("/visit")
+    public ResponseMessage<KnowledgePlanetDto> visitPlanet(
+            @PathVariable String planetId
+    ) {
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        try {
+            KnowledgePlanet planet = planetService.visitPlanet(planetId, userId);
+            KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(planet);
+            return ResponseMessage.success(dto);
+        } catch (IllegalArgumentException e) {
+            return ResponseMessage.error(e.getMessage());
+        }
     }
 
     /**
@@ -220,6 +261,7 @@ public class PlanetController {
         planetService.updatebrightness(dto.getPlanetId(), dto.getBrightness());
         return ResponseMessage.success("星球亮度更新成功");
     }
+
     /**
      * 更新星球标题
      * 前端请求方式：PUT
@@ -227,7 +269,7 @@ public class PlanetController {
      * 请求参数（JSON格式）：
      * {
      *   "planetId": String,        // 星球ID（必填）
-     *   "title": String            // 新标题（必填）
+     *   "fuelValue": Integer          // 燃料值（必填）
      * }
      //     * 返回值：成功或失败信息
      */
@@ -243,6 +285,58 @@ public class PlanetController {
         planetService.updatefuelvalue(dto.getPlanetId(), dto.getFuelValue());
         return ResponseMessage.success("星球燃料更新成功");
     }
+
+    /**
+     * 更新星球标题
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/planet/updateTitle
+     * 请求参数（JSON格式）：
+     * {
+     *   "planetId": String,        // 星球ID（必填）
+     *   "colorScheme": String        // 颜色方案（必填）
+     * }
+     //     * 返回值：成功或失败信息
+     */
+    @PutMapping("/updatecolorscheme")
+    public ResponseMessage updatecolorscheme(@Valid @RequestBody KnowledgePlanetDto dto) {
+        KnowledgePlanet planet = planetService.findByPlanetId(dto.getPlanetId());
+        if (planet == null) {
+            return ResponseMessage.error("星球不存在");
+        }
+        if(dto.getColorScheme()!=null) {
+            if (planet.getColorScheme().equals(dto.getColorScheme())) {
+                return ResponseMessage.success("颜色方案未变更");
+            }
+        }
+        planetService.updatefuelvalue(dto.getPlanetId(), dto.getFuelValue());
+        return ResponseMessage.success("颜色方案更新成功");
+    }
+
+    /**
+     * 更新星球标题
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/planet/updateTitle
+     * 请求参数（JSON格式）：
+     * {
+     *   "planetId": String,        // 星球ID（必填）
+     *   "modelType": Integer          // 展示模型（必填）
+     * }
+     //     * 返回值：成功或失败信息
+     */
+    @PutMapping("/updatemodeltype")
+    public ResponseMessage updatemodeltype(@Valid @RequestBody KnowledgePlanetDto dto) {
+        KnowledgePlanet planet = planetService.findByPlanetId(dto.getPlanetId());
+        if (planet == null) {
+            return ResponseMessage.error("星球不存在");
+        }
+        if (planet.getModelType().equals(dto.getModelType())) {
+            return ResponseMessage.success("展示模型未变更");
+        }
+        planetService.updatefuelvalue(dto.getPlanetId(), dto.getFuelValue());
+        return ResponseMessage.success("展示模型更新成功");
+    }
+
+
     /**
      * 将评论加入星球
      * 前端请求方式：POST

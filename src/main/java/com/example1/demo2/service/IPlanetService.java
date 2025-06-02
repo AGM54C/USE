@@ -36,4 +36,8 @@ public interface IPlanetService {
     void updatebrightness(String planetId, Integer brightness);
 
     void updatefuelvalue(String planetId, Integer fuelValue);
+
+    KnowledgePlanet visitPlanet(String planetId, Integer userId);
+
+    void publish(@Valid KnowledgePlanetDto planet);
 }
