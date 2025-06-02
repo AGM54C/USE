@@ -1,85 +1,209 @@
 package com.example1.demo2.pojo.dto;
 
-import java.io.Serializable;
 import jakarta.validation.constraints.*;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class PlanetCommentDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    // 评论ID（创建时自动生成，更新时必须存在）
-    @Null(groups = CreateGroup.class, message = "创建评论时无需指定ID")
-    @NotNull(groups = UpdateGroup.class, message = "更新评论时ID不能为空")
-    private Long commentId;
+    // 评论ID（创建时不需要，更新/删除时需要）
+    private Integer planetCommentId;
 
-    // 星球ID（必填，格式校验）
-    @Pattern(
-            regexp = "^PLNT-\\d{8}-[A-Z0-9]{4}$",
-            message = "星球ID格式错误，需为PLNT-YYYYMMDD-XXXX"
-    )
-    private String planetId;
-
-    // 用户ID（必填，从认证信息获取）
+    // 创建者用户ID（从认证信息获取）
+    @NotNull(groups = {Create.class}, message = "用户ID不能为空")
     private Integer userId;
 
-    // 父评论ID（默认0，表示一级评论）
-    @Min(value = 0, message = "父评论ID不能为负数")
-    private Long parentId = 0L;
+    // 创建者用户名（用于展示）
+    private String username;
 
-    // 评论层级（自动计算，前端无需传入）
-    @Null(message = "评论层级由系统自动计算")
-    private Integer level;
+    // 星球ID
+    @NotNull(groups = {Create.class}, message = "星球ID不能为空")
+    private String planetId;
 
-    // 评论内容（必填，长度校验）
-    @Size(max = 2000, message = "评论内容不能超过2000字符")
+    // 星球名称（用于展示）
+    private String planetName;
+
+    // 评论内容
+    @NotBlank(groups = {Create.class}, message = "评论内容不能为空")
+    @Size(max = 500, message = "评论内容不能超过500字")
     private String content;
 
-    // 点赞数（自动维护，前端无需传入）
-    @Null(message = "点赞数由系统自动维护")
-    private Integer likeCount;
+    // 评论层级（1-3级）
+    @Min(value = 1, message = "评论层级最小为1")
+    @Max(value = 3, message = "评论层级最大为3")
+    private Integer level = 1;
 
-    // 回复数（自动维护，前端无需传入）
-    @Null(message = "回复数由系统自动维护")
-    private Integer replyCount;
+    // 父评论ID（0表示一级评论）
+    private Integer parentId = 0;
 
-    // 状态（可选，范围校验，默认0-正常）
-    @Min(value = 0, message = "状态取值范围为0-2")
-    @Max(value = 2, message = "状态取值范围为0-2")
-    private Integer status;
+    // 被回复的用户ID
+    private Integer replyToUserId;
 
-    // 创建时间（自动生成，不可修改）
-    @Null(message = "创建时间由系统自动生成")
+    // 被回复的用户名（用于展示）
+    private String replyToUsername;
+
+    // 点赞数
+    private Integer likeCount = 0;
+
+    // 回复数
+    private Integer replyCount = 0;
+
+    // 状态（0-正常，1-待审核，2-已删除）
+    private Integer status = 0;
+
+    // 是否已点赞（当前用户）
+    private Boolean isLiked = false;
+
+    // 创建时间
     private Date createTime;
 
-    // 更新时间（自动更新，不可修改）
-    @Null(message = "更新时间由系统自动生成")
+    // 更新时间
     private Date updateTime;
 
-    // 分组校验接口
-    public interface CreateGroup { }
-    public interface UpdateGroup { }
+    // 子评论列表
+    private List<PlanetCommentDto> replies;
 
-    // Getter 和 Setter
-    public Long getCommentId() { return commentId; }
-    public void setCommentId(Long commentId) { this.commentId = commentId; }
-    public String getPlanetId() { return planetId; }
-    public void setPlanetId(String planetId) { this.planetId = planetId; }
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
-    public Long getParentId() { return parentId; }
-    public void setParentId(Long parentId) { this.parentId = parentId; }
-    public Integer getLevel() { return level; }
-    public void setLevel(Integer level) { this.level = level; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public Integer getLikeCount() { return likeCount; }
-    public void setLikeCount(Integer likeCount) { this.likeCount = likeCount; }
-    public Integer getReplyCount() { return replyCount; }
-    public void setReplyCount(Integer replyCount) { this.replyCount = replyCount; }
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
-    public Date getCreateTime() { return createTime; }
-    public void setCreateTime(Date createTime) { this.createTime = createTime; }
-    public Date getUpdateTime() { return updateTime; }
-    public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+    // 分组校验接口
+    public interface Create {}
+    public interface Update {}
+
+    // Getters and Setters
+    public Integer getPlanetCommentId() {
+        return planetCommentId;
+    }
+
+    public void setPlanetCommentId(Integer planetCommentId) {
+        this.planetCommentId = planetCommentId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPlanetId() {
+        return planetId;
+    }
+
+    public void setPlanetId(String planetId) {
+        this.planetId = planetId;
+    }
+
+    public String getPlanetName() {
+        return planetName;
+    }
+
+    public void setPlanetName(String planetName) {
+        this.planetName = planetName;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getReplyToUserId() {
+        return replyToUserId;
+    }
+
+    public void setReplyToUserId(Integer replyToUserId) {
+        this.replyToUserId = replyToUserId;
+    }
+
+    public String getReplyToUsername() {
+        return replyToUsername;
+    }
+
+    public void setReplyToUsername(String replyToUsername) {
+        this.replyToUsername = replyToUsername;
+    }
+
+
+    public Integer getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Integer getReplyCount() {
+        return replyCount;
+    }
+
+    public void setReplyCount(Integer replyCount) {
+        this.replyCount = replyCount;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Boolean getIsLiked() {
+        return isLiked;
+    }
+
+    public void setIsLiked(Boolean isLiked) {
+        this.isLiked = isLiked;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public List<PlanetCommentDto> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<PlanetCommentDto> replies) {
+        this.replies = replies;
+    }
 }

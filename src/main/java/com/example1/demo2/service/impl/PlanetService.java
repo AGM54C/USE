@@ -1,6 +1,6 @@
 package com.example1.demo2.service.impl;
 
-import com.example1.demo2.mapper.CommentMapper;
+import com.example1.demo2.mapper.PlanetCommentMapper;
 import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
@@ -21,7 +21,7 @@ public class PlanetService implements IPlanetService {
     private PlanetMapper planetMapper;
 
     @Autowired
-    private CommentMapper commentMapper;
+    private PlanetCommentMapper commentMapper;
 
     @Override
     public KnowledgePlanet findByTitle(String title) {
@@ -120,11 +120,8 @@ public class PlanetService implements IPlanetService {
                 throw new IllegalArgumentException("星球为私有，无访问权限");
             }
         }
-
-        // 3. 处理访问量统计（非创建者访问）
-        if (!isCreator) {
+        // 3. 处理访问量统计
             planetMapper.updatevisitCount(planetId);
-        }
 
         // 4. 返回更新后的星球信息（包含最新访问量）
         return planetMapper.findByPlanetId(planetId);

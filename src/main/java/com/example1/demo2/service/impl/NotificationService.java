@@ -331,6 +331,11 @@ public class NotificationService implements INotificationService {
     }
 
     @Override
+    public void sendPlanetCommentNotification(Integer senderId, Integer planetOwnerId, String planetId, String planetName) {
+
+    }
+
+    @Override
     public void sendSystemNotification(Integer receiverId, String title, String content) {
         // 系统通知的实现
     }

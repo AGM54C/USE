@@ -108,12 +108,12 @@ public class ConvertUtil {
     //  PlanetComment转DTO
     public static PlanetCommentDto convertPlanetCommentToDto(PlanetComment comment) {
         PlanetCommentDto dto = new PlanetCommentDto();
-        dto.setCommentId(comment.getCommentId());
+        dto.setPlanetCommentId(comment.getPlanetCommentId());
         // 只提取星球ID
         if (comment.getPlanet() != null) {
             dto.setPlanetId(comment.getPlanet().getPlanetId());
         }
-        dto.setUserId(comment.getUserId());
+        dto.setUserId(comment.getUser().getUserId());
         dto.setParentId(comment.getParentId());
         dto.setLevel(comment.getLevel());
         dto.setContent(comment.getContent());
@@ -128,14 +128,16 @@ public class ConvertUtil {
     // DTO转PlanetComment
     public static PlanetComment convertDtoToPlanetComment(PlanetCommentDto dto) {
         PlanetComment comment = new PlanetComment();
-        comment.setCommentId(dto.getCommentId());
+        comment.setPlanetCommentId(dto.getPlanetCommentId());
         // 关键处理：根据planetId创建临时星球对象
         if (dto.getPlanetId() != null) {
             KnowledgePlanet planet = new KnowledgePlanet();
             planet.setPlanetId(dto.getPlanetId());
             comment.setPlanet(planet); // 设置关联对象
         }
-        comment.setUserId(dto.getUserId());
+        User user=new User();
+        user.setUserId(dto.getUserId());
+        comment.setUser(user);
         comment.setParentId(dto.getParentId());
         comment.setLevel(dto.getLevel() != null ? dto.getLevel() : 1); // 默认层级1
         comment.setContent(dto.getContent());
