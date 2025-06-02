@@ -5,7 +5,6 @@ import com.example1.demo2.pojo.PlanetComment;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
-import com.example1.demo2.service.ICommentService;
 import com.example1.demo2.util.ConvertUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

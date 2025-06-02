@@ -1,6 +1,5 @@
 package com.example1.demo2.service.impl;
 
-import com.example1.demo2.mapper.CommentMapper;
 import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;

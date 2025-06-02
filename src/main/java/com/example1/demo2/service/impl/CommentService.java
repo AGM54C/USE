@@ -1,9 +1,7 @@
 package com.example1.demo2.service.impl;
 
-import com.example1.demo2.mapper.CommentMapper;
 import com.example1.demo2.pojo.PlanetComment;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
-import com.example1.demo2.service.ICommentService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
