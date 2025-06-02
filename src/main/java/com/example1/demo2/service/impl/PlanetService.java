@@ -120,11 +120,8 @@ public class PlanetService implements IPlanetService {
                 throw new IllegalArgumentException("星球为私有，无访问权限");
             }
         }
-
-        // 3. 处理访问量统计（非创建者访问）
-        if (!isCreator) {
+        // 3. 处理访问量统计
             planetMapper.updatevisitCount(planetId);
-        }
 
         // 4. 返回更新后的星球信息（包含最新访问量）
         return planetMapper.findByPlanetId(planetId);

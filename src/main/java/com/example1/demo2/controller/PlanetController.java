@@ -87,14 +87,14 @@ public class PlanetController {
     /**
      * 访问星球（带可见性校验和访问量统计）
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/planet/visit
+     * 请求URL：localhost:8081/planet/visit/{}
      * 请求参数（Param格式）：
      *      * {
      *      *   "planetId": String         // 星球ID（必填）
      * }
      * 返回值：成功返回星球信息，失败返回错误信息
      */
-    @GetMapping("/visit")
+    @GetMapping("/visit/{planetId}")
     public ResponseMessage<KnowledgePlanetDto> visitPlanet(
             @PathVariable String planetId
     ) {
