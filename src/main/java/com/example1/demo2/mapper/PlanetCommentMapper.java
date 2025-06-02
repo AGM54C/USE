@@ -13,9 +13,9 @@ public interface PlanetCommentMapper {
      * 修正版本：确保正确返回自增主键
      */
     @Insert("INSERT INTO tab_planet_comment(user_id, planet_id, content, level, parent_comment_id, " +
-            "reply_to_user_id, creator_role, release_time, update_time) " +
+            "reply_to_user_id, release_time, update_time) " +
             "VALUES(#{user.userId}, #{planet.planetId}, #{content}, #{level}, #{parentId}, " +
-            "#{replyToUserId}, #{creatorRole}, now(), now())")
+            "#{replyToUserId}, now(), now())")
     @Options(useGeneratedKeys = true, keyProperty = "planetCommentId", keyColumn = "planet_comment_id")
     int insertComment(PlanetComment comment); // 修改返回类型为 int
 
@@ -131,16 +131,6 @@ public interface PlanetCommentMapper {
     boolean isLiked(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**
-     * 获取用户在星球中的角色
-     */
-    @Select("SELECT CASE " +
-            "WHEN p.user_id = #{userId} THEN 0 " +
-            "WHEN EXISTS(SELECT 1 FROM tab_planet_administrator WHERE planet_id = #{planetId} AND user_id = #{userId}) THEN 1 " +
-            "ELSE 2 END " +
-            "FROM tab_planet p WHERE p.planet_id = #{planetId}")
-    Integer getUserRoleInPlanet(@Param("userId") Integer userId, @Param("planetId") String planetId);
-
-    /**
      * 更新评论的星球 ID
      * @param commentId 评论 ID
      * @param planetId 星球 ID
@@ -161,7 +151,7 @@ public interface PlanetCommentMapper {
          * 根据星球 ID 删除星球
          * @param planetId 星球 ID
          */
-        @Delete("DELETE FROM tab_planet WHERE planet_id = #{planetId}")
+        @Delete("DELETE FROM tab_knowlege_planet WHERE planet_id = #{planetId}")
         void deleteById(String planetId);
     }
 }

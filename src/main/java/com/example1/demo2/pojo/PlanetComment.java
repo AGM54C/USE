@@ -69,12 +69,6 @@ public class PlanetComment {
     private Integer replyToUserId;
 
     /**
-     * 创建者角色（0 星球创建者 1 星球管理员 2普通成员）
-     */
-    @Column(name = "creator_role", nullable = false, columnDefinition = "tinyint default 2")
-    private Integer creatorRole = 2;
-
-    /**
      * 点赞数（默认0）
      */
     @Column(name = "like_count", columnDefinition = "int default 0")
@@ -215,14 +209,6 @@ public class PlanetComment {
         this.replyToUserId = replyToUserId;
     }
 
-    public Integer getCreatorRole() {
-        return creatorRole;
-    }
-
-    public void setCreatorRole(Integer creatorRole) {
-        this.creatorRole = creatorRole;
-    }
-
     public Integer getLikeCount() {
         return likeCount;
     }
@@ -305,7 +291,6 @@ public class PlanetComment {
                 ", content='" + content + '\'' +
                 ", level=" + level +
                 ", parentId=" + parentId +
-                ", creatorRole=" + creatorRole +
                 ", likeCount=" + likeCount +
                 ", replyCount=" + replyCount +
                 ", status=" + status +

@@ -30,13 +30,13 @@ public class PlanetCommentController {
      *   "parentId": 0,                // 父评论ID（选填，默认0表示一级评论）
      *   "replyToUserId": null         // 被回复用户ID（选填）
      * }
-     * 返回值：成功返回评论信息，失败返回错误信息
+     * 返回值：成功返回评论id，失败返回错误信息
      */
     @PostMapping("/publish")
     public ResponseMessage publishComment(@Validated(PlanetCommentDto.Create.class) @RequestBody PlanetCommentDto commentDto) {
         try {
             PlanetCommentDto result = commentService.publishComment(commentDto);
-            return ResponseMessage.success(result);
+            return ResponseMessage.success(result.getPlanetCommentId());
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }

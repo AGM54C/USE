@@ -44,9 +44,6 @@ public class PlanetCommentDto implements Serializable {
     // 被回复的用户名（用于展示）
     private String replyToUsername;
 
-    // 创建者角色（0-星球创建者，1-管理员，2-普通成员）
-    private Integer creatorRole = 2;
-
     // 点赞数
     private Integer likeCount = 0;
 
@@ -153,13 +150,6 @@ public class PlanetCommentDto implements Serializable {
         this.replyToUsername = replyToUsername;
     }
 
-    public Integer getCreatorRole() {
-        return creatorRole;
-    }
-
-    public void setCreatorRole(Integer creatorRole) {
-        this.creatorRole = creatorRole;
-    }
 
     public Integer getLikeCount() {
         return likeCount;

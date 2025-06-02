@@ -63,9 +63,6 @@ public class PlanetCommentService implements IPlanetCommentService {
             comment.setParentId(0);
         }
 
-        // 获取用户在星球中的角色
-        Integer userRole = commentMapper.getUserRoleInPlanet(commentDto.getUserId(), commentDto.getPlanetId());
-        comment.setCreatorRole(userRole);
 
         // 插入评论
         commentMapper.insertComment(comment);
@@ -257,8 +254,7 @@ public class PlanetCommentService implements IPlanetCommentService {
 
         // 权限验证：评论创建者、星球创建者、管理员可以删除
         boolean canDelete = comment.getUser().getUserId().equals(userId) ||
-                comment.getPlanet().getUserId().equals(userId) ||
-                commentMapper.getUserRoleInPlanet(userId, comment.getPlanet().getPlanetId()).equals(1);
+                comment.getPlanet().getUserId().equals(userId);
 
         if (!canDelete) {
             throw new RuntimeException("无权删除此评论");
@@ -337,7 +333,6 @@ public class PlanetCommentService implements IPlanetCommentService {
         dto.setLevel(comment.getLevel());
         dto.setParentId(comment.getParentId());
         dto.setReplyToUserId(comment.getReplyToUserId());
-        dto.setCreatorRole(comment.getCreatorRole());
         dto.setLikeCount(comment.getLikeCount());
         dto.setReplyCount(comment.getReplyCount());
         dto.setStatus(comment.getStatus());
