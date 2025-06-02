@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface PlanetMapper {
     //根据星球名查找
-    @Select("select * from tab_knowledge_planet where title=#{title}")
+    @Select("select * from tab_knowledge_planet where content_title=#{contentTitle}")
     KnowledgePlanet findByTitle(String title);
 
     //创建星球
@@ -29,7 +29,7 @@ public interface PlanetMapper {
     List<KnowledgePlanet> selectAll(Integer userId);
 
     // 根据关键词搜索用户创建的星球ID(模糊查询)
-    @Select("select planet_id from tab_knowledge_planet where title like CONCAT('%', #{keyword}, '%') and user_id = #{userId}")
+    @Select("select planet_id from tab_knowledge_planet where contentTitle like CONCAT('%', #{keyword}, '%') and user_id = #{userId}")
     List<String> searchIdsByKeyword(String keyword, Integer userId);
 
     @Update("UPDATE tab_knowledge_planet " +

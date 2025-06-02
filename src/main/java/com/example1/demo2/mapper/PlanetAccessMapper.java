@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.*;
 public interface PlanetAccessMapper {
 
     //根据星球名查找
-    @Select("select * from tab_knowledge_planet where title=#{title}")
+    @Select("select * from tab_knowledge_planet where content_title=#{contentTitle}")
     KnowledgePlanet findByTitle(String title);
     //随机访问
     @Select("select * from tab_knowledge_planet order by rand() limit 1")
