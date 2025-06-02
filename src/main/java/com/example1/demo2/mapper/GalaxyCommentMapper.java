@@ -10,14 +10,14 @@ public interface GalaxyCommentMapper {
 
     /**
      * 插入评论
-     * 修正：将 creator_id 改为 user_id，与数据库表结构保持一致
+     * 修正版本：确保正确返回自增主键
      */
     @Insert("INSERT INTO tab_galaxy_comment(user_id, galaxy_id, content, level, parent_comment_id, " +
             "reply_to_user_id, creator_role, release_time, update_time) " +
             "VALUES(#{user.userId}, #{knowledgeGalaxy.galaxyId}, #{content}, #{level}, #{parentId}, " +
             "#{replyToUserId}, #{creatorRole}, now(), now())")
     @Options(useGeneratedKeys = true, keyProperty = "galaxyCommentId", keyColumn = "galaxy_comment_id")
-    void insertComment(GalaxyComment comment);
+    int insertComment(GalaxyComment comment); // 修改返回类型为 int
 
     /**
      * 根据ID查询评论
