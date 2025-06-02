@@ -47,6 +47,18 @@ public interface INotificationService {
                                        Integer galaxyId, String galaxyName);
 
     /**
+     * 发送星球评论通知
+     * 通知星球相关人员有新评论
+     *
+     * @param senderId 评论者ID
+     * @param planetOwnerId 星球所有者ID
+     * @param planetId 星球ID
+     * @param planetName 星球名称评论内容
+     */
+    void sendPlanetCommentNotification(Integer senderId, Integer planetOwnerId,
+                                       String planetId, String planetName);
+
+    /**
      * 发送系统通知
      * 用于发送系统级别的通知
      *

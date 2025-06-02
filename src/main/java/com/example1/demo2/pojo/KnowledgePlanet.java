@@ -90,7 +90,7 @@ public class KnowledgePlanet {
     /**
      * 星球评论（一对多关联）
      */
-    @OneToMany(mappedBy = "planet", fetch = FetchType.LAZY,
+    @OneToMany(mappedBy = "knowledgePlanet", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanetComment> comments;
 

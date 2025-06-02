@@ -127,7 +127,7 @@ public class User {
     /**
      * 用户星球评论（一对多关联）
      */
-    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanetComment> Pcomments;
 
     // JPA回调方法，插入前自动设置创建时间和更新时间
