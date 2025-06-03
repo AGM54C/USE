@@ -184,7 +184,7 @@ public class PlanetCommentService implements IPlanetCommentService {
 
         // 获取一级评论
         List<PlanetComment> firstLevelComments = commentMapper.getFirstLevelComments(planetId, offset, size);
-
+        System.out.println(firstLevelComments);
         // 转换为DTO并加载回复
         return firstLevelComments.stream()
                 .map(comment -> {
@@ -243,6 +243,7 @@ public class PlanetCommentService implements IPlanetCommentService {
     public void deleteComment(Integer commentId, Integer userId) {
         // 获取评论信息
         PlanetComment comment = commentMapper.getCommentById(commentId);
+        System.out.println(comment);
         if (comment == null) {
             throw new RuntimeException("评论不存在");
         }

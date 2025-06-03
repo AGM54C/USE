@@ -23,18 +23,18 @@ public interface PlanetCommentMapper {
      * 根据ID查询评论
      * 修正：将方法引用改为正确的方法名
      */
-    @Select("SELECT * FROM tab_planet_comment WHERE planet_comment_id = #{commentId}")
-    @Results({
-            @Result(property = "planetCommentId", column = "planet_comment_id"),
-            @Result(property = "user", column = "user_id",
-                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
-            @Result(property = "planet", column = "planet_id",
-                    one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
-            @Result(property = "parentId", column = "parent_comment_id"),
-            @Result(property = "replyToUserId", column = "reply_to_user_id"),
-            @Result(property = "createTime", column = "release_time"),
-            @Result(property = "updateTime", column = "update_time")
-    })
+    @Select("SELECT * FROM tab_planet_comment WHERE comment_id = #{commentId}")
+//    @Results({
+//            @Result(property = "planetCommentId", column = "planet_comment_id"),
+//            @Result(property = "user", column = "user_id",
+//                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
+//            @Result(property = "planet", column = "planet_id",
+//                    one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
+//            @Result(property = "parentId", column = "parent_comment_id"),
+//            @Result(property = "replyToUserId", column = "reply_to_user_id"),
+//            @Result(property = "createTime", column = "release_time"),
+//            @Result(property = "updateTime", column = "update_time")
+//    })
     PlanetComment getCommentById(Integer commentId);
 
     /**
@@ -48,7 +48,7 @@ public interface PlanetCommentMapper {
             @Result(property = "planetCommentId", column = "planet_comment_id"),
             @Result(property = "user", column = "user_id",
                     one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
-            @Result(property = "planet", column = "planet_id",
+            @Result(property = "knowledgePlanet", column = "planet_id",
                     one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
             @Result(property = "parentId", column = "parent_comment_id"),
             @Result(property = "replyToUserId", column = "reply_to_user_id"),

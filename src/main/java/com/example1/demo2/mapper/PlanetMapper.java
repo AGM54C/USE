@@ -1,5 +1,6 @@
 package com.example1.demo2.mapper;
 
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import org.apache.ibatis.annotations.*;
 
@@ -10,6 +11,12 @@ public interface PlanetMapper {
     //根据星球名查找
     @Select("select * from tab_knowledge_planet where content_title=#{contentTitle}")
     KnowledgePlanet findByTitle(String title);
+
+    /**
+     * 根据星球ID查找星球
+     */
+    @Select("select * from tab_knowledge_planet where planet_id=#{planetId}")
+    KnowledgeGalaxy getPlanetById(String planetId);
 
     //创建星球
     @Insert("insert into tab_knowledge_planet(planet_id,user_id,content_title,description,theme_id,create_time,update_time)"

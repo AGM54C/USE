@@ -66,6 +66,7 @@ public class ConvertUtil {
         dto.setPlanetId(planet.getPlanetId());
         dto.setUserId(planet.getUserId());
         dto.setContentTitle(planet.getContentTitle());
+        dto.setContentDetail(planet.getContentDetail());
         dto.setDescription(planet.getDescription());
         dto.setCoverUrl(planet.getCoverUrl());
         dto.setThemeId(planet.getThemeId());
@@ -90,6 +91,7 @@ public class ConvertUtil {
         planet.setPlanetId(dto.getPlanetId());
         planet.setUserId(dto.getUserId());
         planet.setContentTitle(dto.getContentTitle());
+        planet.setContentDetail(dto.getContentDetail());
         planet.setDescription(dto.getDescription());
         planet.setCoverUrl(dto.getCoverUrl());
         planet.setThemeId(dto.getThemeId());
