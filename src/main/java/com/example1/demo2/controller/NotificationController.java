@@ -16,6 +16,7 @@ import java.util.Map;
  * 通知控制器
  * 这是通知系统的对外接口，就像邮局的服务窗口
  * 用户可以通过这些接口查看通知、标记已读、管理通知等
+ * 支持7种通知类型的完整管理
  */
 @RestController
 @RequestMapping("/notification")  // localhost:8081/notification/**
@@ -34,7 +35,9 @@ public class NotificationController {
      * 请求URL：localhost:8081/notification/list
      * 请求参数：
      *   - userId: 用户ID（必填）
-     *   - type: 通知类型（可选，1-评论回复 2-点赞 3-星系新评论 4-系统）
+     *   - type: 通知类型（可选）
+     *       1-星系评论回复 2-星系评论点赞 3-星系新评论
+     *       4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知
      *   - isRead: 是否已读（可选，0-未读 1-已读）
      *   - page: 页码（默认1）
      *   - size: 每页大小（默认20）
@@ -49,7 +52,7 @@ public class NotificationController {
      *       "senderName": "张三",
      *       "senderAvatar": "avatar_url",
      *       "type": 1,
-     *       "typeDesc": "评论回复",
+     *       "typeDesc": "星系评论回复",
      *       "title": "张三回复了你的评论",
      *       "content": "说得很有道理...",
      *       "createTimeAgo": "5分钟前",
@@ -67,6 +70,11 @@ public class NotificationController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size) {
         try {
+            // 参数验证
+            if (type != null && (type < 1 || type > 7)) {
+                return ResponseMessage.error("无效的通知类型");
+            }
+
             List<NotificationDto> notifications = notificationService.getUserNotifications(
                     userId, type, isRead, page, size
             );
@@ -93,8 +101,9 @@ public class NotificationController {
      *   "data": {
      *     "total": 5,           // 总未读数
      *     "byType": {           // 分类未读数
-     *       "1": 3,             // 评论回复: 3条
-     *       "2": 2              // 点赞: 2条
+     *       "1": 2,             // 星系评论回复: 2条
+     *       "2": 1,             // 星系评论点赞: 1条
+     *       "4": 2              // 星球评论回复: 2条
      *     }
      *   }
      * }
@@ -205,6 +214,34 @@ public class NotificationController {
     }
 
     /**
+     * 按类型标记为已读
+     *
+     * 标记特定类型的所有通知为已读
+     * 比如标记所有"点赞通知"为已读
+     *
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/notification/read/type
+     * 请求参数：
+     *   - userId: 用户ID
+     *   - type: 通知类型（1-7）
+     */
+    @PutMapping("/read/type")
+    public ResponseMessage markTypeAsRead(
+            @RequestParam @NotNull Integer userId,
+            @RequestParam @NotNull Integer type) {
+        try {
+            if (type < 1 || type > 7) {
+                return ResponseMessage.error("无效的通知类型");
+            }
+
+            int count = notificationService.markTypeAsRead(userId, type);
+            return ResponseMessage.success("成功标记" + count + "条通知为已读");
+        } catch (Exception e) {
+            return ResponseMessage.error("按类型标记失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 删除通知
      *
      * 软删除，不会真正从数据库删除
@@ -232,6 +269,36 @@ public class NotificationController {
     }
 
     /**
+     * 批量删除通知
+     *
+     * 批量软删除多条通知
+     *
+     * 前端请求方式：DELETE
+     * 请求URL：localhost:8081/notification/batch
+     * 请求体（JSON）：
+     * {
+     *   "userId": 1,
+     *   "notificationIds": [1, 2, 3]
+     * }
+     */
+    @DeleteMapping("/batch")
+    public ResponseMessage deleteNotificationBatch(@RequestBody Map<String, Object> request) {
+        try {
+            Integer userId = (Integer) request.get("userId");
+            List<Integer> notificationIds = (List<Integer>) request.get("notificationIds");
+
+            if (userId == null || notificationIds == null || notificationIds.isEmpty()) {
+                return ResponseMessage.error("参数错误");
+            }
+
+            int count = notificationService.deleteNotificationBatch(notificationIds, userId);
+            return ResponseMessage.success("成功删除" + count + "条通知");
+        } catch (Exception e) {
+            return ResponseMessage.error("批量删除失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 发送系统通知（管理员接口）
      *
      * 这个接口通常只有管理员能够调用
@@ -241,7 +308,7 @@ public class NotificationController {
      * 请求URL：localhost:8081/notification/system
      * 请求体（JSON）：
      * {
-     *   "receiverId": null,     // null表示全体用户
+     *   "receiverId": null,     // null表示全体用户，或指定用户ID
      *   "title": "系统维护通知",
      *   "content": "系统将于今晚12点进行维护..."
      * }
@@ -264,6 +331,27 @@ public class NotificationController {
             return ResponseMessage.success("系统通知发送成功");
         } catch (Exception e) {
             return ResponseMessage.error("发送失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 清理过期通知（系统接口）
+     *
+     * 这个接口应该由定时任务调用
+     * 用于定期清理已删除超过30天的通知
+     *
+     * 前端请求方式：POST
+     * 请求URL：localhost:8081/notification/clean
+     */
+    @PostMapping("/clean")
+    public ResponseMessage cleanExpiredNotifications() {
+        try {
+            // TODO: 添加系统权限验证
+
+            notificationService.cleanExpiredNotifications();
+            return ResponseMessage.success("过期通知清理完成");
+        } catch (Exception e) {
+            return ResponseMessage.error("清理失败: " + e.getMessage());
         }
     }
 }
