@@ -135,18 +135,15 @@ public class GalaxyCommentService implements IGalaxyCommentService {
     }
 
     /**
-     * 发送回复通知（预留接口）
-     * 实际项目中，这里可以集成消息队列或通知服务
+     * 发送回复通知
+     * 使用新的通知类型系统
      */
     private void sendReplyNotification(GalaxyComment comment) {
-        // 使用我们新创建的通知服务来发送通知
-        // 这就像把信件交给邮局去投递
-
         try {
-            // 发送评论回复通知
+            // 发送评论回复通知（类型1：星系评论回复）
             if (comment.getReplyToUserId() != null) {
                 // 如果是回复某个用户的评论
-                notificationService.sendCommentReplyNotification(
+                notificationService.sendGalaxyCommentReplyNotification(
                         comment.getUser().getUserId(),      // 发送者
                         comment.getReplyToUserId(),         // 接收者
                         comment.getGalaxyCommentId(),       // 评论ID
@@ -157,7 +154,7 @@ public class GalaxyCommentService implements IGalaxyCommentService {
                 // 通知一级评论的作者
                 GalaxyComment parentComment = commentMapper.getCommentById(comment.getParentId());
                 if (parentComment != null && !parentComment.getUser().getUserId().equals(comment.getUser().getUserId())) {
-                    notificationService.sendCommentReplyNotification(
+                    notificationService.sendGalaxyCommentReplyNotification(
                             comment.getUser().getUserId(),
                             parentComment.getUser().getUserId(),
                             comment.getGalaxyCommentId(),
@@ -166,10 +163,10 @@ public class GalaxyCommentService implements IGalaxyCommentService {
                 }
             }
 
-            // 如果评论者不是星系创建者，通知星系创建者
+            // 如果评论者不是星系创建者，通知星系创建者（类型3：星系新评论）
             Integer galaxyOwnerId = comment.getKnowledgeGalaxy().getUserId();
             if (!comment.getUser().getUserId().equals(galaxyOwnerId)) {
-                notificationService.sendGalaxyCommentNotification(
+                notificationService.sendGalaxyNewCommentNotification(
                         comment.getUser().getUserId(),
                         galaxyOwnerId,
                         comment.getKnowledgeGalaxy().getGalaxyId(),
@@ -179,10 +176,10 @@ public class GalaxyCommentService implements IGalaxyCommentService {
 
         } catch (Exception e) {
             // 通知发送失败不应该影响评论的发布
-            // 这就像即使邮局出了问题，也不应该影响信件的书写
             System.err.println("发送通知失败: " + e.getMessage());
         }
     }
+
 
     @Override
     public List<GalaxyCommentDto> getCommentList(@NotNull Integer galaxyId, int page, int size, Integer userId) {
@@ -225,19 +222,19 @@ public class GalaxyCommentService implements IGalaxyCommentService {
             commentMapper.insertLike(userId, galaxyCommentId);
             commentMapper.increaseLikeCount(galaxyCommentId);
 
-            // 发送点赞通知
-            // 这就像给对方发送一个"赞"的贴纸
+// 发送点赞通知（类型2：星系评论点赞）
             try {
                 // 不给自己的评论点赞发通知
                 if (!userId.equals(comment.getUser().getUserId())) {
-                    notificationService.sendLikeNotification(
+                    notificationService.sendGalaxyCommentLikeNotification(
                             userId,                              // 点赞者
                             comment.getUser().getUserId(),       // 被点赞者
                             galaxyCommentId,                     // 评论ID
                             comment.getContent()                 // 评论内容
                     );
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 // 通知发送失败不影响点赞功能
                 System.err.println("发送点赞通知失败: " + e.getMessage());
             }

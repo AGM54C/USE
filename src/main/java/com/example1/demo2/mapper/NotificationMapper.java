@@ -8,12 +8,14 @@ import java.util.Map;
 
 /**
  * 通知Mapper接口 - 负责与数据库交互
+ * 支持完整的7种通知类型和5种目标类型
  */
 @Mapper
 public interface NotificationMapper {
 
     /**
      * 插入一条新通知
+     * 注意：target_id已改为VARCHAR类型以支持不同格式的ID
      */
     @Insert("INSERT INTO tab_notification(receiver_id, sender_id, type, title, content, " +
             "target_type, target_id, extra_data, create_time) " +
@@ -30,7 +32,10 @@ public interface NotificationMapper {
             "INSERT INTO tab_notification(receiver_id, sender_id, type, title, content, " +
             "target_type, target_id, create_time) VALUES " +
             "<foreach collection='notifications' item='n' separator=','>" +
-            "(#{n.receiver.userId}, #{n.sender.userId}, #{n.type}, #{n.title}, #{n.content}, " +
+            "(#{n.receiver.userId}, " +
+            "<if test='n.sender != null'>#{n.sender.userId}</if>" +
+            "<if test='n.sender == null'>NULL</if>, " +
+            "#{n.type}, #{n.title}, #{n.content}, " +
             "#{n.targetType}, #{n.targetId}, now())" +
             "</foreach>" +
             "</script>")
@@ -51,16 +56,14 @@ public interface NotificationMapper {
             @Result(property = "targetId", column = "target_id"),
             @Result(property = "isRead", column = "is_read"),
             @Result(property = "createTime", column = "create_time"),
-            @Result(property = "readTime", column = "read_time")
+            @Result(property = "readTime", column = "read_time"),
+            @Result(property = "extraData", column = "extra_data")
     })
     Notification getNotificationById(Integer notificationId);
 
     /**
      * 查询用户的通知列表（分页）
-     * 就像查看自己的收件箱
-     * @param receiverId 接收者ID
-     * @param type 通知类型（可选，null表示全部）
-     * @param isRead 是否已读（可选，null表示全部）
+     * 支持按通知类型和已读状态筛选
      */
     @Select("<script>" +
             "SELECT * FROM tab_notification " +
@@ -80,7 +83,8 @@ public interface NotificationMapper {
             @Result(property = "targetId", column = "target_id"),
             @Result(property = "isRead", column = "is_read"),
             @Result(property = "createTime", column = "create_time"),
-            @Result(property = "readTime", column = "read_time")
+            @Result(property = "readTime", column = "read_time"),
+            @Result(property = "extraData", column = "extra_data")
     })
     List<Notification> getNotificationsByUser(@Param("receiverId") Integer receiverId,
                                               @Param("type") Integer type,
@@ -90,7 +94,7 @@ public interface NotificationMapper {
 
     /**
      * 统计用户未读通知数量
-     * 就像数一下信箱里有多少未开封的信件
+     * 支持按通知类型统计
      */
     @Select("<script>" +
             "SELECT COUNT(*) FROM tab_notification " +
@@ -112,7 +116,6 @@ public interface NotificationMapper {
 
     /**
      * 标记通知为已读
-     * 就像在信件上盖上"已阅"的印章
      */
     @Update("UPDATE tab_notification SET is_read = 1, read_time = now() " +
             "WHERE notification_id = #{notificationId} AND receiver_id = #{receiverId}")
@@ -121,7 +124,6 @@ public interface NotificationMapper {
 
     /**
      * 批量标记为已读
-     * 一次性标记多条通知
      */
     @Update("<script>" +
             "UPDATE tab_notification SET is_read = 1, read_time = now() " +
@@ -141,8 +143,14 @@ public interface NotificationMapper {
     int markAllAsRead(Integer receiverId);
 
     /**
+     * 标记特定类型的所有通知为已读
+     */
+    @Update("UPDATE tab_notification SET is_read = 1, read_time = now() " +
+            "WHERE receiver_id = #{receiverId} AND type = #{type} AND is_read = 0")
+    int markTypeAsRead(@Param("receiverId") Integer receiverId, @Param("type") Integer type);
+
+    /**
      * 软删除通知
-     * 并不真正删除数据，只是标记为已删除状态
      */
     @Update("UPDATE tab_notification SET status = 1 " +
             "WHERE notification_id = #{notificationId} AND receiver_id = #{receiverId}")
@@ -150,8 +158,21 @@ public interface NotificationMapper {
                            @Param("receiverId") Integer receiverId);
 
     /**
+     * 批量删除通知
+     */
+    @Update("<script>" +
+            "UPDATE tab_notification SET status = 1 " +
+            "WHERE receiver_id = #{receiverId} AND notification_id IN " +
+            "<foreach collection='notificationIds' item='id' open='(' separator=',' close=')'>" +
+            "#{id}" +
+            "</foreach>" +
+            "</script>")
+    int deleteNotificationBatch(@Param("receiverId") Integer receiverId,
+                                @Param("notificationIds") List<Integer> notificationIds);
+
+    /**
      * 清理过期通知
-     * 定期清理超过指定天数的通知
+     * 定期清理超过指定天数的已删除通知
      */
     @Delete("DELETE FROM tab_notification " +
             "WHERE create_time < DATE_SUB(NOW(), INTERVAL #{days} DAY) " +
@@ -169,6 +190,38 @@ public interface NotificationMapper {
     int checkDuplicateNotification(@Param("receiverId") Integer receiverId,
                                    @Param("senderId") Integer senderId,
                                    @Param("type") Integer type,
-                                   @Param("targetId") Integer targetId,
+                                   @Param("targetId") String targetId,
                                    @Param("minutes") int minutes);
+
+    /**
+     * 获取特定目标的通知
+     * 比如获取某个评论的所有相关通知
+     */
+    @Select("SELECT * FROM tab_notification " +
+            "WHERE target_type = #{targetType} AND target_id = #{targetId} " +
+            "ORDER BY create_time DESC")
+    @Results({
+            @Result(property = "notificationId", column = "notification_id"),
+            @Result(property = "receiver", column = "receiver_id",
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
+            @Result(property = "sender", column = "sender_id",
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
+            @Result(property = "targetType", column = "target_type"),
+            @Result(property = "targetId", column = "target_id"),
+            @Result(property = "isRead", column = "is_read"),
+            @Result(property = "createTime", column = "create_time"),
+            @Result(property = "readTime", column = "read_time")
+    })
+    List<Notification> getNotificationsByTarget(@Param("targetType") Integer targetType,
+                                                @Param("targetId") String targetId);
+
+    /**
+     * 统计用户发送的通知数量
+     * 用于防止恶意刷通知
+     */
+    @Select("SELECT COUNT(*) FROM tab_notification " +
+            "WHERE sender_id = #{senderId} " +
+            "AND create_time > DATE_SUB(NOW(), INTERVAL #{hours} HOUR)")
+    int countSentNotifications(@Param("senderId") Integer senderId,
+                               @Param("hours") int hours);
 }

@@ -7,32 +7,42 @@ import java.util.Map;
 /**
  * 通知服务接口
  * 定义了通知系统需要提供的所有功能
+ * 支持7种通知类型：
+ * 1. 星系评论回复
+ * 2. 星系评论点赞
+ * 3. 星系新评论
+ * 4. 星球评论回复
+ * 5. 星球评论点赞
+ * 6. 星球新评论
+ * 7. 系统通知
  */
 public interface INotificationService {
 
+    // ==================== 星系相关通知 ====================
+
     /**
-     * 发送评论回复通知
-     * 当有人回复你的评论时调用
+     * 发送星系评论回复通知
+     * 当有人回复星系评论时调用
      *
      * @param senderId 发送者ID
      * @param receiverId 接收者ID
      * @param commentId 相关评论ID
      * @param content 回复内容
      */
-    void sendCommentReplyNotification(Integer senderId, Integer receiverId,
-                                      Integer commentId, String content);
+    void sendGalaxyCommentReplyNotification(Integer senderId, Integer receiverId,
+                                            Integer commentId, String content);
 
     /**
-     * 发送点赞通知
-     * 当有人点赞你的评论时调用
+     * 发送星系评论点赞通知
+     * 当有人点赞星系评论时调用
      *
      * @param senderId 点赞者ID
      * @param receiverId 被点赞者ID
      * @param commentId 被点赞的评论ID
      * @param commentContent 评论内容（用于展示）
      */
-    void sendLikeNotification(Integer senderId, Integer receiverId,
-                              Integer commentId, String commentContent);
+    void sendGalaxyCommentLikeNotification(Integer senderId, Integer receiverId,
+                                           Integer commentId, String commentContent);
 
     /**
      * 发送星系新评论通知
@@ -43,20 +53,48 @@ public interface INotificationService {
      * @param galaxyId 星系ID
      * @param galaxyName 星系名称
      */
-    void sendGalaxyCommentNotification(Integer senderId, Integer galaxyOwnerId,
-                                       Integer galaxyId, String galaxyName);
+    void sendGalaxyNewCommentNotification(Integer senderId, Integer galaxyOwnerId,
+                                          Integer galaxyId, String galaxyName);
+
+    // ==================== 星球相关通知 ====================
 
     /**
-     * 发送星球评论通知
-     * 通知星球相关人员有新评论
+     * 发送星球评论回复通知
+     * 当有人回复星球评论时调用
+     *
+     * @param senderId 发送者ID
+     * @param receiverId 接收者ID
+     * @param commentId 相关评论ID
+     * @param content 回复内容
+     */
+    void sendPlanetCommentReplyNotification(Integer senderId, Integer receiverId,
+                                            Integer commentId, String content);
+
+    /**
+     * 发送星球评论点赞通知
+     * 当有人点赞星球评论时调用
+     *
+     * @param senderId 点赞者ID
+     * @param receiverId 被点赞者ID
+     * @param commentId 被点赞的评论ID
+     * @param commentContent 评论内容（用于展示）
+     */
+    void sendPlanetCommentLikeNotification(Integer senderId, Integer receiverId,
+                                           Integer commentId, String commentContent);
+
+    /**
+     * 发送星球新评论通知
+     * 通知星球创建者有新评论
      *
      * @param senderId 评论者ID
      * @param planetOwnerId 星球所有者ID
      * @param planetId 星球ID
-     * @param planetName 星球名称评论内容
+     * @param planetName 星球名称
      */
-    void sendPlanetCommentNotification(Integer senderId, Integer planetOwnerId,
-                                       String planetId, String planetName);
+    void sendPlanetNewCommentNotification(Integer senderId, Integer planetOwnerId,
+                                          String planetId, String planetName);
+
+    // ==================== 系统通知 ====================
 
     /**
      * 发送系统通知
@@ -68,12 +106,14 @@ public interface INotificationService {
      */
     void sendSystemNotification(Integer receiverId, String title, String content);
 
+    // ==================== 通知查询和管理 ====================
+
     /**
      * 获取用户通知列表
      *
      * @param userId 用户ID
-     * @param type 通知类型（可选）
-     * @param isRead 是否已读（可选）
+     * @param type 通知类型（可选，1-7）
+     * @param isRead 是否已读（可选，0未读1已读）
      * @param page 页码
      * @param size 每页大小
      * @return 通知列表
@@ -125,6 +165,15 @@ public interface INotificationService {
     int markAllAsRead(Integer userId);
 
     /**
+     * 标记特定类型的所有通知为已读
+     *
+     * @param userId 用户ID
+     * @param type 通知类型
+     * @return 标记的数量
+     */
+    int markTypeAsRead(Integer userId, Integer type);
+
+    /**
      * 删除通知
      *
      * @param notificationId 通知ID
@@ -134,8 +183,55 @@ public interface INotificationService {
     boolean deleteNotification(Integer notificationId, Integer userId);
 
     /**
+     * 批量删除通知
+     *
+     * @param notificationIds 通知ID列表
+     * @param userId 用户ID
+     * @return 删除的数量
+     */
+    int deleteNotificationBatch(List<Integer> notificationIds, Integer userId);
+
+    /**
      * 清理过期通知
      * 定时任务调用，清理超过30天的已删除通知
      */
     void cleanExpiredNotifications();
+
+    // ==================== 兼容旧接口（已废弃，建议使用新接口） ====================
+
+    /**
+     * @deprecated 使用 sendGalaxyCommentReplyNotification 或 sendPlanetCommentReplyNotification
+     */
+    @Deprecated
+    default void sendCommentReplyNotification(Integer senderId, Integer receiverId,
+                                              Integer commentId, String content) {
+        sendGalaxyCommentReplyNotification(senderId, receiverId, commentId, content);
+    }
+
+    /**
+     * @deprecated 使用 sendGalaxyCommentLikeNotification 或 sendPlanetCommentLikeNotification
+     */
+    @Deprecated
+    default void sendLikeNotification(Integer senderId, Integer receiverId,
+                                      Integer commentId, String commentContent) {
+        sendGalaxyCommentLikeNotification(senderId, receiverId, commentId, commentContent);
+    }
+
+    /**
+     * @deprecated 使用 sendGalaxyNewCommentNotification
+     */
+    @Deprecated
+    default void sendGalaxyCommentNotification(Integer senderId, Integer galaxyOwnerId,
+                                               Integer galaxyId, String galaxyName) {
+        sendGalaxyNewCommentNotification(senderId, galaxyOwnerId, galaxyId, galaxyName);
+    }
+
+    /**
+     * @deprecated 使用 sendPlanetNewCommentNotification
+     */
+    @Deprecated
+    default void sendPlanetCommentNotification(Integer senderId, Integer planetOwnerId,
+                                               String planetId, String planetName) {
+        sendPlanetNewCommentNotification(senderId, planetOwnerId, planetId, planetName);
+    }
 }

@@ -58,10 +58,10 @@ public class Notification {
 
     /**
      * 关联的目标ID
-     * 根据targetType的不同，可能是评论ID、星系ID等
+     * 根据targetType的不同，可能是评论ID、星系ID、星球ID等
      */
     @Column(name = "target_id")
-    private Integer targetId;
+    private String targetId;  // 改为String类型，以兼容星球的String ID
 
     /**
      * 是否已读
@@ -161,11 +161,11 @@ public class Notification {
         this.targetType = targetType;
     }
 
-    public Integer getTargetId() {
+    public String getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(Integer targetId) {
+    public void setTargetId(String targetId) {
         this.targetId = targetId;
     }
 
@@ -217,10 +217,10 @@ public class Notification {
 enum NotificationType {
     GALAXY_COMMENT_REPLY(1, "星系评论回复"),
     GALAXY_COMMENT_LIKE(2, "星系评论点赞"),
-    GALAXY_COMMENT(3, "星系新评论"),
+    GALAXY_NEW_COMMENT(3, "星系新评论"),
     PLANET_COMMENT_REPLY(4, "星球评论回复"),
     PLANET_COMMENT_LIKE(5, "星球评论点赞"),
-    PLANET_COMMENT(6, "星球新评论"),
+    PLANET_NEW_COMMENT(6, "星球新评论"),
     SYSTEM(7, "系统通知");
 
     private final int code;
@@ -237,6 +237,15 @@ enum NotificationType {
 
     public String getDescription() {
         return description;
+    }
+
+    public static NotificationType fromCode(int code) {
+        for (NotificationType type : values()) {
+            if (type.code == code) {
+                return type;
+            }
+        }
+        return null;
     }
 }
 
@@ -260,5 +269,18 @@ enum TargetType {
 
     public int getCode() {
         return code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static TargetType fromCode(int code) {
+        for (TargetType type : values()) {
+            if (type.code == code) {
+                return type;
+            }
+        }
+        return null;
     }
 }

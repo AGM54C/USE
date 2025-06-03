@@ -10,6 +10,7 @@ import java.util.Map;
 
 /**
  * 通知DTO
+ * 用于前后端数据传输，包含了完整的通知信息
  */
 public class NotificationDto implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,7 +28,7 @@ public class NotificationDto implements Serializable {
     private String senderName;
     private String senderAvatar;  // 发送者头像，用于前端展示
 
-    // 通知类型（1-评论回复 2-评论点赞 3-星系新评论 4-系统通知）
+    // 通知类型（1-星系评论回复 2-星系评论点赞 3-星系新评论 4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知）
     @NotNull(groups = {Create.class}, message = "通知类型不能为空")
     private Integer type;
     private String typeDesc;  // 类型描述，便于前端理解
@@ -40,9 +41,9 @@ public class NotificationDto implements Serializable {
     @Size(max = 500, message = "内容长度不能超过500字符")
     private String content;
 
-    // 关联目标
+    // 关联目标（1-星系评论 2-星系 3-星球评论 4-星球 5-其他）
     private Integer targetType;
-    private Integer targetId;
+    private String targetId;  // 改为String类型，兼容不同ID格式
     private String targetTitle;  // 目标标题，如评论内容的前20字
 
     // 状态信息
@@ -73,43 +74,102 @@ public class NotificationDto implements Serializable {
     public NotificationDto() {}
 
     /**
-     * 快速创建评论回复通知的构造函数
+     * 快速创建星系评论回复通知的构造函数
      */
-    public static NotificationDto createCommentReplyNotification(
+    public static NotificationDto createGalaxyCommentReplyNotification(
             Integer receiverId, Integer senderId, String senderName,
             Integer commentId, String commentContent) {
         NotificationDto dto = new NotificationDto();
         dto.setReceiverId(receiverId);
         dto.setSenderId(senderId);
         dto.setSenderName(senderName);
-        dto.setType(1);  // 评论回复
+        dto.setType(1);  // 星系评论回复
         dto.setTitle(senderName + " 回复了你的评论");
         dto.setContent(commentContent.length() > 50 ?
                 commentContent.substring(0, 50) + "..." : commentContent);
-        dto.setTargetType(1);  // 评论
-        dto.setTargetId(commentId);
+        dto.setTargetType(1);  // 星系评论
+        dto.setTargetId(String.valueOf(commentId));
         dto.setIsRead(0);
         dto.setStatus(0);
         return dto;
     }
 
     /**
-     * 快速创建点赞通知的构造函数
+     * 快速创建星系评论点赞通知的构造函数
      */
-    public static NotificationDto createLikeNotification(
+    public static NotificationDto createGalaxyLikeNotification(
             Integer receiverId, Integer senderId, String senderName,
             Integer commentId, String commentContent) {
         NotificationDto dto = new NotificationDto();
         dto.setReceiverId(receiverId);
         dto.setSenderId(senderId);
         dto.setSenderName(senderName);
-        dto.setType(2);  // 点赞
+        dto.setType(2);  // 星系评论点赞
         dto.setTitle(senderName + " 赞了你的评论");
         dto.setContent("你的评论收到了一个赞");
-        dto.setTargetType(1);  // 评论
-        dto.setTargetId(commentId);
+        dto.setTargetType(1);  // 星系评论
+        dto.setTargetId(String.valueOf(commentId));
         dto.setTargetTitle(commentContent.length() > 30 ?
                 commentContent.substring(0, 30) + "..." : commentContent);
+        dto.setIsRead(0);
+        dto.setStatus(0);
+        return dto;
+    }
+
+    /**
+     * 快速创建星球评论回复通知的构造函数
+     */
+    public static NotificationDto createPlanetCommentReplyNotification(
+            Integer receiverId, Integer senderId, String senderName,
+            Integer commentId, String commentContent) {
+        NotificationDto dto = new NotificationDto();
+        dto.setReceiverId(receiverId);
+        dto.setSenderId(senderId);
+        dto.setSenderName(senderName);
+        dto.setType(4);  // 星球评论回复
+        dto.setTitle(senderName + " 回复了你的评论");
+        dto.setContent(commentContent.length() > 50 ?
+                commentContent.substring(0, 50) + "..." : commentContent);
+        dto.setTargetType(3);  // 星球评论
+        dto.setTargetId(String.valueOf(commentId));
+        dto.setIsRead(0);
+        dto.setStatus(0);
+        return dto;
+    }
+
+    /**
+     * 快速创建星球评论点赞通知的构造函数
+     */
+    public static NotificationDto createPlanetLikeNotification(
+            Integer receiverId, Integer senderId, String senderName,
+            Integer commentId, String commentContent) {
+        NotificationDto dto = new NotificationDto();
+        dto.setReceiverId(receiverId);
+        dto.setSenderId(senderId);
+        dto.setSenderName(senderName);
+        dto.setType(5);  // 星球评论点赞
+        dto.setTitle(senderName + " 赞了你的评论");
+        dto.setContent("你的评论收到了一个赞");
+        dto.setTargetType(3);  // 星球评论
+        dto.setTargetId(String.valueOf(commentId));
+        dto.setTargetTitle(commentContent.length() > 30 ?
+                commentContent.substring(0, 30) + "..." : commentContent);
+        dto.setIsRead(0);
+        dto.setStatus(0);
+        return dto;
+    }
+
+    /**
+     * 快速创建系统通知的构造函数
+     */
+    public static NotificationDto createSystemNotification(
+            Integer receiverId, String title, String content) {
+        NotificationDto dto = new NotificationDto();
+        dto.setReceiverId(receiverId);
+        dto.setType(7);  // 系统通知
+        dto.setTitle(title);
+        dto.setContent(content);
+        dto.setTargetType(5);  // 其他
         dto.setIsRead(0);
         dto.setStatus(0);
         return dto;
@@ -204,11 +264,11 @@ public class NotificationDto implements Serializable {
         this.targetType = targetType;
     }
 
-    public Integer getTargetId() {
+    public String getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(Integer targetId) {
+    public void setTargetId(String targetId) {
         this.targetId = targetId;
     }
 
