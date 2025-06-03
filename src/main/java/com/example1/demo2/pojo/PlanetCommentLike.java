@@ -14,8 +14,8 @@ public class PlanetCommentLike {
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(name = "comment_id", nullable = false)
-    private Integer commentId;
+    @Column(name = "planet_comment_id", nullable = false)
+    private Integer planetCommentId;
 
     @Column(name = "create_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -38,12 +38,12 @@ public class PlanetCommentLike {
         this.userId = userId;
     }
 
-    public Integer getCommentId() {
-        return commentId;
+    public Integer getPlanetCommentId() {
+        return planetCommentId;
     }
 
-    public void setCommentId(Integer commentId) {
-        this.commentId = commentId;
+    public void setPlanetCommentId(Integer planetCommentId) {
+        this.planetCommentId = planetCommentId;
     }
 
     public Date getCreateTime() {

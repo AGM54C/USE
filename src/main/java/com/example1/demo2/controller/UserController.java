@@ -358,6 +358,32 @@ public class UserController {
     }
 
     /**
+     * 加载最喜欢星球数据接口
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/user/loadingfavorplanet
+     * 请求参数（JSON格式）：
+     * {
+     *   无
+     * }
+     * 返回值：最喜欢星球
+     */
+    @GetMapping("/loadingfavorplanet")
+    public ResponseMessage<KnowledgePlanet> loadingfavorplanet() {
+        //通过id查询用户
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            //用户不存在
+            return ResponseMessage.error("用户不存在");
+        }
+
+        KnowledgePlanet planet = userService.getFavorPlanet(u.getFavoritePlanetId());
+        return ResponseMessage.success(planet);
+    }
+
+
+    /**
      * 搜索星球(模糊搜索)
      * 前端请求方式：GET
      * 请求URL：localhost:8081/user/selectplanet
@@ -391,12 +417,12 @@ public class UserController {
      * 选择最喜欢星球
      * 前端请求方式：PUT
      * 请求URL：localhost:8081/user/setfavorplanet
-     * 请求参数（JSON格式）：
-     * {
+     * 请求参数（Param格式）：
+     *
      *   "planetId":String             //星球id
-     * }
+     *
      * 返回
-     * 返回值：成功返回星球ID，失败返回错误信息
+     * 返回值：成功返回成功信息，失败返回错误信息
      */
     @PutMapping("/setfavorplanet")
     public ResponseMessage<String> setfavorplanet(@RequestParam("planetId") String planetId) {
@@ -411,7 +437,7 @@ public class UserController {
 
         // 更新用户的最喜欢星球
         userService.updateFavoritePlanet(userId, planetId);
-        return ResponseMessage.success(planetId);
+        return ResponseMessage.success("最喜欢星球成功设置！");
     }
 
     /**

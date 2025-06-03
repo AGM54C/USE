@@ -16,7 +16,7 @@ public interface PlanetMapper {
      * 根据星球ID查找星球
      */
     @Select("select * from tab_knowledge_planet where planet_id=#{planetId}")
-    KnowledgeGalaxy getPlanetById(String planetId);
+    KnowledgePlanet getPlanetById(String planetId);
 
     //创建星球
     @Insert("insert into tab_knowledge_planet(planet_id,user_id,content_title,description,theme_id,create_time,update_time)"
@@ -48,11 +48,6 @@ public interface PlanetMapper {
             "SET cover_url = #{newCoverUrl}, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void updateCoverUrl(String planetId, String newCoverUrl);
-
-    @Update("UPDATE tab_knowledge_planet " +
-            "SET visibility = #{newVisibility}, update_time = NOW() " +
-            "WHERE planet_id = #{planetId}")
-    void updateVisibility(String planetId, Integer newVisibility);
 
     @Delete("DELETE FROM tab_knowledge_planet WHERE planet_id = #{planetId}")
     void deleteById(String planetId);
@@ -86,7 +81,11 @@ public interface PlanetMapper {
     void updatevisitCount(String planetId);
 
     @Update("UPDATE tab_knowledge_planet " +
-            "SET status = 1, update_time = NOW() " +
+            "SET visibility = 1, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void publish(String planetId);
+
+    // 获取用户最喜欢星球
+    @Select("select * from tab_knowledge_planet where planet_id = #{favorPlanetId}")
+    KnowledgePlanet getFavorPlanet(String favorPlanetId);
 }

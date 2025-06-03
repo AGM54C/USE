@@ -13,7 +13,7 @@ public interface PlanetCommentMapper {
      * 修正版本：确保正确返回自增主键
      */
     @Insert("INSERT INTO tab_planet_comment(user_id, planet_id, content, level, parent_comment_id, " +
-            "reply_to_user_id, release_time, update_time) " +
+            "reply_to_user_id, create_time, update_time) " +
             "VALUES(#{user.userId}, #{planet.planetId}, #{content}, #{level}, #{parentId}, " +
             "#{replyToUserId}, now(), now())")
     @Options(useGeneratedKeys = true, keyProperty = "planetCommentId", keyColumn = "planet_comment_id")
@@ -23,18 +23,18 @@ public interface PlanetCommentMapper {
      * 根据ID查询评论
      * 修正：将方法引用改为正确的方法名
      */
-    @Select("SELECT * FROM tab_planet_comment WHERE comment_id = #{commentId}")
-//    @Results({
-//            @Result(property = "planetCommentId", column = "planet_comment_id"),
-//            @Result(property = "user", column = "user_id",
-//                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
-//            @Result(property = "planet", column = "planet_id",
-//                    one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
-//            @Result(property = "parentId", column = "parent_comment_id"),
-//            @Result(property = "replyToUserId", column = "reply_to_user_id"),
-//            @Result(property = "createTime", column = "release_time"),
-//            @Result(property = "updateTime", column = "update_time")
-//    })
+    @Select("SELECT * FROM tab_planet_comment WHERE planet_comment_id = #{commentId}")
+    @Results({
+            @Result(property = "planetCommentId", column = "planet_comment_id"),
+            @Result(property = "user", column = "user_id",
+                    one = @One(select = "com.example1.demo2.mapper.UserMapper.findById")),
+            @Result(property = "planet", column = "planet_id",
+                    one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
+            @Result(property = "parentId", column = "parent_comment_id"),
+            @Result(property = "replyToUserId", column = "reply_to_user_id"),
+            @Result(property = "createTime", column = "create_time"),
+            @Result(property = "updateTime", column = "update_time")
+    })
     PlanetComment getCommentById(Integer commentId);
 
     /**
@@ -43,7 +43,7 @@ public interface PlanetCommentMapper {
      */
     @Select("SELECT * FROM tab_planet_comment WHERE planet_id = #{planetId} " +
             "AND parent_comment_id = 0 AND status = 0 " +
-            "ORDER BY release_time DESC LIMIT #{offset}, #{size}")
+            "ORDER BY create_time DESC LIMIT #{offset}, #{size}")
     @Results({
             @Result(property = "planetCommentId", column = "planet_comment_id"),
             @Result(property = "user", column = "user_id",
@@ -52,7 +52,7 @@ public interface PlanetCommentMapper {
                     one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
             @Result(property = "parentId", column = "parent_comment_id"),
             @Result(property = "replyToUserId", column = "reply_to_user_id"),
-            @Result(property = "createTime", column = "release_time"),
+            @Result(property = "createTime", column = "create_time"),
             @Result(property = "updateTime", column = "update_time")
     })
     List<PlanetComment> getFirstLevelComments(@Param("planetId") @NotNull String planetId,
@@ -64,7 +64,7 @@ public interface PlanetCommentMapper {
      * 修正：将方法引用改为正确的方法名
      */
     @Select("SELECT * FROM tab_planet_comment WHERE parent_comment_id = #{parentId} " +
-            "AND status = 0 ORDER BY release_time ASC")
+            "AND status = 0 ORDER BY create_time ASC")
     @Results({
             @Result(property = "planetCommentId", column = "planet_comment_id"),
             @Result(property = "user", column = "user_id",
@@ -73,7 +73,7 @@ public interface PlanetCommentMapper {
                     one = @One(select = "com.example1.demo2.mapper.PlanetMapper.getPlanetById")),
             @Result(property = "parentId", column = "parent_comment_id"),
             @Result(property = "replyToUserId", column = "reply_to_user_id"),
-            @Result(property = "createTime", column = "release_time"),
+            @Result(property = "createTime", column = "create_time"),
             @Result(property = "updateTime", column = "update_time")
     })
     List<PlanetComment> getRepliesByParentId(Integer parentId);
@@ -121,7 +121,7 @@ public interface PlanetCommentMapper {
     /**
      * 删除点赞记录
      */
-    @Delete("DELETE FROM tab_comment_like WHERE user_id = #{userId} AND comment_id = #{commentId}")
+    @Delete("DELETE FROM tab_comment_like WHERE user_id = #{userId} AND planet_comment_id = #{commentId}")
     void deleteLike(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**

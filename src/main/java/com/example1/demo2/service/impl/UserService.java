@@ -121,6 +121,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public KnowledgePlanet getFavorPlanet(String favorPlanetId) {
+        return planetMapper.getFavorPlanet(favorPlanetId);
+    }
+
+    @Override
     public void register(String nickname, String password,String email) {
         //加密处理
         String passwordHash= BCryptUtil.hashPassword(password);

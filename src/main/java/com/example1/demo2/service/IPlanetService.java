@@ -19,8 +19,6 @@ public interface IPlanetService {
 
     void updateCoverUrl(String planetId, String coverUrl);
 
-    void updateVisibility(String planetId, Integer visibility);
-
     void addCommentToPlanet(String planetId, Long commentId);
 
     void removeCommentFromPlanet(String planetId, Long commentId);
