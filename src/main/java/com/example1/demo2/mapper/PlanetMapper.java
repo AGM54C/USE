@@ -49,11 +49,6 @@ public interface PlanetMapper {
             "WHERE planet_id = #{planetId}")
     void updateCoverUrl(String planetId, String newCoverUrl);
 
-    @Update("UPDATE tab_knowledge_planet " +
-            "SET visibility = #{newVisibility}, update_time = NOW() " +
-            "WHERE planet_id = #{planetId}")
-    void updateVisibility(String planetId, Integer newVisibility);
-
     @Delete("DELETE FROM tab_knowledge_planet WHERE planet_id = #{planetId}")
     void deleteById(String planetId);
 
@@ -86,7 +81,11 @@ public interface PlanetMapper {
     void updatevisitCount(String planetId);
 
     @Update("UPDATE tab_knowledge_planet " +
-            "SET status = 1, update_time = NOW() " +
+            "SET visibility = 1, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void publish(String planetId);
+
+    // 获取用户最喜欢星球
+    @Select("select * from tab_knowledge_planet where planet_id = #{favorPlanetId}")
+    KnowledgePlanet getFavorPlanet(String favorPlanetId);
 }

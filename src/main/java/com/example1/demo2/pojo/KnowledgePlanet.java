@@ -58,7 +58,7 @@ public class KnowledgePlanet {
     private String colorScheme;
 
     /** 可见性：0-私有，1-公开 */
-    @Column(name = "visibility", nullable = false, columnDefinition = "tinyint default 1")
+    @Column(name = "visibility", nullable = false, columnDefinition = "tinyint default 0")
     private Integer visibility;
 
     /** 燃料值 */
@@ -72,10 +72,6 @@ public class KnowledgePlanet {
     /** 访问量 */
     @Column(name = "visit_count", nullable = false, columnDefinition = "int default 0")
     private Integer visitCount;
-
-    /** 状态：0-草稿，1-已发布，2-已删除 */
-    @Column(name = "status", nullable = false, columnDefinition = "tinyint default 0")
-    private Integer status;
 
     /** 创建时间 */
     @Column(name = "create_time", nullable = false, updatable = false)
@@ -117,11 +113,6 @@ public class KnowledgePlanet {
     public String getPlanetId() { return planetId; }
     public void setPlanetId(String planetId) { this.planetId = planetId; }
 
-
-
-
-
-
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
@@ -148,9 +139,6 @@ public class KnowledgePlanet {
 
     public Integer getVisitCount() { return visitCount; }
     public void setVisitCount(Integer visitCount) { this.visitCount = visitCount; }
-
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
 
     public Date getCreateTime() { return createTime; }
     public void setCreateTime(Date createTime) { this.createTime = createTime; }
@@ -214,7 +202,6 @@ public class KnowledgePlanet {
                 ", fuelValue=" + fuelValue +
                 ", brightness=" + brightness +
                 ", visitCount=" + visitCount +
-                ", status=" + status +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", comments=" + comments +

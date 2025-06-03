@@ -66,4 +66,5 @@ public interface UserMapper {
     @Update("update tab_user set favorite_galaxy_id=#{galaxyId} " +
             " where user_id=#{userId}")
     void updateFavoriteGalaxy(Integer userId, Integer galaxyId);
+
 }

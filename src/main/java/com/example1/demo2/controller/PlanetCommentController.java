@@ -58,12 +58,8 @@ public class PlanetCommentController {
                                           @RequestParam(defaultValue = "1") int page,
                                           @RequestParam(defaultValue = "20") int size,
                                           @RequestParam(required = false) Integer userId) {
-        try {
             List<PlanetCommentDto> comments = commentService.getCommentList(planetId, page, size, userId);
             return ResponseMessage.success(comments);
-        } catch (Exception e) {
-            return ResponseMessage.error(e.getMessage());
-        }
     }
 
     /**

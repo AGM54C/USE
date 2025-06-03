@@ -76,7 +76,6 @@ public class ConvertUtil {
         dto.setFuelValue(planet.getFuelValue());
         dto.setBrightness(planet.getBrightness());
         dto.setVisitCount(planet.getVisitCount());
-        dto.setStatus(planet.getStatus());
         dto.setCreateTime(planet.getCreateTime());
         dto.setUpdateTime(planet.getUpdateTime());
         return dto;
@@ -101,7 +100,6 @@ public class ConvertUtil {
         planet.setFuelValue(dto.getFuelValue());
         planet.setBrightness(dto.getBrightness());
         planet.setVisitCount(dto.getVisitCount());
-        planet.setStatus(dto.getStatus());
         // 时间字段由数据库自动管理，此处可省略或按需设置
         return planet;
     }

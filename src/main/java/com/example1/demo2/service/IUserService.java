@@ -58,4 +58,6 @@ public interface IUserService {
     List<KnowledgeGalaxy> GetGalaxiesByNameAndCreatorId(String name, Integer userId);
 
     List<KnowledgeGalaxy> GetGalaxiesByNameExcludeUser(String name, Integer userId);
+
+    KnowledgePlanet getFavorPlanet(String favorPlanetId);
 }

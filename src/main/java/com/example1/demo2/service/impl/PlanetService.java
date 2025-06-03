@@ -46,12 +46,6 @@ public class PlanetService implements IPlanetService {
     }
 
     @Override
-    public void updateVisibility(String planetId, Integer newVisibility) {
-        planetMapper.updateVisibility(planetId, newVisibility);
-    }
-
-
-    @Override
     @Transactional
     public void addCommentToPlanet(String planetId, Long commentId) {
         commentMapper.updatePlanetId(commentId, planetId);

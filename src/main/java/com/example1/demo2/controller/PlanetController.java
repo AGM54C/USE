@@ -165,30 +165,6 @@ public class PlanetController {
     }
 
     /**
-     * 更新星球可见性
-     * 前端请求方式：PUT
-     * 请求URL：localhost:8081/planet/updateVisibility
-     * 请求参数（JSON格式）：
-     * {
-     *   "planetId": String,        // 星球ID（必填）
-     *   "visibility": Integer      // 可见性（0-私有，1-公开）
-     * }
-     * 返回值：成功或失败信息
-     */
-    @PutMapping("/updateVisibility")
-    public ResponseMessage updateVisibility(@Valid @RequestBody KnowledgePlanetDto dto) {
-        KnowledgePlanet planet = planetService.findByPlanetId(dto.getPlanetId());
-        if (planet == null) {
-            return ResponseMessage.error("星球不存在");
-        }
-        if (planet.getVisibility().equals(dto.getVisibility())) {
-            return ResponseMessage.success("可见性未变更");
-        }
-        planetService.updateVisibility(dto.getPlanetId(), dto.getVisibility());
-        return ResponseMessage.success("星球可见性更新成功");
-    }
-
-    /**
      * 更新星球简介
      * 前端请求方式：PUT
      * 请求URL：localhost:8081/planet/updatedescription

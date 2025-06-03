@@ -13,8 +13,8 @@ public class PlanetComment {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Integer CommentId;
+    @Column(name = "planet_comment_id")
+    private Integer planetCommentId;
 
     /**
      * 创建者ID,关联用户表
@@ -33,7 +33,7 @@ public class PlanetComment {
     /**
      * 发布时间
      */
-    @Column(name = "release_time", nullable = false, updatable = false)
+    @Column(name = "create_time", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime = new Date();
 
@@ -138,11 +138,11 @@ public class PlanetComment {
 
     // Getters and Setters
     public Integer getPlanetCommentId() {
-        return CommentId;
+        return planetCommentId;
     }
 
-    public void setPlanetCommentId(Integer CommentId) {
-        this.CommentId = CommentId;
+    public void setPlanetCommentId(Integer planetCommentId) {
+        this.planetCommentId = planetCommentId;
     }
 
     public User getUser() {
@@ -284,7 +284,7 @@ public class PlanetComment {
     @Override
     public String toString() {
         return "PlanetComment{" +
-                "CommentId=" + CommentId +
+                "planetCommentId=" + planetCommentId +
                 ", userId=" + (user != null ? user.getUserId() : null) +
                 ", planetId=" + (knowledgePlanet != null ? knowledgePlanet.getPlanetId() : null) +
                 ", createTime=" + createTime +
