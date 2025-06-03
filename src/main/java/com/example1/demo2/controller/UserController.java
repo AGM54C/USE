@@ -417,10 +417,10 @@ public class UserController {
      * 选择最喜欢星球
      * 前端请求方式：PUT
      * 请求URL：localhost:8081/user/setfavorplanet
-     * 请求参数（JSON格式）：
-     * {
+     * 请求参数（Param格式）：
+     *
      *   "planetId":String             //星球id
-     * }
+     *
      * 返回
      * 返回值：成功返回成功信息，失败返回错误信息
      */

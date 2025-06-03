@@ -64,7 +64,7 @@ public interface PlanetCommentMapper {
      * 修正：将方法引用改为正确的方法名
      */
     @Select("SELECT * FROM tab_planet_comment WHERE parent_comment_id = #{parentId} " +
-            "AND status = 0 ORDER BY creare_time ASC")
+            "AND status = 0 ORDER BY create_time ASC")
     @Results({
             @Result(property = "planetCommentId", column = "planet_comment_id"),
             @Result(property = "user", column = "user_id",

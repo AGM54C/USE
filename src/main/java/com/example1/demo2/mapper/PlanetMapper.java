@@ -16,7 +16,7 @@ public interface PlanetMapper {
      * 根据星球ID查找星球
      */
     @Select("select * from tab_knowledge_planet where planet_id=#{planetId}")
-    KnowledgeGalaxy getPlanetById(String planetId);
+    KnowledgePlanet getPlanetById(String planetId);
 
     //创建星球
     @Insert("insert into tab_knowledge_planet(planet_id,user_id,content_title,description,theme_id,create_time,update_time)"
