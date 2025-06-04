@@ -23,11 +23,11 @@ public class PlanetAccessController {
     /**
      * 定向飞行到指定星球
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/planet/access/search?planet=星球名(模糊查询)
+     * 请求URL：localhost:8081/planet/access/search?planetName=星球名(模糊查询)
      * 返回值：成功返回星球列表，失败返回错误信息
      */
     @GetMapping("/search")
-    public ResponseMessage<List<KnowledgePlanetDto>> search(@RequestParam("planet") String planetName) {
+    public ResponseMessage<List<KnowledgePlanetDto>> search(@RequestParam("planetName") String planetName) {
         //查询星球
         List<KnowledgePlanet> planets = planetAccessService.findByTitle(planetName);
         if(planets.isEmpty()) {
