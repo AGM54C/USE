@@ -88,4 +88,9 @@ public interface PlanetMapper {
     // 获取用户最喜欢星球
     @Select("select * from tab_knowledge_planet where planet_id = #{favorPlanetId}")
     KnowledgePlanet getFavorPlanet(String favorPlanetId);
+
+    @Update("UPDATE tab_knowledge_planet " +
+            "SET visibility = 1, update_time = NOW() " +
+            "WHERE planet_id = #{planetId}")
+    void updatevisibility(String planetId, Integer visibility);
 }

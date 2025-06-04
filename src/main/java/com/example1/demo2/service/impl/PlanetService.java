@@ -106,6 +106,11 @@ public class PlanetService implements IPlanetService {
     }
 
     @Override
+    public void updatevisibility(String planetId, Integer visibility) {
+        planetMapper.updatevisibility(planetId, visibility);
+    }
+
+    @Override
     public KnowledgePlanet findByPlanetId(String planetId) {
         return planetMapper.findByPlanetId(planetId);
     }

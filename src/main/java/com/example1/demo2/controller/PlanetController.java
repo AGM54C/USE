@@ -189,7 +189,7 @@ public class PlanetController {
     }
 
     /**
-     * 更新星球标题
+     * 更新星球内容
      * 前端请求方式：PUT
      * 请求URL：localhost:8081/planet/updateTitle
      * 请求参数（JSON格式）：
@@ -213,6 +213,33 @@ public class PlanetController {
         planetService.updatedetail(dto.getPlanetId(), dto.getContentDetail());
         return ResponseMessage.success("星球内容更新成功");
     }
+
+    /**
+     * 更新星球标题
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/planet/updateTitle
+     * 请求参数（JSON格式）：
+     * {
+     *   "planetId": String,        // 星球ID（必填）
+     *   "contentDetail": String            // 新内容（必填）
+     * }
+     //     * 返回值：成功或失败信息
+     */
+    @PutMapping("/updatevisibility")
+    public ResponseMessage updatevisibility(@Valid @RequestBody KnowledgePlanetDto dto) {
+        KnowledgePlanet planet = planetService.findByPlanetId(dto.getPlanetId());
+        if (planet == null) {
+            return ResponseMessage.error("星球不存在");
+        }
+        if(dto.getVisibility()!=null) {
+            if (planet.getVisibility().equals(dto.getVisibility())) {
+                return ResponseMessage.success("内容未变更");
+            }
+        }
+        planetService.updatevisibility(dto.getPlanetId(), dto.getVisibility());
+        return ResponseMessage.success("星球内容更新成功");
+    }
+
 
     /**
      * 更新星球亮度
