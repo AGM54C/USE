@@ -7,8 +7,10 @@ import com.example1.demo2.pojo.GalaxyComment;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
+import com.example1.demo2.service.IGalaxyAdminService;
 import com.example1.demo2.service.IGalaxyCommentService;
 import com.example1.demo2.service.INotificationService;
+import com.example1.demo2.service.ISystemAdminService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,12 @@ public class GalaxyCommentService implements IGalaxyCommentService {
 
     @Autowired
     private INotificationService notificationService;
+
+    @Autowired
+    private IGalaxyAdminService galaxyAdminService;
+
+    @Autowired
+    private ISystemAdminService systemAdminService;
 
     @Override
     @Transactional
@@ -252,10 +260,28 @@ public class GalaxyCommentService implements IGalaxyCommentService {
             throw new RuntimeException("评论不存在");
         }
 
-        // 权限验证：评论创建者、星系创建者、管理员可以删除
-        boolean canDelete = comment.getUser().getUserId().equals(userId) ||
-                comment.getKnowledgeGalaxy().getUserId().equals(userId) ||
-                commentMapper.getUserRoleInGalaxy(userId, comment.getKnowledgeGalaxy().getGalaxyId()) == 1;
+        // 权限验证：评论创建者、星系创建者、星系管理员、系统管理员可以删除
+        boolean canDelete = false;
+
+        // 1. 评论创建者
+        if (comment.getUser().getUserId().equals(userId)) {
+            canDelete = true;
+        }
+
+        // 2. 星系创建者
+        if (comment.getKnowledgeGalaxy().getUserId().equals(userId)) {
+            canDelete = true;
+        }
+
+        // 3. 星系管理员
+        if (galaxyAdminService.isGalaxyAdmin(comment.getKnowledgeGalaxy().getGalaxyId(), userId)) {
+            canDelete = true;
+        }
+
+        // 4. 系统管理员
+        if (systemAdminService.isSystemAdmin(userId)) {
+            canDelete = true;
+        }
 
         if (!canDelete) {
             throw new RuntimeException("无权删除此评论");
@@ -271,6 +297,15 @@ public class GalaxyCommentService implements IGalaxyCommentService {
 
         // 递归软删除所有子评论
         deleteChildComments(commentId);
+
+        // 如果是管理员删除，发送通知
+        if (!comment.getUser().getUserId().equals(userId)) {
+            notificationService.sendSystemNotification(
+                    comment.getUser().getUserId(),
+                    "评论被删除",
+                    "您的评论被管理员删除"
+            );
+        }
     }
 
     @Override

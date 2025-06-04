@@ -23,6 +23,9 @@ public class PlanetService implements IPlanetService {
     @Autowired
     private PlanetCommentMapper commentMapper;
 
+    @Autowired
+    private SystemAdminService systemAdminService;
+
     @Override
     public KnowledgePlanet findByTitle(String title) {
         return planetMapper.findByTitle(title);
@@ -98,30 +101,6 @@ public class PlanetService implements IPlanetService {
     }
 
     @Override
-    public KnowledgePlanet visitPlanet(String planetId, Integer userId) {
-        // 1. 校验星球存在
-        KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
-        if (planet == null) {
-            throw new IllegalArgumentException("星球不存在");
-        }
-
-        // 2. 校验可见性
-        Integer visibility = planet.getVisibility();
-        boolean isCreator = userId != null && userId.equals(planet.getUserId());
-
-        if (visibility == 0) { // 私有星球
-            if (!isCreator) {
-                throw new IllegalArgumentException("星球为私有，无访问权限");
-            }
-        }
-        // 3. 处理访问量统计
-            planetMapper.updatevisitCount(planetId);
-
-        // 4. 返回更新后的星球信息（包含最新访问量）
-        return planetMapper.findByPlanetId(planetId);
-    }
-
-    @Override
     public void publish(KnowledgePlanetDto planet) {
         planetMapper.publish(planet.getPlanetId());
     }
@@ -136,5 +115,33 @@ public class PlanetService implements IPlanetService {
         String datePart = currentDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String randomPart = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         return "PLNT-" + datePart + "-" + randomPart;
+    }
+
+    @Override
+    public KnowledgePlanet visitPlanet(String planetId, Integer userId) {
+        // 1. 校验星球存在
+        KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
+        if (planet == null) {
+            throw new IllegalArgumentException("星球不存在");
+        }
+
+        // 2. 校验可见性
+        Integer visibility = planet.getVisibility();
+        boolean isCreator = userId != null && userId.equals(planet.getUserId());
+        boolean isSystemAdmin = userId != null && systemAdminService.isSystemAdmin(userId);
+
+        if (visibility == 0) { // 私有星球
+            if (!isCreator && !isSystemAdmin) {
+                throw new IllegalArgumentException("星球为私有，无访问权限");
+            }
+        }
+
+        // 3. 处理访问量统计（系统管理员访问不计入统计）
+        if (!isSystemAdmin) {
+            planetMapper.updatevisitCount(planetId);
+        }
+
+        // 4. 返回更新后的星球信息
+        return planetMapper.findByPlanetId(planetId);
     }
 }
