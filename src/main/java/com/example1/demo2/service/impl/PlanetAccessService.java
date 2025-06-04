@@ -16,7 +16,7 @@ public class PlanetAccessService implements IPlanetAccessService {
     private PlanetAccessMapper planetAccessMapper;
 
     @Override
-    public KnowledgePlanet findByTitle(String title) {
+    public List<KnowledgePlanet> findByTitle(String title) {
         return planetAccessMapper.findByTitle(title);
     }
 

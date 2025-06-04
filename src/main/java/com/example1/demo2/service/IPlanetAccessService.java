@@ -10,7 +10,7 @@ import java.util.List;
 public interface IPlanetAccessService {
 
     //按标题查找知识星球
-    KnowledgePlanet findByTitle(String title);
+    List<KnowledgePlanet> findByTitle(String contentTitle);
     //随机查找知识星球
     KnowledgePlanet findRandomPlanet();
 

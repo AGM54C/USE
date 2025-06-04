@@ -23,25 +23,19 @@ public class PlanetAccessController {
     /**
      * 定向飞行到指定星球
      * 前端请求方式：GET
-     * 请求URL：localhost:8081/planet/access/search?planet=星球名
-     * 返回值：成功返回星球信息，失败返回错误信息
+     * 请求URL：localhost:8081/planet/access/search?planet=星球名(模糊查询)
+     * 返回值：成功返回星球列表，失败返回错误信息
      */
-
-    //定向飞行
     @GetMapping("/search")
-    public ResponseMessage<KnowledgePlanetDto> search(@Valid @RequestParam  String planetName) {
-
-        //根据星球名查询
-        KnowledgePlanet p = planetAccessService.findByTitle(planetName);
-        if(p==null) {
-            return ResponseMessage.error("星球不存在");
+    public ResponseMessage<List<KnowledgePlanetDto>> search(@RequestParam("planet") String planetName) {
+        //查询星球
+        List<KnowledgePlanet> planets = planetAccessService.findByTitle(planetName);
+        if(planets.isEmpty()) {
+            return ResponseMessage.error("没有找到相关星球");
         }
-        if(p.getVisibility() != 1) {
-            return ResponseMessage.error("星球不可见");
-        }
-        //转化为dto
-        KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(p);
-        return ResponseMessage.success(dto);
+        //转化为dto列表
+        List<KnowledgePlanetDto> dtoList = ConvertUtil.convertKnowledgePlanetListToDtoList(planets);
+        return ResponseMessage.success(dtoList);
     }
 
     /**
