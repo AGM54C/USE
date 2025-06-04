@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "system_admins")
+@Table(name = "tab_system_admin")
 public class SystemAdmin {
 
     /**

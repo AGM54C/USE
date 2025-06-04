@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/planet/access")  //localhost:8081/planet/access/**
 @Validated
@@ -34,6 +36,9 @@ public class PlanetAccessController {
         if(p==null) {
             return ResponseMessage.error("星球不存在");
         }
+        if(p.getVisibility() != 1) {
+            return ResponseMessage.error("星球不可见");
+        }
         //转化为dto
         KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(p);
         return ResponseMessage.success(dto);
@@ -52,9 +57,31 @@ public class PlanetAccessController {
         if(p==null) {
             return ResponseMessage.error("没有可访问的星球");
         }
+        if(p.getVisibility() != 1) {
+            return ResponseMessage.error("星球不可见");
+        }
         //转化为dto
         KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(p);
         return ResponseMessage.success(dto);
+    }
+
+    /**
+     * 展示访问量前10且visibility为1的星球
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/planet/access/loadinghotplanets
+     * 返回值：成功返回星球列表，失败返回错误信息
+     */
+
+    @GetMapping("/loadinghotplanets")
+    public ResponseMessage<List<KnowledgePlanetDto>> loadinghotplanets() {
+        //获取访问量前10的星球
+        List<KnowledgePlanet> planets = planetAccessService.getTop10Planets();
+        if(planets.isEmpty()) {
+            return ResponseMessage.error("没有可访问的星球");
+        }
+        //转化为dto列表
+        List<KnowledgePlanetDto> dtoList = ConvertUtil.convertKnowledgePlanetListToDtoList(planets);
+        return ResponseMessage.success(dtoList);
     }
 
 }
