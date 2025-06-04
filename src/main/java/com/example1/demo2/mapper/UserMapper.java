@@ -3,6 +3,8 @@ package com.example1.demo2.mapper;
 import com.example1.demo2.pojo.User;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 
 @Mapper
 public interface UserMapper {
@@ -66,5 +68,33 @@ public interface UserMapper {
     @Update("update tab_user set favorite_galaxy_id=#{galaxyId} " +
             " where user_id=#{userId}")
     void updateFavoriteGalaxy(Integer userId, Integer galaxyId);
+
+    /**
+     * 封禁用户
+     */
+    @Update("UPDATE tab_user SET status = 1 WHERE user_id = #{userId}")
+    void banUser(Integer userId);
+
+    /**
+     * 解封用户
+     */
+    @Update("UPDATE tab_user SET status = 0 WHERE user_id = #{userId}")
+    void unbanUser(Integer userId);
+
+    /**
+     * 搜索用户（用于添加好友）
+     */
+    @Select("<script>" +
+            "SELECT * FROM tab_user WHERE status = 0 " +
+            "<if test='keyword != null and keyword != \"\"'>" +
+            "AND (nickname LIKE CONCAT('%', #{keyword}, '%') " +
+            "OR email LIKE CONCAT('%', #{keyword}, '%'))" +
+            "</if> " +
+            "AND user_id != #{excludeUserId} " +
+            "LIMIT #{limit}" +
+            "</script>")
+    List<User> searchUsers(@Param("keyword") String keyword,
+                           @Param("excludeUserId") Integer excludeUserId,
+                           @Param("limit") int limit);
 
 }

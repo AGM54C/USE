@@ -9,6 +9,7 @@ import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.service.IPlanetCommentService;
 import com.example1.demo2.service.INotificationService;
+import com.example1.demo2.service.ISystemAdminService;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class PlanetCommentService implements IPlanetCommentService {
 
     @Autowired
     private INotificationService notificationService;
+
+    @Autowired
+    private ISystemAdminService systemAdminService;
 
     @Override
     @Transactional
@@ -243,14 +247,27 @@ public class PlanetCommentService implements IPlanetCommentService {
     public void deleteComment(Integer commentId, Integer userId) {
         // 获取评论信息
         PlanetComment comment = commentMapper.getCommentById(commentId);
-        System.out.println(comment);
         if (comment == null) {
             throw new RuntimeException("评论不存在");
         }
 
-        // 权限验证：评论创建者、星球创建者、管理员可以删除
-        boolean canDelete = comment.getUser().getUserId().equals(userId) ||
-                comment.getPlanet().getUserId().equals(userId);
+        // 权限验证：评论创建者、星球创建者、系统管理员可以删除
+        boolean canDelete = false;
+
+        // 1. 评论创建者
+        if (comment.getUser().getUserId().equals(userId)) {
+            canDelete = true;
+        }
+
+        // 2. 星球创建者
+        if (comment.getPlanet().getUserId().equals(userId)) {
+            canDelete = true;
+        }
+
+        // 3. 系统管理员
+        if (systemAdminService.isSystemAdmin(userId)) {
+            canDelete = true;
+        }
 
         if (!canDelete) {
             throw new RuntimeException("无权删除此评论");
@@ -266,6 +283,15 @@ public class PlanetCommentService implements IPlanetCommentService {
 
         // 递归软删除所有子评论
         deleteChildComments(commentId);
+
+        // 如果是管理员删除，发送通知
+        if (!comment.getUser().getUserId().equals(userId)) {
+            notificationService.sendSystemNotification(
+                    comment.getUser().getUserId(),
+                    "评论被删除",
+                    "您的评论被管理员删除"
+            );
+        }
     }
 
     @Override

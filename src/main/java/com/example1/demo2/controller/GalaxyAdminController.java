@@ -1,0 +1,144 @@
+package com.example1.demo2.controller;
+
+import com.example1.demo2.pojo.GalaxyAdministrator;
+import com.example1.demo2.pojo.dto.ResponseMessage;
+import com.example1.demo2.service.IGalaxyAdminService;
+import com.example1.demo2.service.IGalaxyService;
+import com.example1.demo2.util.ThreadLocalUtil;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 星系管理员控制器
+ * 处理星系管理员的任命、撤销等功能
+ */
+@RestController
+@RequestMapping("/galaxy/admin")
+@Validated
+public class GalaxyAdminController {
+
+    @Autowired
+    private IGalaxyAdminService galaxyAdminService;
+
+    @Autowired
+    private IGalaxyService galaxyService;
+
+    /**
+     * 任命星系管理员
+     * 前端请求方式：POST
+     * 请求URL：localhost:8081/galaxy/admin/appoint
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": 1,    // 星系ID（必填）
+     *   "userId": 2       // 被任命用户ID（必填）
+     * }
+     * 返回值：成功信息
+     * 权限：只有星系创建者可以任命管理员
+     */
+    @PostMapping("/appoint")
+    public ResponseMessage appointAdmin(@RequestBody Map<String, Integer> request) {
+        try {
+            Integer galaxyId = request.get("galaxyId");
+            Integer appointUserId = request.get("userId");
+
+            if (galaxyId == null || appointUserId == null) {
+                return ResponseMessage.error("参数错误");
+            }
+
+            // 获取当前用户（必须是星系创建者）
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer currentUserId = (Integer) userInfo.get("userId");
+
+            boolean success = galaxyAdminService.addGalaxyAdmin(
+                    galaxyId, appointUserId, currentUserId
+            );
+
+            if (success) {
+                return ResponseMessage.success("管理员任命成功");
+            }
+            return ResponseMessage.error("任命失败");
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 撤销星系管理员
+     * 前端请求方式：DELETE
+     * 请求URL：localhost:8081/galaxy/admin/revoke
+     * 请求参数（JSON格式）：
+     * {
+     *   "galaxyId": 1,    // 星系ID（必填）
+     *   "userId": 2       // 被撤销用户ID（必填）
+     * }
+     * 返回值：成功信息
+     * 权限：只有星系创建者可以撤销管理员
+     */
+    @DeleteMapping("/revoke")
+    public ResponseMessage revokeAdmin(@RequestBody Map<String, Integer> request) {
+        try {
+            Integer galaxyId = request.get("galaxyId");
+            Integer revokeUserId = request.get("userId");
+
+            if (galaxyId == null || revokeUserId == null) {
+                return ResponseMessage.error("参数错误");
+            }
+
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer currentUserId = (Integer) userInfo.get("userId");
+
+            boolean success = galaxyAdminService.revokeGalaxyAdmin(
+                    galaxyId, revokeUserId, currentUserId
+            );
+
+            if (success) {
+                return ResponseMessage.success("管理员撤销成功");
+            }
+            return ResponseMessage.error("撤销失败");
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取星系管理员列表
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/admin/list/{galaxyId}
+     * 路径参数：galaxyId - 星系ID
+     * 返回值：管理员列表
+     */
+    @GetMapping("/list/{galaxyId}")
+    public ResponseMessage<List<GalaxyAdministrator>> getAdminList(
+            @PathVariable @NotNull Integer galaxyId) {
+        try {
+            List<GalaxyAdministrator> admins = galaxyAdminService.getGalaxyAdmins(galaxyId);
+            return ResponseMessage.success(admins);
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取用户管理的星系列表
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/admin/managed
+     * 返回值：用户管理的星系ID列表
+     */
+    @GetMapping("/managed")
+    public ResponseMessage<List<Integer>> getManagedGalaxies() {
+        try {
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer userId = (Integer) userInfo.get("userId");
+
+            List<Integer> galaxyIds = galaxyAdminService.getUserManagedGalaxies(userId);
+            return ResponseMessage.success(galaxyIds);
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
+}

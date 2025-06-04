@@ -248,11 +248,11 @@ public class NotificationController {
      * 就像把信件放入垃圾箱，还可以恢复
      *
      * 前端请求方式：DELETE
-     * 请求URL：localhost:8081/notification/{notificationId}
+     * 请求URL：localhost:8081/notification/delete/{notificationId}
      * 路径参数：notificationId - 通知ID
      * 请求参数：userId - 用户ID
      */
-    @DeleteMapping("/{notificationId}")
+    @DeleteMapping("/delete/{notificationId}")
     public ResponseMessage deleteNotification(
             @PathVariable @NotNull Integer notificationId,
             @RequestParam @NotNull Integer userId) {

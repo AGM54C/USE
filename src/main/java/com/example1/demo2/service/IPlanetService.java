@@ -38,4 +38,6 @@ public interface IPlanetService {
     KnowledgePlanet visitPlanet(String planetId, Integer userId);
 
     void publish(@Valid KnowledgePlanetDto planet);
+
+    void updatevisibility(String planetId, Integer visibility);
 }

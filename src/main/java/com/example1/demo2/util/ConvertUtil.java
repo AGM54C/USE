@@ -37,6 +37,8 @@ public class ConvertUtil {
         dto.setUpdateTime(user.getUpdateTime());
         // 最后登录时间
         dto.setLastLoginTime(user.getLastLoginTime());
+        // 最喜爱星球id
+        dto.setFavoritePlanetId(user.getFavoritePlanetId());
         return dto;
     }
 
@@ -53,6 +55,7 @@ public class ConvertUtil {
         user.setBio(dto.getBio());
         user.setStatus(dto.getStatus());
         user.setEmailVerified(dto.getEmailVerified());
+        user.setCreateTime(dto.getCreateTime());
         // 时间字段通常由系统自动生成，注册/更新时无需手动设置（可省略或按需处理）
         return user;
     }
