@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "galaxy_admins")
+@Table(name = "tab_galaxy_admins")
 public class GalaxyAdministrator {
 
     /**
