@@ -36,6 +36,9 @@ public class PlanetAccessController {
         if(p==null) {
             return ResponseMessage.error("星球不存在");
         }
+        if(p.getVisibility() != 1) {
+            return ResponseMessage.error("星球不可见");
+        }
         //转化为dto
         KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(p);
         return ResponseMessage.success(dto);
@@ -53,6 +56,9 @@ public class PlanetAccessController {
         KnowledgePlanet p = planetAccessService.findRandomPlanet();
         if(p==null) {
             return ResponseMessage.error("没有可访问的星球");
+        }
+        if(p.getVisibility() != 1) {
+            return ResponseMessage.error("星球不可见");
         }
         //转化为dto
         KnowledgePlanetDto dto = ConvertUtil.convertKnowledgePlanetToDto(p);
