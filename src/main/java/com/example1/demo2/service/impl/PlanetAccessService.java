@@ -7,6 +7,8 @@ import com.example1.demo2.service.IPlanetAccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PlanetAccessService implements IPlanetAccessService {
 
@@ -21,5 +23,10 @@ public class PlanetAccessService implements IPlanetAccessService {
     @Override
     public KnowledgePlanet findRandomPlanet() {
         return planetAccessMapper.findRandomPlanet();
+    }
+
+    @Override
+    public List<KnowledgePlanet> getTop10Planets() {
+        return planetAccessMapper.getTop10Planets();
     }
 }

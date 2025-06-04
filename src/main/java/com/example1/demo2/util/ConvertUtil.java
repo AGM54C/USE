@@ -279,5 +279,18 @@ public class ConvertUtil {
         }
         return dtos;
     }
+    /**
+     * 将GalaxyComment实体列表转换为DTO列表
+     */
+    public static List<KnowledgePlanetDto> convertKnowledgePlanetListToDtoList(List<KnowledgePlanet> planets) {
+        if (planets == null || planets.isEmpty()) {
+            return new ArrayList<>();
+        }
 
+        List<KnowledgePlanetDto> dtoList = new ArrayList<>();
+        for (KnowledgePlanet planet : planets) {
+            dtoList.add(convertKnowledgePlanetToDto(planet));
+        }
+        return dtoList;
+    }
 }

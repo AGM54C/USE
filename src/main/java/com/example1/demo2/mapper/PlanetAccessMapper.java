@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface PlanetAccessMapper {
 
@@ -14,4 +16,6 @@ public interface PlanetAccessMapper {
     @Select("select * from tab_knowledge_planet order by rand() limit 1")
     KnowledgePlanet findRandomPlanet();
 
+    @Select("select * from tab_knowledge_planet where visibility=1 order by visit_count limit 10")
+    List<KnowledgePlanet> getTop10Planets();
 }
