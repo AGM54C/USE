@@ -79,5 +79,7 @@ public interface IGalaxyService {
      */
     void updateGalaxyPermission(Integer galaxyId, Integer newPermission);
 
+    boolean isGalaxyOwner(Integer galaxyId, Integer userId);
+
 
 }

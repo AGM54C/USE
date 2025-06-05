@@ -44,37 +44,23 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回星系ID，失败返回错误信息
      */
     @PostMapping("/create")
-    @Transactional
     public ResponseMessage create(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 获取当前用户ID
         Map<String, Object> userInfo = ThreadLocalUtil.get();
-        Integer userId = (Integer) userInfo.get("userId");
-        galaxy.setUserId(userId);
+        Integer currentUserId = (Integer) userInfo.get("userId");
 
-        // 检查知识星云值是否足够
-        if (!rewardService.hasSufficientKnowledgeDust(userId, 1)) {
-            return ResponseMessage.error("知识星云值不足，无法创建星系");
-        }
+        // 设置创建者ID为当前用户
+        galaxy.setUserId(currentUserId);
 
         // 查询星系名是否已存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyByName(galaxy.getName());
         if (g != null) {
+            // 星系名已经占用
             return ResponseMessage.error("星系名已被占用，请重新输入");
         } else {
             // 创建星系
             galaxyService.createGalaxy(galaxy);
-
-            // 扣除知识星云值
-            try {
-                Integer newDust = rewardService.consumeForGalaxyCreation(userId);
-                Map<String, Object> result = new HashMap<>();
-                result.put("galaxyId", galaxy.getGalaxyId());
-                result.put("newKnowledgeDust", newDust);
-                return ResponseMessage.success(result);
-            } catch (Exception e) {
-                // 如果扣除失败，需要回滚星系创建
-                throw new RuntimeException("创建星系失败: " + e.getMessage());
-            }
+            return ResponseMessage.success(galaxy.getGalaxyId());
         }
     }
 
@@ -117,10 +103,19 @@ public class KnowledgeGalaxyController {
      */
     @PutMapping("/update")
     public ResponseMessage update(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
         // 根据ID查找星系
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxy.getGalaxyId());
         if (g == null) {
             return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以修改星系信息");
         }
 
         // 判断星系信息是否有变化
@@ -151,11 +146,24 @@ public class KnowledgeGalaxyController {
      */
     @DeleteMapping("/delete")
     public ResponseMessage delete(@Valid @RequestParam Integer galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
         // 通过ID查找星系
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
-            // 删除星系
-            galaxyService.deleteGalaxy(g.getGalaxyId());
-            return ResponseMessage.success(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以删除星系");
+        }
+
+        // 删除星系
+        galaxyService.deleteGalaxy(g.getGalaxyId());
+        return ResponseMessage.success(galaxyId);
     }
 
     /**
@@ -171,10 +179,19 @@ public class KnowledgeGalaxyController {
      */
     @PostMapping("/addplanet")
     public ResponseMessage addPlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
         // 检查星系是否存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
         if (g == null) {
             return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以添加星球");
         }
 
         // 添加星球到星系
@@ -194,10 +211,19 @@ public class KnowledgeGalaxyController {
      */
     @DeleteMapping("/deleteplanet")
     public ResponseMessage deletePlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
         // 检查星系是否存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
         if (g == null) {
             return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以移除星球");
         }
 
         // 移除星球从星系
@@ -217,6 +243,21 @@ public class KnowledgeGalaxyController {
      */
     @PutMapping("/updateName")
     public ResponseMessage updateName(@RequestParam Integer galaxyId, @RequestParam String newName) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 查找星系
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以修改名称");
+        }
+
         // 更新星系名称
         galaxyService.updateGalaxyName(galaxyId, newName);
         return ResponseMessage.success("星系名称已更新为：" + newName);
@@ -234,6 +275,21 @@ public class KnowledgeGalaxyController {
      */
     @PutMapping("/updateLabel")
     public ResponseMessage updateLabel(@RequestParam Integer galaxyId, @RequestParam String newLabel) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 查找星系
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以修改标签");
+        }
+
         // 更新星系标签
         galaxyService.updateGalaxyLabel(galaxyId, newLabel);
         return ResponseMessage.success("星系标签已更新为：" + newLabel);
@@ -252,6 +308,21 @@ public class KnowledgeGalaxyController {
      */
     @PutMapping("/updatePermission")
     public ResponseMessage updatePermission(@RequestParam Integer galaxyId, @RequestParam Integer newPermission) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 查找星系
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否为创建者
+        if (!g.getUserId().equals(currentUserId)) {
+            return ResponseMessage.error("只有星系创建者可以修改权限");
+        }
+
         // 更新星系权限
         galaxyService.updateGalaxyPermission(galaxyId, newPermission);
         return ResponseMessage.success("星系权限已更新为：" + (newPermission == 0 ? "私有" : "公开"));

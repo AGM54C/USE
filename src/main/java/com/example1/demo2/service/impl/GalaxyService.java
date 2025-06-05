@@ -144,4 +144,10 @@ public class GalaxyService implements IGalaxyService {
         }
         return code.toString();
     }
+
+    @Override
+    public boolean isGalaxyOwner(Integer galaxyId, Integer userId) {
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        return galaxy != null && galaxy.getUserId().equals(userId);
+    }
 }
