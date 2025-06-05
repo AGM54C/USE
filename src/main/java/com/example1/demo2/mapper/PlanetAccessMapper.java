@@ -16,6 +16,6 @@ public interface PlanetAccessMapper {
     @Select("select * from tab_knowledge_planet where visibility=1 order by rand() limit 1")
     KnowledgePlanet findRandomPlanet();
 
-    @Select("select * from tab_knowledge_planet where visibility=1 order by visit_count limit 10")
+    @Select("select * from tab_knowledge_planet where visibility=1 order by visit_count DESC limit 10")
     List<KnowledgePlanet> getTop10Planets();
 }
