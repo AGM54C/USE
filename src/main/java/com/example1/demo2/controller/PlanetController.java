@@ -5,14 +5,20 @@ import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPlanetService;
+import com.example1.demo2.service.IRewardService;
 import com.example1.demo2.service.IUserService;
+import com.example1.demo2.service.impl.RewardService;
 import com.example1.demo2.util.ConvertUtil;
 import com.example1.demo2.util.ThreadLocalUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,6 +32,11 @@ public class PlanetController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IRewardService rewardService;
+
+    private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
 
     /**
      * 创建知识星球
@@ -41,21 +52,35 @@ public class PlanetController {
      * }
      * 返回值：成功返回星球id，失败返回错误信息
      */
-    @PostMapping("/create")         //localhost:8081/planet/create
+    @PostMapping("/create")
+    @Transactional
     public ResponseMessage<String> create(@Valid @RequestBody KnowledgePlanetDto planet) {
-        if(planet.getContentTitle() == null || planet.getThemeId() == null || planet.getUserId() == null||planet.getDescription()==null) {
+        if(planet.getContentTitle() == null || planet.getThemeId() == null
+                || planet.getUserId() == null || planet.getDescription() == null) {
             return ResponseMessage.error("缺少必要参数！");
         }
-        //查询星球
+
+        // 查询星球
         KnowledgePlanet p = planetService.findByTitle(planet.getContentTitle());
-        if(p!=null) {
-            //星球名已经占用
+        if(p != null) {
             return ResponseMessage.error("星球名已被占用，请重新输入");
-        }
-        else{
-            //没有占用
+        } else {
+            // 创建星球
             planetService.create(planet);
-            return ResponseMessage.success(planet.getPlanetId());
+
+            // 奖励用户燃料值
+            try {
+                Integer newFuelValue = rewardService.rewardForPlanetCreation(planet.getUserId());
+                // 可以在响应中返回新的燃料值
+                Map<String, Object> result = new HashMap<>();
+                result.put("planetId", planet.getPlanetId());
+                result.put("newFuelValue", newFuelValue);
+                return ResponseMessage.success(result);
+            } catch (Exception e) {
+                // 如果奖励失败，仍然返回成功（星球已创建），但记录错误
+                logger.error("奖励燃料值失败: {}", e.getMessage());
+                return ResponseMessage.success(planet.getPlanetId());
+            }
         }
     }
 

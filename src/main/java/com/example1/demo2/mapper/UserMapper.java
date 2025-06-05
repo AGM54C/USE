@@ -97,4 +97,52 @@ public interface UserMapper {
                            @Param("excludeUserId") Integer excludeUserId,
                            @Param("limit") int limit);
 
+    /**
+     * 更新用户燃料值
+     * @param userId 用户ID
+     * @param fuelValue 新的燃料值
+     */
+    @Update("UPDATE tab_user SET fuel_value = #{fuelValue} WHERE user_id = #{userId}")
+    void updateFuelValue(@Param("userId") Integer userId, @Param("fuelValue") Integer fuelValue);
+
+    /**
+     * 更新用户知识星云值
+     * @param userId 用户ID
+     * @param knowledgeDust 新的知识星云值
+     */
+    @Update("UPDATE tab_user SET knowledge_dust = #{knowledgeDust} WHERE user_id = #{userId}")
+    void updateKnowledgeDust(@Param("userId") Integer userId, @Param("knowledgeDust") Integer knowledgeDust);
+
+    /**
+     * 增加用户燃料值
+     * @param userId 用户ID
+     * @param amount 增加的数量
+     */
+    @Update("UPDATE tab_user SET fuel_value = fuel_value + #{amount} WHERE user_id = #{userId}")
+    void increaseFuelValue(@Param("userId") Integer userId, @Param("amount") Integer amount);
+
+    /**
+     * 减少用户燃料值（确保不会小于0）
+     * @param userId 用户ID
+     * @param amount 减少的数量
+     */
+    @Update("UPDATE tab_user SET fuel_value = GREATEST(fuel_value - #{amount}, 0) WHERE user_id = #{userId}")
+    void decreaseFuelValue(@Param("userId") Integer userId, @Param("amount") Integer amount);
+
+    /**
+     * 增加用户知识星云值
+     * @param userId 用户ID
+     * @param amount 增加的数量
+     */
+    @Update("UPDATE tab_user SET knowledge_dust = knowledge_dust + #{amount} WHERE user_id = #{userId}")
+    void increaseKnowledgeDust(@Param("userId") Integer userId, @Param("amount") Integer amount);
+
+    /**
+     * 减少用户知识星云值（确保不会小于0）
+     * @param userId 用户ID
+     * @param amount 减少的数量
+     */
+    @Update("UPDATE tab_user SET knowledge_dust = GREATEST(knowledge_dust - #{amount}, 0) WHERE user_id = #{userId}")
+    void decreaseKnowledgeDust(@Param("userId") Integer userId, @Param("amount") Integer amount);
+
 }

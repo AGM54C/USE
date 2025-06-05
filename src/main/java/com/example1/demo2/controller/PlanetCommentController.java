@@ -3,12 +3,19 @@ package com.example1.demo2.controller;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPlanetCommentService;
+import com.example1.demo2.service.IRewardService;
+import com.example1.demo2.service.impl.RewardService;
+import com.example1.demo2.util.ThreadLocalUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/planet/comment")  // localhost:8081/planet/comment/**
@@ -18,6 +25,10 @@ public class PlanetCommentController {
     @Autowired
     private IPlanetCommentService commentService;
 
+    @Autowired
+    private IRewardService rewardService;
+
+    private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
     /**
      * 发布评论接口
      * 前端请求方式：POST
@@ -33,14 +44,32 @@ public class PlanetCommentController {
      * 返回值：成功返回评论id，失败返回错误信息
      */
     @PostMapping("/publish")
-    public ResponseMessage publishComment(@Validated(PlanetCommentDto.Create.class) @RequestBody PlanetCommentDto commentDto) {
+    @Transactional
+    public ResponseMessage publishComment(@Validated(PlanetCommentDto.Create.class)
+                                          @RequestBody PlanetCommentDto commentDto) {
         try {
+            // 使用ThreadLocal获取当前用户ID
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer userId = (Integer) userInfo.get("userId");
+            commentDto.setUserId(userId);
+
+            // 发布评论
             PlanetCommentDto result = commentService.publishComment(commentDto);
+
+            // 奖励知识星云值
+            try {
+                Integer newDust = rewardService.rewardForComment(userId, false);
+                logger.info("用户 {} 发表星球评论，获得知识星云值，当前值: {}", userId, newDust);
+            } catch (Exception e) {
+                logger.error("奖励知识星云值失败: {}", e.getMessage());
+            }
+
             return ResponseMessage.success(result.getPlanetCommentId());
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }
     }
+
 
     /**
      * 获取星球评论列表接口

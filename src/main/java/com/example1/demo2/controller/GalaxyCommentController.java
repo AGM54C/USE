@@ -3,13 +3,20 @@ package com.example1.demo2.controller;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyCommentService;
+import com.example1.demo2.service.IRewardService;
+import com.example1.demo2.service.impl.RewardService;
+import com.example1.demo2.util.ThreadLocalUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/galaxy/comment")  // localhost:8081/galaxy/comment/**
@@ -18,6 +25,11 @@ public class GalaxyCommentController {
 
     @Autowired
     private IGalaxyCommentService commentService;
+
+    @Autowired
+    private IRewardService rewardService;
+
+    private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
 
     /**
      * 发布评论接口
@@ -34,9 +46,27 @@ public class GalaxyCommentController {
      * 返回值：成功返回评论信息，失败返回错误信息
      */
     @PostMapping("/publish")
-    public ResponseMessage publishComment(@Validated(GalaxyCommentDto.Create.class) @RequestBody GalaxyCommentDto commentDto) {
+    @Transactional
+    public ResponseMessage publishComment(@Validated(GalaxyCommentDto.Create.class)
+                                          @RequestBody GalaxyCommentDto commentDto) {
         try {
+            // 使用ThreadLocal获取当前用户ID
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer userId = (Integer) userInfo.get("userId");
+            commentDto.setUserId(userId);
+
+            // 发布评论
             GalaxyCommentDto result = commentService.publishComment(commentDto);
+
+            // 奖励知识星云值
+            try {
+                Integer newDust = rewardService.rewardForComment(userId, true);
+                // 更新ThreadLocal中的用户信息
+                logger.info("用户 {} 发表星系评论，获得知识星云值，当前值: {}", userId, newDust);
+            } catch (Exception e) {
+                logger.error("奖励知识星云值失败: {}", e.getMessage());
+            }
+
             return ResponseMessage.success(result);
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
