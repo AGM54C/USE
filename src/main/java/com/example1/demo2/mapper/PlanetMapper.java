@@ -90,7 +90,7 @@ public interface PlanetMapper {
     KnowledgePlanet getFavorPlanet(String favorPlanetId);
 
     @Update("UPDATE tab_knowledge_planet " +
-            "SET visibility = 1, update_time = NOW() " +
+            "SET visibility = #{visibility}, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void updatevisibility(String planetId, Integer visibility);
 }

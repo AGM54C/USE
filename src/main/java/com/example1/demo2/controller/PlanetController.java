@@ -79,7 +79,7 @@ public class PlanetController {
             } catch (Exception e) {
                 // 如果奖励失败，仍然返回成功（星球已创建），但记录错误
                 logger.error("奖励燃料值失败: {}", e.getMessage());
-                return ResponseMessage.success(planet.getPlanetId());
+                return ResponseMessage.success(ConvertUtil.convertKnowledgePlanetToDto(p));
             }
         }
     }
