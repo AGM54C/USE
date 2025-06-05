@@ -2,6 +2,7 @@ package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
+import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.service.IRewardService;
@@ -192,7 +193,7 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回成功信息，失败返回错误信息
      */
     @PostMapping("/addplanet")
-    public ResponseMessage addPlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
+    public ResponseMessage<KnowledgePlanetDto> addPlanet(@RequestParam Integer galaxyId, @RequestParam String planetId) {
         // 获取当前用户ID
         Map<String, Object> userInfo = ThreadLocalUtil.get();
         Integer currentUserId = (Integer) userInfo.get("userId");
@@ -208,9 +209,14 @@ public class KnowledgeGalaxyController {
             return ResponseMessage.error("只有星系创建者可以添加星球");
         }
 
-        // 添加星球到星系
-        galaxyService.addKnowledgePlanetToGalaxy(galaxyId, planetId);
-        return ResponseMessage.success("成功添加星球到星系");
+        // 添加星球到星系，并返回更新后的星球信息
+        KnowledgePlanetDto planetDto = galaxyService.addKnowledgePlanetToGalaxy(galaxyId, planetId);
+
+        if (planetDto == null) {
+            return ResponseMessage.error("星球不存在或添加失败");
+        }
+
+        return ResponseMessage.success(planetDto);
     }
     /**
      * 移除知识星球到星系接口
@@ -340,6 +346,33 @@ public class KnowledgeGalaxyController {
         // 更新星系权限
         galaxyService.updateGalaxyPermission(galaxyId, newPermission);
         return ResponseMessage.success("星系权限已更新为：" + (newPermission == 0 ? "私有" : "公开"));
+    }
+
+    /**
+     * 获取当前星系的星球列表接口
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/{galaxyId}/planets
+     * 返回值：成功返回星球列表，失败返回错误信息
+     */
+    @GetMapping("/{galaxyId}/planets")
+    public ResponseMessage getGalaxyPlanets(@PathVariable @Positive(message = "星系ID必须为正数") Integer galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 检查星系是否存在
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否有权限查看星系
+        if (!g.getUserId().equals(currentUserId) && g.getPermission() == 0) {
+            return ResponseMessage.error("没有权限查看该星系");
+        }
+
+        // 获取星球列表
+        return ResponseMessage.success(galaxyService.getPlanetsByGalaxyId(galaxyId));
     }
 }
 

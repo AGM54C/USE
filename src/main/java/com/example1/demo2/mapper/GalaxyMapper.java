@@ -1,6 +1,7 @@
 package com.example1.demo2.mapper;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.KnowledgePlanet;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -103,4 +104,12 @@ public interface GalaxyMapper {
      */
     @Select("select max(galaxy_id) from tab_knowledge_galaxy")
     Integer getMaxGalaxyId();
+
+    /**
+     * 获取指定星系下的所有知识星球
+     * @param galaxyId 星系ID
+     * @return 返回该星系下的所有知识星球列表
+     */
+    @Select("select * from tab_knowledge_planet where galaxy_id=#{galaxyId}")
+    List<KnowledgePlanet> getPlanetsByGalaxyId(Integer galaxyId);
 }

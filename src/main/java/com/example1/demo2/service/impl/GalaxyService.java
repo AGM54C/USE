@@ -1,18 +1,26 @@
 package com.example1.demo2.service.impl;
 
 import com.example1.demo2.mapper.GalaxyMapper;
+import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
+import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class GalaxyService implements IGalaxyService {
     @Autowired
     private GalaxyMapper galaxyMapper;
+
+    @Autowired
+    private PlanetMapper planetMapper;
 
     private final Object createLock = new Object();
 
@@ -78,9 +86,27 @@ public class GalaxyService implements IGalaxyService {
 
     @Override
     @Transactional
-    public void addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId) {
+    public KnowledgePlanetDto addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId) {
+        // 首先检查星球是否存在
+        KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
+        if (planet == null) {
+            return null; // 星球不存在
+        }
+
+        // 检查星球是否已经属于其他星系
+        if (planet.getGalaxyId() != null && !planet.getGalaxyId().isEmpty()) {
+            // 如果需要，可以抛出异常或返回特定错误
+            throw new RuntimeException("星球已经属于其他星系");
+        }
+
         // 将星球添加到星系中（更新星球表中的galaxy_id字段）
         galaxyMapper.addPlanetToGalaxy(galaxyId, planetId);
+
+        // 重新查询更新后的星球信息
+        KnowledgePlanet updatedPlanet = planetMapper.findByPlanetId(planetId);
+
+        // 转换为DTO并返回
+        return ConvertUtil.convertKnowledgePlanetToDto(updatedPlanet);
     }
 
     @Override
@@ -149,5 +175,11 @@ public class GalaxyService implements IGalaxyService {
     public boolean isGalaxyOwner(Integer galaxyId, Integer userId) {
         KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
         return galaxy != null && galaxy.getUserId().equals(userId);
+    }
+
+    @Override
+    public List<KnowledgePlanet> getPlanetsByGalaxyId(Integer galaxyId) {
+        // 获取指定星系下的所有星球
+        return galaxyMapper.getPlanetsByGalaxyId(galaxyId);
     }
 }

@@ -1,7 +1,12 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
+import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
+import jakarta.validation.constraints.Positive;
+
+import java.util.List;
 
 public interface IGalaxyService {
     /**
@@ -42,8 +47,9 @@ public interface IGalaxyService {
      * 添加知识星球到星系
      * @param galaxyId 星系ID
      * @param planetId 星球ID
+     * @return 添加成功后的星球DTO对象，如果失败则返回null
      */
-    void addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId);
+    KnowledgePlanetDto addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId);
 
     /**
      * 从知识星系移除知识星球
@@ -82,4 +88,5 @@ public interface IGalaxyService {
     boolean isGalaxyOwner(Integer galaxyId, Integer userId);
 
 
+    List<KnowledgePlanet> getPlanetsByGalaxyId(@Positive(message = "星系ID必须为正数") Integer galaxyId);
 }
