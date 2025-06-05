@@ -44,23 +44,37 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回星系ID，失败返回错误信息
      */
     @PostMapping("/create")
+    @Transactional
     public ResponseMessage create(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
         // 获取当前用户ID
         Map<String, Object> userInfo = ThreadLocalUtil.get();
-        Integer currentUserId = (Integer) userInfo.get("userId");
+        Integer userId = (Integer) userInfo.get("userId");
+        galaxy.setUserId(userId);
 
-        // 设置创建者ID为当前用户
-        galaxy.setUserId(currentUserId);
+        // 检查知识星云值是否足够
+        if (!rewardService.hasSufficientKnowledgeDust(userId, 1)) {
+            return ResponseMessage.error("知识星云值不足，无法创建星系");
+        }
 
         // 查询星系名是否已存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyByName(galaxy.getName());
         if (g != null) {
-            // 星系名已经占用
             return ResponseMessage.error("星系名已被占用，请重新输入");
         } else {
             // 创建星系
             galaxyService.createGalaxy(galaxy);
-            return ResponseMessage.success(galaxy.getGalaxyId());
+
+            // 扣除知识星云值
+            try {
+                Integer newDust = rewardService.consumeForGalaxyCreation(userId);
+                Map<String, Object> result = new HashMap<>();
+                result.put("galaxyId", galaxy.getGalaxyId());
+                result.put("newKnowledgeDust", newDust);
+                return ResponseMessage.success(result);
+            } catch (Exception e) {
+                // 如果扣除失败，需要回滚星系创建
+                throw new RuntimeException("创建星系失败: " + e.getMessage());
+            }
         }
     }
 
