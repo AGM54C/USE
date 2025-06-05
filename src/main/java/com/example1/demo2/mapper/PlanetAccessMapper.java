@@ -9,9 +9,9 @@ import java.util.List;
 @Mapper
 public interface PlanetAccessMapper {
 
-    //根据星球名查找
-    @Select("select * from tab_knowledge_planet where content_title=#{contentTitle} and visibility=1")
-    KnowledgePlanet findByTitle(String title);
+    //根据星球名查找(模糊查询)
+    @Select("select * from tab_knowledge_planet where content_title like concat('%', #{title}, '%') and visibility=1 limit 10")
+    List<KnowledgePlanet> findByTitle(String title);
     //随机访问
     @Select("select * from tab_knowledge_planet where visibility=1 order by rand() limit 1")
     KnowledgePlanet findRandomPlanet();

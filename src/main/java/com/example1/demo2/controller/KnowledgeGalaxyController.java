@@ -4,13 +4,18 @@ import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyService;
+import com.example1.demo2.service.IRewardService;
 import com.example1.demo2.util.ConvertUtil;
+import com.example1.demo2.util.ThreadLocalUtil;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -20,6 +25,9 @@ public class KnowledgeGalaxyController {
 
     @Autowired
     private IGalaxyService galaxyService;
+
+    @Autowired
+    private IRewardService rewardService;
 
     /**
      * 创建知识星系接口
@@ -36,16 +44,37 @@ public class KnowledgeGalaxyController {
      * 返回值：成功返回星系ID，失败返回错误信息
      */
     @PostMapping("/create")
+    @Transactional
     public ResponseMessage create(@Valid @RequestBody KnowledgeGalaxyDto galaxy) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer userId = (Integer) userInfo.get("userId");
+        galaxy.setUserId(userId);
+
+        // 检查知识星云值是否足够
+        if (!rewardService.hasSufficientKnowledgeDust(userId, 1)) {
+            return ResponseMessage.error("知识星云值不足，无法创建星系");
+        }
+
         // 查询星系名是否已存在
         KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyByName(galaxy.getName());
         if (g != null) {
-            // 星系名已经占用
             return ResponseMessage.error("星系名已被占用，请重新输入");
         } else {
             // 创建星系
             galaxyService.createGalaxy(galaxy);
-            return ResponseMessage.success(galaxy.getGalaxyId());
+
+            // 扣除知识星云值
+            try {
+                Integer newDust = rewardService.consumeForGalaxyCreation(userId);
+                Map<String, Object> result = new HashMap<>();
+                result.put("galaxyId", galaxy.getGalaxyId());
+                result.put("newKnowledgeDust", newDust);
+                return ResponseMessage.success(result);
+            } catch (Exception e) {
+                // 如果扣除失败，需要回滚星系创建
+                throw new RuntimeException("创建星系失败: " + e.getMessage());
+            }
         }
     }
 
