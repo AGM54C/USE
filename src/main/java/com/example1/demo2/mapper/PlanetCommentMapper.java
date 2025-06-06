@@ -121,7 +121,7 @@ public interface PlanetCommentMapper {
     /**
      * 删除点赞记录
      */
-    @Delete("DELETE FROM tab_comment_like WHERE user_id = #{userId} AND planet_comment_id = #{commentId}")
+    @Delete("DELETE FROM tab_comment_like WHERE user_id = #{userId} AND comment_id = #{commentId}")
     void deleteLike(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**
