@@ -156,6 +156,16 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
         if (planet.getContentTitle().equals(dto.getContentTitle())) {
             return ResponseMessage.success("标题未变更");
         }
@@ -180,6 +190,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if(dto.getCoverUrl()!=null) {
             if (Objects.equals(planet.getCoverUrl(), dto.getCoverUrl())) {
                 return ResponseMessage.success("封面URL未变更");
@@ -206,6 +227,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if (planet.getDescription().equals(dto.getDescription())) {
             return ResponseMessage.success("简介未变更");
         }
@@ -230,6 +262,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if(dto.getContentTitle()!=null) {
             if (planet.getContentDetail().equals(dto.getContentDetail())) {
                 return ResponseMessage.success("内容未变更");
@@ -256,6 +299,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if(dto.getVisibility()!=null) {
             if (planet.getVisibility().equals(dto.getVisibility())) {
                 return ResponseMessage.success("内容未变更");
@@ -283,6 +337,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if (planet.getContentTitle().equals(dto.getBrightness())) {
             return ResponseMessage.success("亮度未变更");
         }
@@ -331,6 +396,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if(dto.getColorScheme()!=null) {
             if (planet.getColorScheme().equals(dto.getColorScheme())) {
                 return ResponseMessage.success("颜色方案未变更");
@@ -357,6 +433,17 @@ public class PlanetController {
         if (planet == null) {
             return ResponseMessage.error("星球不存在");
         }
+        // 获取当前用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId= (Integer) map.get("userId");
+        User u=userService.findById(userId);
+        if(u==null) {
+            return ResponseMessage.error("用户不存在或登录状态已过期");
+        }
+        if(!planet.getPlanetId().equals(dto.getPlanetId())) {
+            return ResponseMessage.error("只有星球主人可以修改！");
+        }
+
         if (planet.getModelType().equals(dto.getModelType())) {
             return ResponseMessage.success("展示模型未变更");
         }
