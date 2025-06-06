@@ -182,4 +182,11 @@ public class GalaxyService implements IGalaxyService {
         // 获取指定星系下的所有星球
         return galaxyMapper.getPlanetsByGalaxyId(galaxyId);
     }
+
+    @Override
+    public int getPlanetCountByGalaxyId(Integer galaxyId) {
+        // 获取指定星系下的星球数量
+        List<KnowledgePlanet> planets = galaxyMapper.getPlanetsByGalaxyId(galaxyId);
+        return planets != null ? planets.size() : 0;
+    }
 }

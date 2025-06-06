@@ -374,6 +374,64 @@ public class KnowledgeGalaxyController {
         // 获取星球列表
         return ResponseMessage.success(galaxyService.getPlanetsByGalaxyId(galaxyId));
     }
+
+    /**
+     * 获取当前星系的星球个数
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/{galaxyId}/planetCount
+     * 路径参数：galaxyId - 星系ID
+     * 返回值：成功返回星系列表，失败返回错误信息
+     */
+    @GetMapping("/{galaxyId}/planetCount")
+    public ResponseMessage<Integer> getGalaxyPlanetCount(@PathVariable @Positive(message = "星系ID必须为正数") Integer galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 检查星系是否存在
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否有权限查看星系
+        if (!g.getUserId().equals(currentUserId) && g.getPermission() == 0) {
+            return ResponseMessage.error("没有权限查看该星系");
+        }
+
+        // 获取星球个数
+        int count = galaxyService.getPlanetCountByGalaxyId(galaxyId);
+        return ResponseMessage.success(count);
+    }
+
+    /**
+     * 通过星系ID获取星系信息
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/galaxy/{galaxyId}/info
+     * 路径参数：galaxyId - 星系ID
+     * 返回值：成功返回星系信息，失败返回错误信息
+     */
+    @GetMapping("/{galaxyId}/info")
+    public ResponseMessage<KnowledgeGalaxyDto> getGalaxyInfoById(@PathVariable @Positive(message = "星系ID必须为正数") Integer galaxyId) {
+        // 获取当前用户ID
+        Map<String, Object> userInfo = ThreadLocalUtil.get();
+        Integer currentUserId = (Integer) userInfo.get("userId");
+
+        // 检查星系是否存在
+        KnowledgeGalaxy g = galaxyService.getKnowledgeGalaxyById(galaxyId);
+        if (g == null) {
+            return ResponseMessage.error("星系不存在");
+        }
+
+        // 验证是否有权限查看星系
+        if (!g.getUserId().equals(currentUserId) && g.getPermission() == 0) {
+            return ResponseMessage.error("没有权限查看该星系");
+        }
+
+        // 转换为DTO返回
+        KnowledgeGalaxyDto dto = ConvertUtil.convertKnowledgeGalaxyToDto(g);
+        return ResponseMessage.success(dto);
+    }
 }
 
 
