@@ -192,4 +192,27 @@ public class GalaxyService implements IGalaxyService {
         List<KnowledgePlanet> planets = galaxyMapper.getPlanetsByGalaxyId(galaxyId);
         return planets != null ? planets.size() : 0;
     }
+
+    /**
+     * 删除违规的星系评论
+     * 只有星系管理员和系统管理员可以删除评论
+     */
+    @Override
+    public boolean deleteGalaxyComment(Integer commentId, Integer currentUserId) {
+        // 检查评论是否存在
+        KnowledgeGalaxy galaxy = galaxyMapper.getGalaxyByCommentId(commentId);
+        if (galaxy == null) {
+            throw new RuntimeException("评论不存在或已被删除");
+        }
+
+        // 检查当前用户是否有权限删除评论
+        if (!galaxyMapper.isUserGalaxyAdmin(galaxy.getGalaxyId(), currentUserId)
+                && !galaxyMapper.isUserSystemAdmin(currentUserId)) {
+            throw new RuntimeException("您没有权限删除此评论");
+        }
+
+        // 删除评论
+        galaxyMapper.deleteGalaxyComment(commentId);
+        return true;
+    }
 }

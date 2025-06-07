@@ -187,6 +187,9 @@ public class ConvertUtil {
         // 更新时间
         dto.setUpdateTime(galaxy.getUpdateTime());
 
+        // 星系的星球数量（如果需要，可以添加）
+        dto.setPlanetCount(galaxy.getPlanetCount());
+
         // 注意：实体中的关联对象（creator, planets, comments, administrators）
         // 在DTO中不需要，所以这里不进行转换
 

@@ -34,8 +34,8 @@ public class GalaxyAdminController {
      * 请求URL：localhost:8081/galaxy/admin/appoint
      * 请求参数（JSON格式）：
      * {
-     *   "galaxyId": 1,    // 星系ID（必填）
-     *   "userId": 2       // 被任命用户ID（必填）
+     * "galaxyId": 1,    // 星系ID（必填）
+     * "userId": 2       // 被任命用户ID（必填）
      * }
      * 返回值：成功信息
      * 权限：只有星系创建者可以任命管理员
@@ -73,8 +73,8 @@ public class GalaxyAdminController {
      * 请求URL：localhost:8081/galaxy/admin/revoke
      * 请求参数（JSON格式）：
      * {
-     *   "galaxyId": 1,    // 星系ID（必填）
-     *   "userId": 2       // 被撤销用户ID（必填）
+     * "galaxyId": 1,    // 星系ID（必填）
+     * "userId": 2       // 被撤销用户ID（必填）
      * }
      * 返回值：成功信息
      * 权限：只有星系创建者可以撤销管理员
@@ -137,6 +137,33 @@ public class GalaxyAdminController {
 
             List<Integer> galaxyIds = galaxyAdminService.getUserManagedGalaxies(userId);
             return ResponseMessage.success(galaxyIds);
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 删除违规星系评论接口
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/admin/deleteComment/{commentId}
+     * 返回值：成功返回成功信息，失败返回错误信息
+     */
+    @PutMapping("/deleteComment")
+    public ResponseMessage deleteComment(@PathVariable @NotNull Integer commentId) {
+        try {
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer userId = (Integer) userInfo.get("userId");
+
+            // 验证用户是否为星系管理员
+            if (!galaxyAdminService.isGalaxyAdmin(commentId, userId)) {
+                return ResponseMessage.error("您没有权限删除此评论");
+            }
+
+            boolean success = galaxyService.deleteGalaxyComment(commentId, userId);
+            if (success) {
+                return ResponseMessage.success("评论删除成功");
+            }
+            return ResponseMessage.error("评论删除失败");
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }

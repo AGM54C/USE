@@ -124,4 +124,36 @@ public interface GalaxyMapper {
      */
     @Select("select * from tab_knowledge_planet where galaxy_id=#{galaxyId}")
     List<KnowledgePlanet> getPlanetsByGalaxyId(Integer galaxyId);
+
+    /**
+     * 根据评论ID获取对应的星系
+     * @param commentId 评论ID
+     * @return 返回对应的星系对象
+     */
+    @Select("SELECT *.kg FROM tab_knowledge_galaxy kg" +
+            "JOIN tab_galaxy_comment gc ON kg.galaxy_id = gc.galaxy_id " +
+            "WHERE gc.galaxy_comment_id = #{commentId}")
+    KnowledgeGalaxy getGalaxyByCommentId(Integer commentId);
+
+    /**
+     * 检查用户是否是星系管理员
+     * @param galaxyId 星系ID
+     * @param currentUserId 当前用户ID
+     * @return 如果是管理员返回true，否则返回false
+     */
+    @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_admins " +
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{currentUserId} AND status = 0")
+    boolean isUserGalaxyAdmin(Integer galaxyId, Integer currentUserId);
+
+    /**
+     * 检查用户是否是系统管理员
+     * @param currentUserId 当前用户ID
+     * @return 如果是系统管理员返回true，否则返回false
+     */
+    @Select("SELECT COUNT(*) > 0 FROM tab_system_admin WHERE user_id = #{currentUserId}")
+    boolean isUserSystemAdmin(Integer currentUserId);
+
+
+    @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_id = #{galaxyId}")
+    void deleteGalaxyComment(Integer galaxyId);
 }

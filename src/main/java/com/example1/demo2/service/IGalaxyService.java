@@ -91,4 +91,6 @@ public interface IGalaxyService {
     List<KnowledgePlanet> getPlanetsByGalaxyId(@Positive(message = "星系ID必须为正数") Integer galaxyId);
 
     int getPlanetCountByGalaxyId(@Positive(message = "星系ID必须为正数") Integer galaxyId);
+
+    boolean deleteGalaxyComment(Integer commentId, Integer currentUserId);
 }
