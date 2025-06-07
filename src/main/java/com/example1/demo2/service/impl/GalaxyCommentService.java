@@ -432,38 +432,4 @@ public class GalaxyCommentService implements IGalaxyCommentService {
             deleteChildComments(child.getGalaxyCommentId());
         }
     }
-
-    /**
-     * 删除违规评论
-     * 验证身份为星系管理员或系统管理员方可删除
-     */
-    @Override
-    public boolean deleteViolationComment(Integer commentId, Integer userId) {
-        // 验证评论是否存在
-        GalaxyComment comment = commentMapper.getCommentById(commentId);
-        if (comment == null || comment.getStatus() != 0) {
-            throw new RuntimeException("评论不存在或已被删除");
-        }
-
-        // 检查用户是否有权限删除
-        boolean isAdmin = galaxyAdminService.isGalaxyAdmin(comment.getKnowledgeGalaxy().getGalaxyId(), userId);
-        boolean isSystemAdmin = systemAdminService.isSystemAdmin(userId);
-
-        if (!isAdmin && !isSystemAdmin) {
-            throw new RuntimeException("无权删除此评论");
-        }
-
-        // 软删除评论
-        commentMapper.updateCommentStatus(commentId, 2);
-
-        // 如果有父评论，减少父评论的回复数
-        if (comment.getParentId() != null && comment.getParentId() > 0) {
-            commentMapper.decreaseReplyCount(comment.getParentId());
-        }
-
-        // 递归软删除所有子评论
-        deleteChildComments(commentId);
-
-        return true;
-    }
 }

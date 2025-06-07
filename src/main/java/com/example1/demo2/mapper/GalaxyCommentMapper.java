@@ -135,7 +135,7 @@ public interface GalaxyCommentMapper {
      */
     @Select("SELECT CASE " +
             "WHEN kg.user_id = #{userId} THEN 0 " +
-            "WHEN EXISTS(SELECT 1 FROM tab_galaxy_administrator WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}) THEN 1 " +
+            "WHEN EXISTS(SELECT 1 FROM tab_galaxy_admins WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}) THEN 1 " +
             "ELSE 2 END " +
             "FROM tab_knowledge_galaxy kg WHERE kg.galaxy_id = #{galaxyId}")
     Integer getUserRoleInGalaxy(@Param("userId") Integer userId, @Param("galaxyId") Integer galaxyId);
