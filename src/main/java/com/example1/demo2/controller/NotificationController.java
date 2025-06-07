@@ -317,7 +317,9 @@ public class NotificationController {
     public ResponseMessage sendSystemNotification(@RequestBody Map<String, Object> request) {
         try {
             // 这里应该添加管理员权限验证
-            // TODO: 检查当前用户是否为管理员
+            if (!request.containsKey("receiverId") || !request.containsKey("title") || !request.containsKey("content")) {
+                return ResponseMessage.error("参数错误");
+            }
 
             Integer receiverId = (Integer) request.get("receiverId");
             String title = (String) request.get("title");
@@ -352,6 +354,35 @@ public class NotificationController {
             return ResponseMessage.success("过期通知清理完成");
         } catch (Exception e) {
             return ResponseMessage.error("清理失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 给特定ID的人发信息
+     *
+     * 请求方式：POST
+     * 入参：
+     * userId - 发送者ID（必填）
+     * RecieverId - 接收者ID
+     * content - 消息内容（选填）
+     * Type - 消息类型（可选，默认为7）
+     * 返回值：
+     * ResponseMessage - 发送结果
+     */
+    @PostMapping("/send")
+    public ResponseMessage sendNotification(@RequestParam @NotNull Integer userId,
+                                            @RequestParam @NotNull Integer receiverId,
+                                            @RequestParam(required = false) String content,
+                                            @RequestParam @NotNull Integer Type) {
+        try {
+            if (receiverId <= 0 || content == null || content.isEmpty()) {
+                return ResponseMessage.error("参数错误");
+            }
+
+            notificationService.sendNotification(userId,receiverId, content,Type);
+            return ResponseMessage.success("消息发送成功");
+        } catch (Exception e) {
+            return ResponseMessage.error("发送失败: " + e.getMessage());
         }
     }
 }

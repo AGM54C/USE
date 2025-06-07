@@ -28,7 +28,7 @@ public class NotificationDto implements Serializable {
     private String senderName;
     private String senderAvatar;  // 发送者头像，用于前端展示
 
-    // 通知类型（1-星系评论回复 2-星系评论点赞 3-星系新评论 4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知）
+    // 通知类型（1-星系评论回复 2-星系评论点赞 3-星系新评论 4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知 8-星系管理员任命通知）
     @NotNull(groups = {Create.class}, message = "通知类型不能为空")
     private Integer type;
     private String typeDesc;  // 类型描述，便于前端理解
@@ -170,6 +170,26 @@ public class NotificationDto implements Serializable {
         dto.setTitle(title);
         dto.setContent(content);
         dto.setTargetType(5);  // 其他
+        dto.setIsRead(0);
+        dto.setStatus(0);
+        return dto;
+    }
+
+    /**
+     * 快速创建星系管理员任命通知的构造函数
+     */
+    public static NotificationDto createGalaxyAdminNotification(
+            Integer receiverId, Integer senderId, String senderName,
+            Integer galaxyId, String galaxyName) {
+        NotificationDto dto = new NotificationDto();
+        dto.setReceiverId(receiverId);
+        dto.setSenderId(senderId);
+        dto.setSenderName(senderName);
+        dto.setType(8);  // 星系管理员任命
+        dto.setTitle(senderName + " 任命你为星系管理员");
+        dto.setContent("你被任命为星系 " + galaxyName + " 的管理员");
+        dto.setTargetType(2);  // 星系
+        dto.setTargetId(String.valueOf(galaxyId));
         dto.setIsRead(0);
         dto.setStatus(0);
         return dto;

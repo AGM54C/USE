@@ -1,6 +1,9 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.dto.NotificationDto;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import java.util.Map;
  * 5. 星球评论点赞
  * 6. 星球新评论
  * 7. 系统通知
+ * * 8. 星系管理员任命通知（兼容旧接口）
  */
 public interface INotificationService {
 
@@ -105,6 +109,19 @@ public interface INotificationService {
      * @param content 通知内容
      */
     void sendSystemNotification(Integer receiverId, String title, String content);
+
+    /**
+     * 发送星系管理员任命通知
+     * 当用户被任命为星系管理员时调用
+     *
+     * @param receiverId 接收者ID
+     * @param senderId 任命者ID
+     * @param senderName 任命者名称
+     * @param galaxyId 星系ID
+     * @param galaxyName 星系名称
+     */
+    void sendGalaxyAdminNotification(Integer receiverId, Integer senderId,
+                                     String senderName, Integer galaxyId, String galaxyName);
 
     // ==================== 通知查询和管理 ====================
 
@@ -234,4 +251,6 @@ public interface INotificationService {
                                                String planetId, String planetName) {
         sendPlanetNewCommentNotification(senderId, planetOwnerId, planetId, planetName);
     }
+
+    void sendNotification(@NotNull Integer userId,@NotNull Integer receiverId,@Null String content ,@NotNull Integer type);
 }

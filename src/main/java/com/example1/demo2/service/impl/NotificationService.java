@@ -408,6 +408,55 @@ public class NotificationService implements INotificationService {
     }
 
     /**
+     * 发送星系管理员通知
+     * 通知类型：8
+     * 用于通知用户被任命为星系管理员
+     */
+    @Override
+    public void sendGalaxyAdminNotification(Integer receiverId, Integer senderId, String senderName, Integer galaxyId, String galaxyName) {
+        try {
+            if (receiverId.equals(senderId)) {
+                logger.info("用户{}被任命为自己的星系管理员，不发送通知", receiverId);
+                return;
+            }
+
+            if (isDuplicateNotification(receiverId, senderId, 8, String.valueOf(galaxyId))) {
+                logger.info("{}分钟内已发送过相同通知，跳过", DUPLICATE_CHECK_MINUTES);
+                return;
+            }
+
+            User receiver = userMapper.findById(receiverId);
+            User sender = userMapper.findById(senderId);
+
+            if (receiver == null || sender == null) {
+                logger.error("接收者或发送者不存在");
+                return;
+            }
+
+            Notification notification = new Notification();
+            notification.setReceiver(receiver);
+            notification.setSender(sender);
+            notification.setType(8);  // 星系管理员任命
+            notification.setTitle(senderName + " 任命你为星系管理员");
+            notification.setContent("你被任命为星系\"" + galaxyName + "\"的管理员");
+
+            notification.setTargetType(2);  // 星系
+            notification.setTargetId(String.valueOf(galaxyId));
+
+            Map<String, Object> extraData = new HashMap<>();
+            extraData.put("jumpUrl", "/galaxy/" + galaxyId);
+            extraData.put("senderAvatar", sender.getAvatarUrl());
+            notification.setExtraData(objectMapper.writeValueAsString(extraData));
+
+            notificationMapper.insertNotification(notification);
+            sendRealtimeNotification(receiverId, notification);
+
+        } catch (Exception e) {
+            logger.error("发送星系管理员通知失败", e);
+        }
+    }
+
+    /**
      * 群发系统通知给所有用户
      * 实现批量发送逻辑
      */
@@ -592,6 +641,48 @@ public class NotificationService implements INotificationService {
         int cleaned = notificationMapper.cleanExpiredNotifications(30);
         logger.info("清理了{}条过期通知", cleaned);
     }
+
+    @Override
+    public void sendNotification(Integer userId, Integer receiverId, String content, Integer type) {
+        try {
+            // 验证接收者是否存在
+            User receiver = userMapper.findById(receiverId);
+            if (receiver == null) {
+                logger.error("接收者不存在：{}", receiverId);
+                return;
+            }
+
+            // 检查重复通知
+            if (isDuplicateNotification(receiverId, userId, type, content)) {
+                logger.info("{}分钟内已发送过相同通知，跳过", DUPLICATE_CHECK_MINUTES);
+                return;
+            }
+
+            // 创建通知
+            Notification notification = new Notification();
+            notification.setReceiver(receiver);
+            notification.setSender(userMapper.findById(userId));
+            notification.setType(type);
+            notification.setTitle("新通知");
+            notification.setContent(content);
+            notification.setTargetType(5);  // 其他类型
+            notification.setTargetId(null);
+
+            Map<String, Object> extraData = new HashMap<>();
+            extraData.put("jumpUrl", "/notifications");
+            notification.setExtraData(objectMapper.writeValueAsString(extraData));
+
+            // 保存通知
+            notificationMapper.insertNotification(notification);
+
+            // 触发实时推送
+            sendRealtimeNotification(receiverId, notification);
+
+        } catch (Exception e) {
+            logger.error("发送通知失败", e);
+        }
+    }
+
 
     // ==================== 辅助方法 ====================
 

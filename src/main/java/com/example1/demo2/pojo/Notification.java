@@ -32,7 +32,7 @@ public class Notification {
 
     /**
      * 通知类型
-     * 1-星系评论回复 2-星系评论点赞 3-星系新评论 4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知
+     * 1-星系评论回复 2-星系评论点赞 3-星系新评论 4-星球评论回复 5-星球评论点赞 6-星球新评论 7-系统通知 8-任命通知
      */
     @Column(name = "type", nullable = false)
     private Integer type;
@@ -221,7 +221,8 @@ enum NotificationType {
     PLANET_COMMENT_REPLY(4, "星球评论回复"),
     PLANET_COMMENT_LIKE(5, "星球评论点赞"),
     PLANET_NEW_COMMENT(6, "星球新评论"),
-    SYSTEM(7, "系统通知");
+    SYSTEM(7, "系统通知"),
+    APPOINTMENT(8, "任命通知");
 
     private final int code;
     private final String description;
