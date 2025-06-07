@@ -12,7 +12,7 @@ public class FriendDto implements Serializable {
     private Integer friendId;
 
     // 用户ID
-    @NotNull(groups = {SendRequest.class}, message = "用户ID不能为空")
+    //@NotNull(groups = {SendRequest.class}, message = "用户ID不能为空")
     private Integer userId;
 
     // 好友用户ID
