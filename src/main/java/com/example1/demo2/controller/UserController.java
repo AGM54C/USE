@@ -583,4 +583,22 @@ public class UserController {
         userService.updateFavoriteGalaxy(userId, galaxyId);
         return ResponseMessage.success(galaxyId);
     }
+
+    /**
+     * 获取用户信息
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/user/getuserinfo/{userId}
+     * 路径参数：userId - 用户ID
+     * 返回值：用户昵称，邮箱，描述
+     */
+    @GetMapping("/getuserinfo/{userId}")
+    public ResponseMessage<UserDto> getUserInfo(@PathVariable Integer userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return ResponseMessage.error("用户不存在");
+        }
+
+        UserDto userDto = ConvertUtil.convertUserToDto(user);
+        return ResponseMessage.success(userDto);
+    }
 }
