@@ -77,6 +77,12 @@ public class KnowledgeGalaxy {
     @OneToMany(mappedBy = "knowledgeGalaxy", fetch = FetchType.LAZY)
     private List<GalaxyAdministrator> administrators;
 
+    /**
+     * 星球数
+     */
+    @Column(name = "planet_count", nullable = false)
+    private Integer planetCount;
+
     // JPA回调方法
     @PrePersist
     protected void onCreate() {
@@ -179,6 +185,13 @@ public class KnowledgeGalaxy {
         this.administrators = administrators;
     }
 
+    public Integer getPlanetCount() {
+        return planetCount;
+    }
+    public void setPlanetCount(Integer planetCount) {
+        this.planetCount = planetCount;
+    }
+
     @Override
     public String toString() {
         return "KnowledgeGalaxy{" +
@@ -190,6 +203,7 @@ public class KnowledgeGalaxy {
                 ", inviteCode='" + inviteCode + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", planetCount=" + planetCount +
                 '}';
     }
 }

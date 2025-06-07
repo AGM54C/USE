@@ -62,4 +62,7 @@ public interface IGalaxyCommentService {
 
     @Transactional
     void deleteChildComments(Integer parentId);
+
+    @Transactional
+    boolean deleteViolationComment(@NotNull Integer commentId, @NotNull Integer userId);
 }

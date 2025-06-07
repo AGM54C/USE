@@ -36,6 +36,7 @@ public class KnowledgeGalaxyDto implements Serializable {
     // 自动维护，前端无需传入
     private Date createTime;
     private Date updateTime;
+    private Integer planetCount;
 
     // Getters and Setters
     public Integer getGalaxyId() {
@@ -102,6 +103,14 @@ public class KnowledgeGalaxyDto implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public Integer getPlanetCount() {
+        return planetCount;
+    }
+
+    public void setPlanetCount(Integer planetCount) {
+        this.planetCount = planetCount;
+    }
+
     @Override
     public String toString() {
         return "KnowledgeGalaxyDto{" +
@@ -113,6 +122,7 @@ public class KnowledgeGalaxyDto implements Serializable {
                 ", inviteCode='" + inviteCode + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", planetCount=" + planetCount +
                 '}';
     }
 }

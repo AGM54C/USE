@@ -156,4 +156,27 @@ public class GalaxyCommentController {
             return ResponseMessage.error(e.getMessage());
         }
     }
+
+    /**
+     * 删除违规星系评论接口
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/comment/delete/violation/{commentId}
+     * 路径参数：commentId - 评论ID
+     * 查询参数：userId - 管理员用户ID（用于权限验证）
+     * 返回值：成功返回成功信息，失败返回错误信息
+     */
+    @PutMapping("/delete/violation/{commentId}")
+    public ResponseMessage deleteViolationComment(@PathVariable @NotNull Integer commentId,
+                                                  @RequestParam @NotNull Integer userId) {
+        try {
+            boolean success = commentService.deleteViolationComment(commentId, userId);
+            if (success) {
+                return ResponseMessage.success("违规评论删除成功");
+            } else {
+                return ResponseMessage.error("删除失败，可能评论不存在或权限不足");
+            }
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
 }

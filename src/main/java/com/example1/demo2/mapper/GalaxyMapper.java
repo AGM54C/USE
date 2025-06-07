@@ -58,7 +58,7 @@ public interface GalaxyMapper {
     KnowledgeGalaxy getKnowledgeGalaxyByInviteCode(String inviteCode);
 
     /**
-     * 更新星球的星系ID（将星球加入星系）
+     * 更新星球的星系ID(将星球加入星系)
      */
     @Update("update tab_knowledge_planet set galaxy_id=#{galaxyId} where planet_id=#{planetId}")
     void addPlanetToGalaxy(@Param("galaxyId") Integer galaxyId, @Param("planetId") String planetId);
@@ -66,8 +66,20 @@ public interface GalaxyMapper {
     /**
      * 从星系中移除星球
      */
-    @Update("update tab_knowledge_planet set galaxy_id=null where planet_id=#{planetId}")
+    @Update("update tab_knowledge_planet set galaxy_id=null where planet_id=#{planetId} and galaxy_id=#{galaxyId}")
     void removePlanetFromGalaxy(@Param("galaxyId") Integer galaxyId, @Param("planetId") String planetId);
+
+    /**
+     * 增加星系的星球数量
+     */
+    @Update("update tab_knowledge_galaxy set planet_count=planet_count+1 where galaxy_id=#{galaxyId}")
+    void incrementPlanetCount(Integer galaxyId);
+
+    /**
+     * 减少星系的星球数量
+     */
+    @Update("update tab_knowledge_galaxy set planet_count=planet_count-1 where galaxy_id=#{galaxyId}")
+    void decrementPlanetCount(Integer galaxyId);
 
     /**
      * 查询星系权限

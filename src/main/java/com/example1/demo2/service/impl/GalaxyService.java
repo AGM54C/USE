@@ -87,20 +87,22 @@ public class GalaxyService implements IGalaxyService {
     @Override
     @Transactional
     public KnowledgePlanetDto addKnowledgePlanetToGalaxy(Integer galaxyId, String planetId) {
-        // 首先检查星球是否存在
+        // 检查星球是否存在
         KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
         if (planet == null) {
-            return null; // 星球不存在
+            return null;
         }
 
         // 检查星球是否已经属于其他星系
         if (planet.getGalaxyId() != null && !planet.getGalaxyId().isEmpty()) {
-            // 如果需要，可以抛出异常或返回特定错误
             throw new RuntimeException("星球已经属于其他星系");
         }
 
-        // 将星球添加到星系中（更新星球表中的galaxy_id字段）
+        // 将星球添加到星系中
         galaxyMapper.addPlanetToGalaxy(galaxyId, planetId);
+
+        // 更新星系的星球数量
+        galaxyMapper.incrementPlanetCount(galaxyId);
 
         // 重新查询更新后的星球信息
         KnowledgePlanet updatedPlanet = planetMapper.findByPlanetId(planetId);
@@ -113,6 +115,7 @@ public class GalaxyService implements IGalaxyService {
     public void removeKnowledgePlanetFromGalaxy(Integer galaxyId, String planetId) {
         // 从星系中移除星球（更新星球表中的galaxy_id字段为null）
         galaxyMapper.removePlanetFromGalaxy(galaxyId, planetId);
+        galaxyMapper.decrementPlanetCount(galaxyId);
     }
 
     @Override
