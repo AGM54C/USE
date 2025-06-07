@@ -25,10 +25,10 @@ public class RewardService implements IRewardService {
     private UserMapper userMapper;
 
     // 奖励和消耗的常量定义，便于后期调整
-    private static final int PLANET_CREATION_FUEL_REWARD = 3;
+    private static final int PLANET_CREATION_FUEL_REWARD = 20;
     private static final int PLANET_ACCESS_FUEL_COST = 1;
     private static final int COMMENT_KNOWLEDGE_DUST_REWARD = 3;
-    private static final int GALAXY_CREATION_KNOWLEDGE_DUST_COST = 1;
+    private static final int GALAXY_CREATION_KNOWLEDGE_DUST_COST = 20;
 
     @Override
     @Transactional
