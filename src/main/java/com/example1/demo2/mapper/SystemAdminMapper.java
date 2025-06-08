@@ -10,8 +10,8 @@ public interface SystemAdminMapper {
     /**
      * 添加系统管理员
      */
-    @Insert("INSERT INTO tab_system_admin(user_id, permissions, scope) " +
-            "VALUES(#{userId}, #{permissions}, #{scope})")
+    @Insert("INSERT INTO tab_system_admin(user_id, permissions, scope,create_time,update_time) " +
+            "VALUES(#{userId}, #{permissions}, #{scope}, now(), now())")
     @Options(useGeneratedKeys = true, keyProperty = "adminId", keyColumn = "admin_id")
     void insertSystemAdmin(SystemAdmin admin);
 

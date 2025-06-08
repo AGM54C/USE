@@ -2,9 +2,11 @@ package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.GalaxyAdministrator;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
+import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyAdminService;
 import com.example1.demo2.service.IGalaxyService;
+import com.example1.demo2.util.ConvertUtil;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.Delete;
@@ -175,6 +177,7 @@ public class GalaxyAdminController {
      * 请求参数（JSON格式）：
      * {
      * "inviteCode": "ABC123" // 邀请码（必填）
+     * "userId": 1 // 用户ID（必填）
      * * }
      * * 返回值：成功信息或错误信息
      */
@@ -182,16 +185,13 @@ public class GalaxyAdminController {
     public ResponseMessage autoBecomeAdmin(@RequestBody Map<String, Object> request) {
         try {
             String inviteCode = (String) request.get("inviteCode");
+            Integer userId = (Integer) request.get("userId");
 
-            if (inviteCode == null || inviteCode.isEmpty()) {
+            if (userId == null ||inviteCode==null|| inviteCode.isEmpty()) {
                 return ResponseMessage.error("参数错误");
             }
 
-            // 获取当前用户
-            Map<String, Object> userInfo = ThreadLocalUtil.get();
-            Integer currentUserId = (Integer) userInfo.get("userId");
-
-            boolean success = galaxyAdminService.autoBecomeAdmin(inviteCode, currentUserId);
+            boolean success = galaxyAdminService.autoBecomeAdmin(inviteCode, userId);
             if (success) {
                 return ResponseMessage.success("自动成为管理员成功");
             }
