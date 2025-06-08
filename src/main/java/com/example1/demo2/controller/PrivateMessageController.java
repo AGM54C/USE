@@ -47,6 +47,11 @@ public class PrivateMessageController {
             messageDto.setSenderId(userId);
 
             PrivateMessageDto sentMessage = messageService.sendMessage(messageDto);
+            // 检查用户状态是否被封禁
+            if((Integer)userInfo.get("status") == 1) {
+                // 提示已经被封禁，无法发送消息
+                return ResponseMessage.error("您已被封禁，无法发送消息");
+            }
             return ResponseMessage.success(sentMessage);
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());

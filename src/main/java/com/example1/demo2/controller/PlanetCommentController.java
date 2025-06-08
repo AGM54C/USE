@@ -55,6 +55,10 @@ public class PlanetCommentController {
 
             // 发布评论
             PlanetCommentDto result = commentService.publishComment(commentDto);
+            if( (Integer) userInfo.get("status") == 1) {
+                // 提示已经被封禁，无法发表评论
+                return ResponseMessage.error("您已被封禁，无法发表评论");
+            }
 
             // 奖励知识星云值
             try {
