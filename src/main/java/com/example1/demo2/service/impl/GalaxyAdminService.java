@@ -205,4 +205,30 @@ public class GalaxyAdminService implements IGalaxyAdminService {
 
         return true;
     }
+
+    @Override
+    public boolean removeGalaxyAdmin(Integer galaxyId, Integer revokeUserId, Integer currentUserId) {
+        // 获取星系信息
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy == null) {
+            throw new RuntimeException("星系不存在");
+        }
+
+        // 检查被撤销的用户是否是管理员
+        if (!isGalaxyAdmin(galaxyId, revokeUserId)) {
+            throw new RuntimeException("该用户不是星系管理员");
+        }
+
+        // 撤销管理员
+        galaxyAdminMapper.revokeAdmin(galaxyId, revokeUserId);
+
+        // 发送通知
+        notificationService.sendSystemNotification(
+                revokeUserId,
+                "管理员权限撤销",
+                "您在星系「" + galaxy.getName() + "」的管理员权限已被撤销"
+        );
+
+        return true;
+    }
 }

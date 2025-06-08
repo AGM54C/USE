@@ -81,7 +81,7 @@ public class GalaxyAdminController {
      * "userId": 2       // 被撤销用户ID（必填）
      * }
      * 返回值：成功信息
-     * 权限：只有星系创建者可以撤销管理员
+     * 权限：只有星系创建者或者管理自己可以撤销管理员
      */
     @DeleteMapping("/revoke")
     public ResponseMessage revokeAdmin(@RequestBody Map<String, Integer> request) {
@@ -93,17 +93,16 @@ public class GalaxyAdminController {
                 return ResponseMessage.error("参数错误");
             }
 
+            // 获取当前用户
             Map<String, Object> userInfo = ThreadLocalUtil.get();
             Integer currentUserId = (Integer) userInfo.get("userId");
 
-            boolean success = galaxyAdminService.revokeGalaxyAdmin(
-                    galaxyId, revokeUserId, currentUserId
-            );
-
+            boolean success = galaxyAdminService.removeGalaxyAdmin(
+                    galaxyId, revokeUserId, currentUserId);
             if (success) {
                 return ResponseMessage.success("管理员撤销成功");
             }
-            return ResponseMessage.error("撤销失败");
+            return ResponseMessage.error("撤销失败，可能是权限不足或用户不是管理员");
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }

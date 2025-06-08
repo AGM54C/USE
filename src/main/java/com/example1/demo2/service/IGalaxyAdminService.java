@@ -59,4 +59,6 @@ public interface IGalaxyAdminService {
     void deleteComment(@NotNull Integer commentId);
 
     boolean autoBecomeAdmin(String inviteCode,Integer userId);
+
+    boolean removeGalaxyAdmin(Integer galaxyId, Integer revokeUserId, Integer currentUserId);
 }
