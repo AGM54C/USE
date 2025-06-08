@@ -189,6 +189,7 @@ public class GalaxyAdminService implements IGalaxyAdminService {
             throw new RuntimeException("您已是该星系的管理员");
         }
 
+
         // 添加管理员
         String permissions = "[\"DELETE_COMMENT\", \"MANAGE_CONTENT\"]";
         galaxyAdminMapper.insertGalaxyAdmin(
