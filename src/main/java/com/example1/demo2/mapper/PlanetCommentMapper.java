@@ -86,6 +86,12 @@ public interface PlanetCommentMapper {
     void updateCommentStatus(@Param("commentId") Integer commentId, @Param("status") Integer status);
 
     /**
+     * 硬删除评论
+     */
+    @Delete("DELETE FROM tab_planet_comment WHERE planet_comment_id = #{commentId}")
+    void deleteComment(Integer commentId);
+
+    /**
      * 增加点赞数
      */
     @Update("UPDATE tab_planet_comment SET like_count = like_count + 1 WHERE planet_comment_id = #{commentId}")

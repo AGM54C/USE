@@ -84,8 +84,8 @@ public class SystemAdminService implements ISystemAdminService {
             throw new RuntimeException("评论不存在");
         }
 
-        // 软删除评论
-        galaxyCommentMapper.updateCommentStatus(commentId, 2);
+        // 硬删除评论
+        galaxyCommentMapper.deleteComment(commentId);
 
         // 发送通知给评论作者
         notificationService.sendSystemNotification(
@@ -113,8 +113,8 @@ public class SystemAdminService implements ISystemAdminService {
             throw new RuntimeException("评论不存在");
         }
 
-        // 软删除评论
-        planetCommentMapper.updateCommentStatus(commentId, 2);
+        // 硬删除评论
+        planetCommentMapper.deleteComment(commentId);
 
         // 发送通知给评论作者
         notificationService.sendSystemNotification(

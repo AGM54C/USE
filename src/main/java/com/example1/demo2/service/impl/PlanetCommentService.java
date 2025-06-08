@@ -273,8 +273,8 @@ public class PlanetCommentService implements IPlanetCommentService {
             throw new RuntimeException("无权删除此评论");
         }
 
-        // 软删除评论
-        commentMapper.updateCommentStatus(commentId, 2);
+        // 硬删除评论
+        commentMapper.deleteComment(commentId);
 
         // 如果有父评论，减少父评论的回复数
         if (comment.getParentId() != null && comment.getParentId() > 0) {
@@ -412,7 +412,7 @@ public class PlanetCommentService implements IPlanetCommentService {
     public void deleteChildComments(Integer parentId) {
         List<PlanetComment> children = commentMapper.getRepliesByParentId(parentId);
         for (PlanetComment child : children) {
-            commentMapper.updateCommentStatus(child.getPlanetCommentId(), 2);
+            commentMapper.deleteComment(child.getPlanetCommentId());
             // 继续递归删除更深层的子评论
             deleteChildComments(child.getPlanetCommentId());
         }

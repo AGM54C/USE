@@ -86,6 +86,12 @@ public interface GalaxyCommentMapper {
     void updateCommentStatus(@Param("commentId") Integer commentId, @Param("status") Integer status);
 
     /**
+     * 删除评论（硬删除）
+     */
+    @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
+    void deleteComment(Integer commentId);
+
+    /**
      * 增加点赞数
      */
     @Update("UPDATE tab_galaxy_comment SET like_count = like_count + 1 WHERE galaxy_comment_id = #{commentId}")

@@ -287,8 +287,8 @@ public class GalaxyCommentService implements IGalaxyCommentService {
             throw new RuntimeException("无权删除此评论");
         }
 
-        // 软删除评论
-        commentMapper.updateCommentStatus(commentId, 2);
+        // 硬删除评论
+        commentMapper.deleteComment(commentId);
 
         // 如果有父评论，减少父评论的回复数
         if (comment.getParentId() != null && comment.getParentId() > 0) {
@@ -427,7 +427,7 @@ public class GalaxyCommentService implements IGalaxyCommentService {
     public void deleteChildComments(Integer parentId) {
         List<GalaxyComment> children = commentMapper.getRepliesByParentId(parentId);
         for (GalaxyComment child : children) {
-            commentMapper.updateCommentStatus(child.getGalaxyCommentId(), 2);
+            commentMapper.deleteComment(child.getGalaxyCommentId());
             // 继续递归删除更深层的子评论
             deleteChildComments(child.getGalaxyCommentId());
         }
