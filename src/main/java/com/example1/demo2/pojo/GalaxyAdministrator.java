@@ -32,12 +32,6 @@ public class GalaxyAdministrator {
     private User user;
 
     /**
-     * 管理员昵称
-     */
-    @Column(name = "nickname", nullable = false, length = 50)
-    private String nickname;
-
-    /**
      * 角色类型(0 创建者 1 其他管理员)
      */
     @Column(name = "role_type", nullable = false, columnDefinition = "tinyint default 0")
@@ -110,14 +104,6 @@ public class GalaxyAdministrator {
         this.user = user;
     }
 
-    public String getNickname() {
-        return user.getNickname();
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = this.user.getNickname();
-    }
-
     public Integer getRoleType() {
         return roleType;
     }
@@ -164,7 +150,6 @@ public class GalaxyAdministrator {
                 "adminId=" + adminId +
                 ", knowledgeGalaxy=" + knowledgeGalaxy +
                 ", user=" + user +
-                ", nickname='" + nickname + '\'' +
                 ", roleType=" + roleType +
                 ", permissions='" + permissions + '\'' +
                 ", appointedBy=" + appointedBy +
