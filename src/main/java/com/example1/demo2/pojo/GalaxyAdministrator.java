@@ -156,5 +156,6 @@ public class GalaxyAdministrator {
                 ", appointTime=" + appointTime +
                 ", status=" + status +
                 '}';
+
     }
 }
