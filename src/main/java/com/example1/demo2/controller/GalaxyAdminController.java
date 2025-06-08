@@ -1,6 +1,7 @@
 package com.example1.demo2.controller;
 
 import com.example1.demo2.pojo.GalaxyAdministrator;
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyAdminService;
 import com.example1.demo2.service.IGalaxyService;
@@ -128,7 +129,7 @@ public class GalaxyAdminController {
      * 获取用户管理的星系列表
      * 前端请求方式：GET
      * 请求URL：localhost:8081/galaxy/admin/managed
-     * 返回值：用户管理的星系ID列表
+     * 返回值：用户管理的星系列表
      */
     @GetMapping("/managed")
     public ResponseMessage<List<Integer>> getManagedGalaxies() {
@@ -136,8 +137,8 @@ public class GalaxyAdminController {
             Map<String, Object> userInfo = ThreadLocalUtil.get();
             Integer userId = (Integer) userInfo.get("userId");
 
-            List<Integer> galaxyIds = galaxyAdminService.getUserManagedGalaxies(userId);
-            return ResponseMessage.success(galaxyIds);
+            List<KnowledgeGalaxy> galaxies = galaxyAdminService.getUserManagedGalaxies(userId);
+            return ResponseMessage.success(galaxies);
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }

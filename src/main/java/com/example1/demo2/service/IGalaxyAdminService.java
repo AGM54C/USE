@@ -1,6 +1,7 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.GalaxyAdministrator;
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface IGalaxyAdminService {
      * @param userId 用户ID
      * @return 星系ID列表
      */
-    List<Integer> getUserManagedGalaxies(Integer userId);
+    List<KnowledgeGalaxy> getUserManagedGalaxies(Integer userId);
 
     /**
      * 检查用户是否有权限删除评论

@@ -1,6 +1,7 @@
 package com.example1.demo2.mapper;
 
 import com.example1.demo2.pojo.GalaxyAdministrator;
+import com.example1.demo2.pojo.KnowledgeGalaxy;
 import org.apache.ibatis.annotations.*;
 import java.util.List;
 
@@ -47,9 +48,10 @@ public interface GalaxyAdministratorMapper {
     /**
      * 获取用户管理的所有星系
      */
-    @Select("SELECT galaxy_id FROM tab_galaxy_admins " +
-            "WHERE user_id = #{userId} AND status = 0")
-    List<Integer> getUserManagedGalaxies(Integer userId);
+    @Select("SELECT * FROM tab_knowledge_galaxy WHERE galaxy_id IN " +
+            "(SELECT galaxy_id FROM tab_galaxy_admins WHERE user_id = #{userId} AND status = 0) " +
+            "ORDER BY create_time DESC")
+    List<KnowledgeGalaxy> getUserManagedGalaxies(Integer userId);
 
     @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     boolean isCommentExists(Integer commentId);

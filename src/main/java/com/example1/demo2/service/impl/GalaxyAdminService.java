@@ -126,7 +126,7 @@ public class GalaxyAdminService implements IGalaxyAdminService {
     }
 
     @Override
-    public List<Integer> getUserManagedGalaxies(Integer userId) {
+    public List<KnowledgeGalaxy> getUserManagedGalaxies(Integer userId) {
         return galaxyAdminMapper.getUserManagedGalaxies(userId);
     }
 
