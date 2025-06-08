@@ -215,4 +215,10 @@ public class GalaxyService implements IGalaxyService {
         galaxyMapper.deleteGalaxyComment(commentId);
         return true;
     }
+
+    @Override
+    public boolean isGalaxyAdmin(Integer galaxyId, Integer currentUserId) {
+        // 检查用户是否是星系管理员
+        return galaxyMapper.isUserGalaxyAdmin(galaxyId, currentUserId);
+    }
 }

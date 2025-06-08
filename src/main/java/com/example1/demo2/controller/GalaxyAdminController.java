@@ -146,30 +146,6 @@ public class GalaxyAdminController {
     }
 
     /**
-     * 删除违规星系评论接口
-     * 前端请求方式：DELETE
-     * 请求URL：localhost:8081/galaxy/admin/deleteComment/{commentId}
-     * 返回值：成功返回成功信息，失败返回错误信息
-     */
-    @DeleteMapping("/deleteComment/{commentId}")
-    public ResponseMessage deleteComment(@PathVariable @NotNull Integer commentId) {
-        try {
-            Map<String, Object> userInfo = ThreadLocalUtil.get();
-            Integer userId = (Integer) userInfo.get("userId");
-
-            // 验证用户是否为星系管理员
-            if (!galaxyAdminService.isGalaxyAdmin(commentId, userId)) {
-                return ResponseMessage.error("无权限删除评论");
-            }
-
-            galaxyAdminService.deleteComment(commentId);
-            return ResponseMessage.success("评论删除成功");
-        } catch (Exception e) {
-            return ResponseMessage.error(e.getMessage());
-        }
-    }
-
-    /**
      * 填写邀请码自动成为星系管理员
      * 前端请求方式：PUT
      * 请求URL：localhost:8081/galaxy/admin/autoBecomeAdmin

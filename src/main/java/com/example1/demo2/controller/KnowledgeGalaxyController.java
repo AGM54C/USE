@@ -204,9 +204,9 @@ public class KnowledgeGalaxyController {
             return ResponseMessage.error("星系不存在");
         }
 
-        // 验证是否为创建者
-        if (!g.getUserId().equals(currentUserId)) {
-            return ResponseMessage.error("只有星系创建者可以添加星球");
+        // 验证是否为创建者或者管理员
+        if (!g.getUserId().equals(currentUserId)&& !galaxyService.isGalaxyAdmin(galaxyId, currentUserId)) {
+            return ResponseMessage.error("只有星系创建者和管理员可以添加星球");
         }
 
         // 添加星球到星系，并返回更新后的星球信息
