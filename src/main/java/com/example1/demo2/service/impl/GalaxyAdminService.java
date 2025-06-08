@@ -167,15 +167,14 @@ public class GalaxyAdminService implements IGalaxyAdminService {
 
     /**
      * 填写邀请码自动成为星系管理员
-     * @param galaxyId 星系ID
      * @param inviteCode 邀请码
      * @param userId 用户ID
      * @return 是否成功
      */
     @Override
-    public boolean autoBecomeAdmin(Integer galaxyId, String inviteCode, Integer userId) {
+    public boolean autoBecomeAdmin(String inviteCode, Integer userId) {
         // 检查星系是否存在
-        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyByInviteCode(inviteCode);
         if (galaxy == null) {
             throw new RuntimeException("星系不存在");
         }
@@ -186,14 +185,14 @@ public class GalaxyAdminService implements IGalaxyAdminService {
         }
 
         // 检查用户是否已是管理员
-        if (isGalaxyAdmin(galaxyId, userId)) {
+        if (isGalaxyAdmin(galaxy.getGalaxyId(), userId)) {
             throw new RuntimeException("您已是该星系的管理员");
         }
 
         // 添加管理员
         String permissions = "[\"DELETE_COMMENT\", \"MANAGE_CONTENT\"]";
         galaxyAdminMapper.insertGalaxyAdmin(
-                galaxyId, userId, 1, permissions, galaxy.getUserId()
+                galaxy.getGalaxyId(), userId, 1, permissions, galaxy.getUserId()
         );
 
         // 发送通知

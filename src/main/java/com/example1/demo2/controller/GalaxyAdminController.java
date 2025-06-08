@@ -173,7 +173,6 @@ public class GalaxyAdminController {
      * 请求URL：localhost:8081/galaxy/admin/autoBecomeAdmin
      * 请求参数（JSON格式）：
      * {
-     * "galaxyId": 1,    // 星系ID（必填）
      * "inviteCode": "ABC123" // 邀请码（必填）
      * * }
      * * 返回值：成功信息或错误信息
@@ -181,10 +180,9 @@ public class GalaxyAdminController {
     @PutMapping("/autoBecomeAdmin")
     public ResponseMessage autoBecomeAdmin(@RequestBody Map<String, Object> request) {
         try {
-            Integer galaxyId = (Integer) request.get("galaxyId");
             String inviteCode = (String) request.get("inviteCode");
 
-            if (galaxyId == null || inviteCode == null || inviteCode.isEmpty()) {
+            if (inviteCode == null || inviteCode.isEmpty()) {
                 return ResponseMessage.error("参数错误");
             }
 
@@ -192,7 +190,7 @@ public class GalaxyAdminController {
             Map<String, Object> userInfo = ThreadLocalUtil.get();
             Integer currentUserId = (Integer) userInfo.get("userId");
 
-            boolean success = galaxyAdminService.autoBecomeAdmin(galaxyId, inviteCode, currentUserId);
+            boolean success = galaxyAdminService.autoBecomeAdmin(inviteCode, currentUserId);
             if (success) {
                 return ResponseMessage.success("自动成为管理员成功");
             }
