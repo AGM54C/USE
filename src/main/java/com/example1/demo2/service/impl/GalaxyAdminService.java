@@ -143,4 +143,66 @@ public class GalaxyAdminService implements IGalaxyAdminService {
                 isGalaxyAdmin(galaxyId, userId) ||
                 systemAdminMapper.isSystemAdmin(userId);
     }
+
+    @Override
+    public void deleteComment(Integer commentId) {
+        // 检查评论是否存在
+        if (!galaxyAdminMapper.isCommentExists(commentId)) {
+            throw new RuntimeException("评论不存在或已被删除");
+        }
+
+        // 删除评论
+        galaxyAdminMapper.deleteComment(commentId);
+
+        // 发送通知给评论作者
+        Integer authorId = galaxyAdminMapper.getCommentAuthorId(commentId);
+        if (authorId != null) {
+            notificationService.sendSystemNotification(
+                    authorId,
+                    "评论删除通知",
+                    "您的评论已被删除"
+            );
+        }
+    }
+
+    /**
+     * 填写邀请码自动成为星系管理员
+     * @param galaxyId 星系ID
+     * @param inviteCode 邀请码
+     * @param userId 用户ID
+     * @return 是否成功
+     */
+    @Override
+    public boolean autoBecomeAdmin(Integer galaxyId, String inviteCode, Integer userId) {
+        // 检查星系是否存在
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy == null) {
+            throw new RuntimeException("星系不存在");
+        }
+
+        // 检查邀请码是否正确
+        if (!galaxy.getInviteCode().equals(inviteCode)) {
+            throw new RuntimeException("邀请码不正确");
+        }
+
+        // 检查用户是否已是管理员
+        if (isGalaxyAdmin(galaxyId, userId)) {
+            throw new RuntimeException("您已是该星系的管理员");
+        }
+
+        // 添加管理员
+        String permissions = "[\"DELETE_COMMENT\", \"MANAGE_CONTENT\"]";
+        galaxyAdminMapper.insertGalaxyAdmin(
+                galaxyId, userId, 1, permissions, galaxy.getUserId()
+        );
+
+        // 发送通知
+        notificationService.sendSystemNotification(
+                userId,
+                "星系管理员任命",
+                "您已通过邀请码成为星系「" + galaxy.getName() + "」的管理员"
+        );
+
+        return true;
+    }
 }

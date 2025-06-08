@@ -6,6 +6,7 @@ import com.example1.demo2.service.IGalaxyAdminService;
 import com.example1.demo2.service.IGalaxyService;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.validation.constraints.NotNull;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -144,11 +145,11 @@ public class GalaxyAdminController {
 
     /**
      * 删除违规星系评论接口
-     * 前端请求方式：PUT
+     * 前端请求方式：DELETE
      * 请求URL：localhost:8081/galaxy/admin/deleteComment/{commentId}
      * 返回值：成功返回成功信息，失败返回错误信息
      */
-    @PutMapping("/deleteComment")
+    @DeleteMapping("/deleteComment/{commentId}")
     public ResponseMessage deleteComment(@PathVariable @NotNull Integer commentId) {
         try {
             Map<String, Object> userInfo = ThreadLocalUtil.get();
@@ -156,16 +157,48 @@ public class GalaxyAdminController {
 
             // 验证用户是否为星系管理员
             if (!galaxyAdminService.isGalaxyAdmin(commentId, userId)) {
-                return ResponseMessage.error("您没有权限删除此评论");
+                return ResponseMessage.error("无权限删除评论");
             }
 
-            boolean success = galaxyService.deleteGalaxyComment(commentId, userId);
-            if (success) {
-                return ResponseMessage.success("评论删除成功");
-            }
-            return ResponseMessage.error("评论删除失败");
+            galaxyAdminService.deleteComment(commentId);
+            return ResponseMessage.success("评论删除成功");
         } catch (Exception e) {
             return ResponseMessage.error(e.getMessage());
         }
     }
-}
+
+    /**
+     * 填写邀请码自动成为星系管理员
+     * 前端请求方式：PUT
+     * 请求URL：localhost:8081/galaxy/admin/autoBecomeAdmin
+     * 请求参数（JSON格式）：
+     * {
+     * "galaxyId": 1,    // 星系ID（必填）
+     * "inviteCode": "ABC123" // 邀请码（必填）
+     * * }
+     * * 返回值：成功信息或错误信息
+     */
+    @PutMapping("/autoBecomeAdmin")
+    public ResponseMessage autoBecomeAdmin(@RequestBody Map<String, Object> request) {
+        try {
+            Integer galaxyId = (Integer) request.get("galaxyId");
+            String inviteCode = (String) request.get("inviteCode");
+
+            if (galaxyId == null || inviteCode == null || inviteCode.isEmpty()) {
+                return ResponseMessage.error("参数错误");
+            }
+
+            // 获取当前用户
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer currentUserId = (Integer) userInfo.get("userId");
+
+            boolean success = galaxyAdminService.autoBecomeAdmin(galaxyId, inviteCode, currentUserId);
+            if (success) {
+                return ResponseMessage.success("自动成为管理员成功");
+            }
+            return ResponseMessage.error("自动成为管理员失败，可能是邀请码错误或已失效");
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+        }
+    }

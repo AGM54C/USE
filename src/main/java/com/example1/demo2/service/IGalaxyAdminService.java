@@ -1,6 +1,8 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.GalaxyAdministrator;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public interface IGalaxyAdminService {
@@ -52,4 +54,8 @@ public interface IGalaxyAdminService {
      * @return 是否有权限
      */
     boolean canDeleteComment(Integer galaxyId, Integer userId);
+
+    void deleteComment(@NotNull Integer commentId);
+
+    boolean autoBecomeAdmin(Integer galaxyId, String inviteCode,Integer userId);
 }

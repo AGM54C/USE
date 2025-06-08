@@ -25,7 +25,7 @@ public interface GalaxyAdministratorMapper {
      * 检查用户是否为星系管理员
      */
     @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_admins " +
-            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId} AND status = 0")
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
     boolean isGalaxyAdmin(@Param("galaxyId") Integer galaxyId,
                           @Param("userId") Integer userId);
 
@@ -50,4 +50,13 @@ public interface GalaxyAdministratorMapper {
     @Select("SELECT galaxy_id FROM tab_galaxy_admins " +
             "WHERE user_id = #{userId} AND status = 0")
     List<Integer> getUserManagedGalaxies(Integer userId);
+
+    @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
+    boolean isCommentExists(Integer commentId);
+
+    @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
+    void deleteComment(Integer commentId);
+
+    @Select("SELECT user_id FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
+    Integer getCommentAuthorId(Integer commentId);
 }
