@@ -1,10 +1,14 @@
 package com.example1.demo2.controller;
 
+import com.example1.demo2.mapper.UserMapper;
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.GalaxyCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IGalaxyCommentService;
 import com.example1.demo2.service.IRewardService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.service.impl.RewardService;
+import com.example1.demo2.service.impl.UserService;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -30,6 +34,8 @@ public class GalaxyCommentController {
     private IRewardService rewardService;
 
     private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
+    @Autowired
+    private IUserService userService;
 
     /**
      * 发布评论接口
@@ -54,12 +60,17 @@ public class GalaxyCommentController {
             Integer userId = (Integer) userInfo.get("userId");
             commentDto.setUserId(userId);
 
+            // 检查用户是否被封禁
+            User user = userService.findById(userId);
+            if (user == null) {
+                return ResponseMessage.error("用户不存在");
+            }
+            if (user.getStatus() != null && user.getStatus() == 1) {
+                return ResponseMessage.error("您的账户已被封禁，无法发表评论");
+            }
+
             // 发布评论
             GalaxyCommentDto result = commentService.publishComment(commentDto);
-            if((Integer)userInfo.get("status") == 1) {
-                //提示已经被封禁，无法发表评论
-                return ResponseMessage.error("您已被封禁，无法发表评论");
-            }
 
             // 奖励知识星云值
             try {

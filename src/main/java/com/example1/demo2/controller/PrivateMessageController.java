@@ -1,5 +1,6 @@
 package com.example1.demo2.controller;
 
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.PrivateMessageDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPrivateMessageService;
@@ -25,6 +26,9 @@ public class PrivateMessageController {
     @Autowired
     private IPrivateMessageService messageService;
 
+    @Autowired
+    private com.example1.demo2.service.IUserService userService;
+
     /**
      * 发送私信
      * 前端请求方式：POST
@@ -47,10 +51,13 @@ public class PrivateMessageController {
             messageDto.setSenderId(userId);
 
             PrivateMessageDto sentMessage = messageService.sendMessage(messageDto);
-            // 检查用户状态是否被封禁
-            if((Integer)userInfo.get("status") == 1) {
-                // 提示已经被封禁，无法发送消息
-                return ResponseMessage.error("您已被封禁，无法发送消息");
+            // 检查用户是否被封禁
+            User user = userService.findById(userId);
+            if (user == null) {
+                return ResponseMessage.error("用户不存在");
+            }
+            if (user.getStatus() != null && user.getStatus() == 1) {
+                return ResponseMessage.error("您的账户已被封禁，无法发表评论");
             }
             return ResponseMessage.success(sentMessage);
         } catch (Exception e) {

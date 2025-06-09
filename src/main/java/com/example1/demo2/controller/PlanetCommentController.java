@@ -1,10 +1,13 @@
 package com.example1.demo2.controller;
 
+import com.example1.demo2.pojo.User;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPlanetCommentService;
 import com.example1.demo2.service.IRewardService;
+import com.example1.demo2.service.IUserService;
 import com.example1.demo2.service.impl.RewardService;
+import com.example1.demo2.service.impl.UserService;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +30,9 @@ public class PlanetCommentController {
 
     @Autowired
     private IRewardService rewardService;
+
+    @Autowired
+    private IUserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
     /**
@@ -55,9 +61,13 @@ public class PlanetCommentController {
 
             // 发布评论
             PlanetCommentDto result = commentService.publishComment(commentDto);
-            if( (Integer) userInfo.get("status") == 1) {
-                // 提示已经被封禁，无法发表评论
-                return ResponseMessage.error("您已被封禁，无法发表评论");
+            // 检查用户是否被封禁
+            User user = userService.findById(userId);
+            if (user == null) {
+                return ResponseMessage.error("用户不存在");
+            }
+            if (user.getStatus() != null && user.getStatus() == 1) {
+                return ResponseMessage.error("您的账户已被封禁，无法发表评论");
             }
 
             // 奖励知识星云值
