@@ -1,13 +1,12 @@
 package com.example1.demo2.controller;
 
-import com.example1.demo2.pojo.User;
+import com.example1.demo2.mapper.PlanetCommentMapper;
 import com.example1.demo2.pojo.dto.PlanetCommentDto;
 import com.example1.demo2.pojo.dto.ResponseMessage;
 import com.example1.demo2.service.IPlanetCommentService;
 import com.example1.demo2.service.IRewardService;
 import com.example1.demo2.service.IUserService;
 import com.example1.demo2.service.impl.RewardService;
-import com.example1.demo2.service.impl.UserService;
 import com.example1.demo2.util.ThreadLocalUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import com.example1.demo2.pojo.User;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +34,9 @@ public class PlanetCommentController {
     private IUserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
+    @Autowired
+    private PlanetCommentMapper planetCommentMapper;
+
     /**
      * 发布评论接口
      * 前端请求方式：POST
@@ -109,12 +111,12 @@ public class PlanetCommentController {
      * 点赞/取消点赞接口
      * 前端请求方式：POST
      * 请求URL：localhost:8081/planet/comment/like
-     * 请求参数（JSON格式）：
+     * 请求参数（param格式）：
      * {
      *   "userId": 1,         // 用户ID（必填）
      *   "commentId": 1       // 评论ID（必填）
      * }
-     * 返回值：成功返回操作结果（true-点赞，false-取消点赞）
+     * 返回值：成功返回点赞数
      */
     @PostMapping("/like")
     public ResponseMessage toggleLike(@RequestParam @NotNull Integer userId,
