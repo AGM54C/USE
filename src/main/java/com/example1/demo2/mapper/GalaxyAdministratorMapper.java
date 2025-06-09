@@ -15,7 +15,6 @@ public interface GalaxyAdministratorMapper {
             "permissions, appointed_by, appoint_time) " +
             "VALUES(#{galaxyId}, #{userId}, #{roleType}, #{permissions}, " +
             "#{appointedBy}, now())")
-// 移除这行：@Options(useGeneratedKeys = true, keyProperty = "adminId", keyColumn = "admin_id")
     void insertGalaxyAdmin(@Param("galaxyId") Integer galaxyId,
                            @Param("userId") Integer userId,
                            @Param("roleType") Integer roleType,
@@ -23,10 +22,11 @@ public interface GalaxyAdministratorMapper {
                            @Param("appointedBy") Integer appointedBy);
 
     /**
-     * 检查用户是否为星系管理员
+     * 检查用户是否为星系管理员（仅检查状态正常的管理员）
+     * 修复：增加 status = 0 的条件，确保只统计有效的管理员
      */
     @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_admins " +
-            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId}")
+            "WHERE galaxy_id = #{galaxyId} AND user_id = #{userId} AND status = 0")
     boolean isGalaxyAdmin(@Param("galaxyId") Integer galaxyId,
                           @Param("userId") Integer userId);
 
@@ -53,12 +53,21 @@ public interface GalaxyAdministratorMapper {
             "ORDER BY create_time DESC")
     List<KnowledgeGalaxy> getUserManagedGalaxies(Integer userId);
 
+    /**
+     * 检查评论是否存在
+     */
     @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     boolean isCommentExists(Integer commentId);
 
+    /**
+     * 删除评论
+     */
     @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     void deleteComment(Integer commentId);
 
+    /**
+     * 获取评论作者ID
+     */
     @Select("SELECT user_id FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     Integer getCommentAuthorId(Integer commentId);
 }
