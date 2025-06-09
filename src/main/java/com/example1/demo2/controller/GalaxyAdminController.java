@@ -115,6 +115,7 @@ public class GalaxyAdminController {
      * 路径参数：galaxyId - 星系ID
      * 返回值：管理员列表
      */
+
     @GetMapping("/list/{galaxyId}")
     public ResponseMessage<List<GalaxyAdministrator>> getAdminList(
             @PathVariable @NotNull Integer galaxyId) {
