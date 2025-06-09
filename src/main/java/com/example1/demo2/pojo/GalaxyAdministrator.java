@@ -28,8 +28,14 @@ public class GalaxyAdministrator {
      * 多对一关系：多个管理员记录可以对应同一个用户（用户可以是多个星系的管理员）
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
+
+    /**
+     * 用户ID（直接映射数据库字段）
+     */
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     /**
      * 角色类型(0 创建者 1 其他管理员)
@@ -104,6 +110,14 @@ public class GalaxyAdministrator {
         this.user = user;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public Integer getRoleType() {
         return roleType;
     }
@@ -150,12 +164,12 @@ public class GalaxyAdministrator {
                 "adminId=" + adminId +
                 ", knowledgeGalaxy=" + knowledgeGalaxy +
                 ", user=" + user +
+                ", userId=" + userId +
                 ", roleType=" + roleType +
                 ", permissions='" + permissions + '\'' +
                 ", appointedBy=" + appointedBy +
                 ", appointTime=" + appointTime +
                 ", status=" + status +
                 '}';
-
     }
 }
