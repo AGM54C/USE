@@ -57,4 +57,11 @@ public interface SystemAdminMapper {
             "update_time = now() WHERE user_id = #{userId}")
     void updateLastLoginIp(@Param("userId") Integer userId,
                            @Param("ip") String ip);
+
+    /**
+     * 删除系统管理员
+     * @param adminId 系统管理员ID
+     */
+    @Delete("DELETE FROM tab_system_admin WHERE admin_id = #{adminId}")
+    void deleteSystemAdmin(Integer adminId);
 }

@@ -71,7 +71,7 @@ public class NotificationController {
             @RequestParam(defaultValue = "20") int size) {
         try {
             // 参数验证
-            if (type != null && (type < 1 || type > 7)) {
+            if (type != null && (type < 1 || type > 8)) {
                 return ResponseMessage.error("无效的通知类型");
             }
 

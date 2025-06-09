@@ -1,6 +1,8 @@
 package com.example1.demo2.service;
 
 import com.example1.demo2.pojo.SystemAdmin;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public interface ISystemAdminService {
@@ -62,4 +64,6 @@ public interface ISystemAdminService {
      * @return 管理员列表
      */
     List<SystemAdmin> getAllSystemAdmins();
+
+    boolean deleteSystemAdmin(@NotNull Integer adminId, Integer operatorId);
 }

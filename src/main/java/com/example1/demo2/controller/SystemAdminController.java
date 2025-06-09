@@ -226,4 +226,29 @@ public class SystemAdminController {
             return ResponseMessage.error(e.getMessage());
         }
     }
+
+    /**
+     * 删除系统管理员（超级管理员功能）
+     * 前端请求方式：DELETE
+     * 请求URL：localhost:8081/admin/delete/{adminId}
+     * 路径参数：adminId - 系统管理员ID
+     * 返回值：成功信息
+     * 权限：超级管理员
+     */
+    @DeleteMapping("/delete/{adminId}")
+    public ResponseMessage deleteSystemAdmin(@PathVariable @NotNull Integer adminId) {
+        try {
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer operatorId = (Integer) userInfo.get("userId");
+
+            boolean success = systemAdminService.deleteSystemAdmin(adminId, operatorId);
+
+            if (success) {
+                return ResponseMessage.success("系统管理员已删除");
+            }
+            return ResponseMessage.error("删除失败");
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
 }

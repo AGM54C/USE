@@ -186,4 +186,31 @@ public class SystemAdminService implements ISystemAdminService {
     public List<SystemAdmin> getAllSystemAdmins() {
         return systemAdminMapper.getAllActiveAdmins();
     }
+
+    @Override
+    public boolean deleteSystemAdmin(Integer adminId, Integer operatorId) {
+        // 验证操作者权限（必须是超级管理员）
+        if (!isSystemAdmin(operatorId)) {
+            throw new RuntimeException("无权限执行此操作");
+        }
+
+        // 检查是否为系统管理员
+        if (!isSystemAdmin(adminId)) {
+            throw new RuntimeException("用户不是系统管理员");
+        }
+
+        // 删除管理员记录
+        systemAdminMapper.deleteSystemAdmin(adminId);
+
+        // 发送通知
+        notificationService.sendSystemNotification(
+                adminId,
+                "系统管理员权限被撤销",
+                "您的系统管理员权限已被撤销"
+        );
+
+        logger.info("用户 {} 的系统管理员权限被 {} 撤销", adminId, operatorId);
+
+        return true;
+    }
 }
