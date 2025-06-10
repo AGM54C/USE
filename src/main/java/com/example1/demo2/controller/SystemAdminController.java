@@ -251,4 +251,23 @@ public class SystemAdminController {
             return ResponseMessage.error(e.getMessage());
         }
     }
+
+    /**
+     * 判断是不是系统管理员接口
+     * 前端请求方式：GET
+     * 请求URL：localhost:8081/admin/isSystemAdmin
+     * 返回值：true-是系统管理员，false-不是
+     */
+    @GetMapping("/isSystemAdmin")
+    public ResponseMessage isSystemAdmin() {
+        try {
+            Map<String, Object> userInfo = ThreadLocalUtil.get();
+            Integer userId = (Integer) userInfo.get("userId");
+
+            boolean isAdmin = systemAdminService.isSystemAdmin(userId);
+            return ResponseMessage.success(isAdmin);
+        } catch (Exception e) {
+            return ResponseMessage.error(e.getMessage());
+        }
+    }
 }
