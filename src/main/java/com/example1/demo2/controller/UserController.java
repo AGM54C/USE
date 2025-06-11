@@ -13,16 +13,20 @@ import com.example1.demo2.util.BCryptUtil;
 import com.example1.demo2.util.ConvertUtil;
 import com.example1.demo2.util.JWTUtil;
 import com.example1.demo2.util.ThreadLocalUtil;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.SftpException;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.jcraft.jsch.Session;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController //接口返回对象，转化为json文本
@@ -604,31 +608,67 @@ public class UserController {
         return ResponseMessage.success(userDto);
     }
 
+
     /**
-     * 上传头像接口
-     * 前端请求方式：POST
-     * 请求URL：localhost:8081/user/uploadavatar
-     * 请求参数：MultipartFile file
-     * 返回值：成功返回头像URL，失败返回错误信息
+     * 更新用户头像
+     * 前端请求方式：PATCH
+     * 请求URL：localhost:8081/user/updateAvatar
+     * 请求参数：file - 上传的头像文件
+     * 返回值：成功返回头像访问URL，失败返回错误信息
      */
-    @PostMapping("/uploadavatar")
-    public ResponseMessage<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    @PatchMapping("/updateAvatar")
+    public ResponseMessage<String> updateAvatar(@RequestParam("file") MultipartFile file) {
+        // 云服务器配置
+        String host = "118.24.140.180";
+        int port = 22; // SSH默认端口
+        String username = "xoj7nfmj"; // 替换为SSH用户名
+        String password = "6e61a74c"; // 替换为SSH密码
+        String remoteDir = "/home/uploads";
+
+        // 生成唯一文件名
+        String originalFilename = file.getOriginalFilename();
+        String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String filename = UUID.randomUUID() + suffix;
+
         // 获取当前用户ID
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("userId");
-        User u = userService.findById(userId);
-        if (u == null) {
-            return ResponseMessage.error("用户不存在");
-        }
 
-        // 调用服务上传头像并获取URL
-        String avatarUrl = userService.uploadAvatar(file, userId);
-        if (avatarUrl == null) {
-            return ResponseMessage.error("头像上传失败");
-        }
+        try {
+            // ========== 1. 通过SFTP上传文件 ==========
+            JSch jsch = new JSch();
+            Session session = jsch.getSession(username, host, port);
+            session.setPassword(password);
+            session.setConfig("StrictHostKeyChecking", "no"); // 跳过主机密钥验证
+            session.connect();
 
-        // 更新用户头像URL
-        userService.updateurl(avatarUrl, userId);
-        return ResponseMessage.success(avatarUrl);
+            ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
+            sftp.connect();
+
+            // 确保远程目录存在
+            try {
+                sftp.cd(remoteDir);
+            } catch (SftpException e) {
+                sftp.mkdir(remoteDir);
+                sftp.cd(remoteDir);
+            }
+
+            // 上传文件
+            sftp.put(file.getInputStream(), filename);
+            sftp.disconnect();
+            session.disconnect();
+            // ========== 上传结束 ==========
+
+            // 2. 生成访问URL (根据实际Nginx配置调整)
+            String accessUrl = "http://118.24.140.180/images/" + filename;
+
+            // 3. 更新用户头像URL
+            userService.updateurl(accessUrl,userId);
+
+            return ResponseMessage.success(accessUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseMessage.error("上传失败: " + e.getMessage());
+        }
     }
 }

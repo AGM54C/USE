@@ -69,6 +69,13 @@
             <artifactId>java-jwt</artifactId>
             <version>4.4.0</version>
         </dependency>
+
+        <!-- JSch用于SFTP文件上传 -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.55</version>
+        </dependency>
         <!-- BCrypt 官方依赖 -->
         <dependency>
             <groupId>org.mindrot</groupId>
