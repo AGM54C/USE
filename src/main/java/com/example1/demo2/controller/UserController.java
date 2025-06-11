@@ -18,6 +18,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -600,5 +602,33 @@ public class UserController {
 
         UserDto userDto = ConvertUtil.convertUserToDto(user);
         return ResponseMessage.success(userDto);
+    }
+
+    /**
+     * 上传头像接口
+     * 前端请求方式：POST
+     * 请求URL：localhost:8081/user/uploadavatar
+     * 请求参数：MultipartFile file
+     * 返回值：成功返回头像URL，失败返回错误信息
+     */
+    @PostMapping("/uploadavatar")
+    public ResponseMessage<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        // 获取当前用户ID
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("userId");
+        User u = userService.findById(userId);
+        if (u == null) {
+            return ResponseMessage.error("用户不存在");
+        }
+
+        // 调用服务上传头像并获取URL
+        String avatarUrl = userService.uploadAvatar(file, userId);
+        if (avatarUrl == null) {
+            return ResponseMessage.error("头像上传失败");
+        }
+
+        // 更新用户头像URL
+        userService.updateurl(avatarUrl, userId);
+        return ResponseMessage.success(avatarUrl);
     }
 }

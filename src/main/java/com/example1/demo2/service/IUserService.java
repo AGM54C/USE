@@ -3,6 +3,7 @@ package com.example1.demo2.service;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -60,4 +61,6 @@ public interface IUserService {
     List<KnowledgeGalaxy> GetGalaxiesByNameExcludeUser(String name, Integer userId);
 
     KnowledgePlanet getFavorPlanet(String favorPlanetId);
+
+    String uploadAvatar(MultipartFile file, Integer userId);
 }

@@ -10,6 +10,7 @@ import com.example1.demo2.service.IUserService;
 import com.example1.demo2.util.BCryptUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -123,6 +124,15 @@ public class UserService implements IUserService {
     @Override
     public KnowledgePlanet getFavorPlanet(String favorPlanetId) {
         return planetMapper.getFavorPlanet(favorPlanetId);
+    }
+
+    @Override
+    public String uploadAvatar(MultipartFile file, Integer userId) {
+        // 这里可以实现文件上传逻辑，返回上传后的头像URL
+        // 例如，将文件保存到服务器并返回其访问路径
+        String avatarUrl = "http://example.com/avatars/" + file.getOriginalFilename();
+        userMapper.updateurl(avatarUrl, userId);
+        return avatarUrl;
     }
 
     @Override
