@@ -57,8 +57,10 @@ public class UserService implements IUserService {
 
     @Override
     public void updatepassword(String newpassword, Integer userId) {
-        String passwordhash=BCryptUtil.hashPassword(newpassword);
-        userMapper.updatepassword(newpassword,userId);
+        // 对新密码进行哈希处理
+        String passwordHash = BCryptUtil.hashPassword(newpassword);
+        // 将哈希后的密码传递给 mapper，而不是原始密码
+        userMapper.updatepassword(passwordHash, userId);
     }
 
     @Override

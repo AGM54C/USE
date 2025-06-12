@@ -176,6 +176,7 @@ public class GalaxyAdminService implements IGalaxyAdminService {
         // 检查星系是否存在
         KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyByInviteCode(inviteCode);
         if (galaxy == null) {
+
             throw new RuntimeException("星系不存在");
         }
 
