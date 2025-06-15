@@ -185,7 +185,7 @@
         <mxCell id="yJiCJOWQ89auQAhYZ19S-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="yJiCJOWQ89auQAhYZ19S-55" target="yJiCJOWQ89auQAhYZ19S-57" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="yJiCJOWQ89auQAhYZ19S-66" value="输入星系ID&lt;div&gt;评论ID（PARAM格式）&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="yJiCJOWQ89auQAhYZ19S-65" vertex="1" connectable="0">
+        <mxCell id="yJiCJOWQ89auQAhYZ19S-66" value="验证身份（JWT）" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="yJiCJOWQ89auQAhYZ19S-65" vertex="1" connectable="0">
           <mxGeometry x="-0.0046" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
