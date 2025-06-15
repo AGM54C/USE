@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0" version="27.1.4">
   <diagram name="第 1 页" id="VuT98deJlEc1pDKwYhzk">
-    <mxGraphModel dx="2098" dy="1196" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+    <mxGraphModel dx="1443" dy="823" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -347,6 +347,47 @@
         </mxCell>
         <mxCell id="vxs2qcMsWGjXZTULrwau-22" value="&lt;div style=&quot;line-height: 70%;&quot;&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;&lt;span style=&quot;color: rgb(64, 64, 64); font-family: quote-cjk-patch, Inter, system-ui, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, Cantarell, &amp;quot;Helvetica Neue&amp;quot;, Oxygen, &amp;quot;Open Sans&amp;quot;, sans-serif; text-align: start; text-wrap-mode: wrap; background-color: rgb(255, 255, 255);&quot;&gt;Map&amp;lt;String, Object&amp;gt; connect(SimpMessageHeaderAccessor headerAccessor);&lt;/span&gt;&lt;br style=&quot;color: rgb(64, 64, 64); font-family: quote-cjk-patch, Inter, system-ui, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, Cantarell, &amp;quot;Helvetica Neue&amp;quot;, Oxygen, &amp;quot;Open Sans&amp;quot;, sans-serif; text-align: start; text-wrap-mode: wrap; background-color: rgb(255, 255, 255);&quot;&gt;&lt;span style=&quot;color: rgb(64, 64, 64); font-family: quote-cjk-patch, Inter, system-ui, -apple-system, BlinkMacSystemFont, &amp;quot;Segoe UI&amp;quot;, Roboto, &amp;quot;Noto Sans&amp;quot;, Ubuntu, Cantarell, &amp;quot;Helvetica Neue&amp;quot;, Oxygen, &amp;quot;Open Sans&amp;quot;, sans-serif; text-align: start; text-wrap-mode: wrap; background-color: rgb(255, 255, 255);&quot;&gt;void disconnect();&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vxs2qcMsWGjXZTULrwau-21">
           <mxGeometry x="33.75" y="37" width="317" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-28" target="vxs2qcMsWGjXZTULrwau-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-28" target="vxs2qcMsWGjXZTULrwau-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-28" target="vxs2qcMsWGjXZTULrwau-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-28" target="vxs2qcMsWGjXZTULrwau-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-28">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1052.5079752604165" y="3435.666724795387" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-28" value="通知系统后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1204" y="3312" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-29" value="知识星系后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="953" y="3312" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-30" value="好友系统后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1470" y="3312" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-31" value="系统管理员系统后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1204" y="3437" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="vxs2qcMsWGjXZTULrwau-33" target="vxs2qcMsWGjXZTULrwau-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-33" value="通知系统前端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1204" y="3167" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-34" value="知识星球后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1403" y="3437" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxs2qcMsWGjXZTULrwau-35" value="用户后端包" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="996" y="3437" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
