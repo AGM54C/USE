@@ -1,14 +1,19 @@
 package com.example1.demo2.service.impl;
 
+import com.example1.demo2.mapper.GalaxyCommentMapper;
 import com.example1.demo2.mapper.GalaxyMapper;
 import com.example1.demo2.mapper.PlanetMapper;
+import com.example1.demo2.mapper.GalaxyAdministratorMapper;
+import com.example1.demo2.mapper.NotificationMapper;
 import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import com.example1.demo2.pojo.dto.KnowledgeGalaxyDto;
 import com.example1.demo2.pojo.dto.KnowledgePlanetDto;
 import com.example1.demo2.service.IGalaxyService;
+import com.example1.demo2.service.IPlanetService;
 import com.example1.demo2.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +26,14 @@ public class GalaxyService implements IGalaxyService {
 
     @Autowired
     private PlanetMapper planetMapper;
+
+    @Autowired
+    private GalaxyCommentMapper galaxyCommentMapper;
+
+    // 使用 @Lazy 避免循环依赖
+    @Autowired
+    @Lazy
+    private IPlanetService planetService;
 
     private final Object createLock = new Object();
 
@@ -78,9 +91,82 @@ public class GalaxyService implements IGalaxyService {
         galaxyMapper.update(galaxy);
     }
 
+    /**
+     * 删除星系 - 实现完整的级联删除
+     * 删除顺序很重要，需要先删除依赖数据，再删除主数据
+     *
+     * 级联删除顺序：
+     * 1. 删除星系评论的点赞记录
+     * 2. 删除星系的所有评论
+     * 3. 删除星系管理员记录
+     * 4. 处理星系下的星球（可以选择删除或解除关联）
+     * 5. 删除与星系相关的通知
+     * 6. 最后删除星系本身
+     */
     @Override
     @Transactional
     public void deleteGalaxy(Integer galaxyId) {
+        // 检查星系是否存在
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy == null) {
+            throw new RuntimeException("星系不存在");
+        }
+
+        // 1. 先删除星系下所有星球及其关联数据
+        // 获取星系下的所有星球
+        List<KnowledgePlanet> planets = galaxyMapper.getPlanetsByGalaxyId(galaxyId);
+        if (planets != null && !planets.isEmpty()) {
+            for (KnowledgePlanet planet : planets) {
+                // 调用星球服务的级联删除方法
+                planetService.deleteWithComments(planet.getPlanetId());
+            }
+        }
+
+        // 2. 删除星系评论的点赞记录
+        // 必须在删除评论之前执行，否则会因外键约束失败
+        galaxyMapper.deleteGalaxyCommentLikesByGalaxyId(galaxyId);
+
+        // 3. 删除星系的所有评论
+        galaxyMapper.deleteGalaxyComments(galaxyId);
+
+        // 4. 删除星系管理员记录
+        galaxyMapper.deleteGalaxyAdminsByGalaxyId(galaxyId);
+
+        // 5. 删除与星系相关的通知
+        galaxyMapper.deleteNotificationsByGalaxyId(galaxyId);
+
+        // 6. 最后删除星系本身
+        galaxyMapper.delete(galaxyId);
+    }
+
+    /**
+     * 删除星系（不删除星球，只解除关联）
+     * 这是一个更温和的删除方式，保留星球但解除与星系的关联
+     */
+    @Transactional
+    public void deleteGalaxyKeepPlanets(Integer galaxyId) {
+        // 检查星系是否存在
+        KnowledgeGalaxy galaxy = galaxyMapper.getKnowledgeGalaxyById(galaxyId);
+        if (galaxy == null) {
+            throw new RuntimeException("星系不存在");
+        }
+
+        // 1. 解除星球与星系的关联（将galaxy_id设为null）
+        galaxyMapper.detachPlanetsFromGalaxy(galaxyId);
+
+        // 2. 删除星系评论的点赞记录
+        galaxyMapper.deleteGalaxyCommentLikesByGalaxyId(galaxyId);
+
+        // 3. 删除星系的所有评论
+        galaxyMapper.deleteGalaxyComments(galaxyId);
+
+        // 4. 删除星系管理员记录
+        galaxyMapper.deleteGalaxyAdminsByGalaxyId(galaxyId);
+
+        // 5. 删除与星系相关的通知
+        galaxyMapper.deleteNotificationsByGalaxyId(galaxyId);
+
+        // 6. 最后删除星系本身
         galaxyMapper.delete(galaxyId);
     }
 
@@ -194,10 +280,14 @@ public class GalaxyService implements IGalaxyService {
     }
 
     /**
-     * 删除违规的星系评论
-     * 只有星系管理员和系统管理员可以删除评论
+     * 删除违规的星系评论 - 实现级联删除
+     * 删除评论时需要同时删除：
+     * 1. 评论的子评论
+     * 2. 评论和子评论的点赞记录
+     * 3. 相关通知
      */
     @Override
+    @Transactional
     public boolean deleteGalaxyComment(Integer commentId, Integer currentUserId) {
         // 检查评论是否存在
         KnowledgeGalaxy galaxy = galaxyMapper.getGalaxyByCommentId(commentId);
@@ -211,9 +301,36 @@ public class GalaxyService implements IGalaxyService {
             throw new RuntimeException("您没有权限删除此评论");
         }
 
-        // 删除评论
-        galaxyMapper.deleteGalaxyComment(commentId);
+        // 级联删除评论
+        deleteGalaxyCommentCascade(commentId);
+
         return true;
+    }
+
+    /**
+     * 级联删除星系评论的内部方法
+     * 处理评论、子评论、点赞记录和通知的删除
+     */
+    @Transactional
+    public void deleteGalaxyCommentCascade(Integer commentId) {
+        // 1. 获取所有子评论ID
+        List<Integer> childCommentIds = galaxyCommentMapper.getChildCommentIds(commentId);
+
+        // 2. 递归删除子评论
+        if (childCommentIds != null && !childCommentIds.isEmpty()) {
+            for (Integer childId : childCommentIds) {
+                deleteGalaxyCommentCascade(childId);
+            }
+        }
+
+        // 3. 删除评论的点赞记录
+        galaxyCommentMapper.deleteLikesByCommentId(commentId);
+
+        // 4. 删除与评论相关的通知
+        galaxyCommentMapper.deleteNotificationsByCommentId(commentId);
+
+        // 5. 删除评论本身
+        galaxyCommentMapper.deleteComment(commentId);
     }
 
     @Override

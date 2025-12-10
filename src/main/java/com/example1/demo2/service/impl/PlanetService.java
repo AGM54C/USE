@@ -1,5 +1,6 @@
 package com.example1.demo2.service.impl;
 
+import com.example1.demo2.mapper.GalaxyMapper;
 import com.example1.demo2.mapper.PlanetCommentMapper;
 import com.example1.demo2.mapper.PlanetMapper;
 import com.example1.demo2.pojo.KnowledgePlanet;
@@ -22,6 +23,9 @@ public class PlanetService implements IPlanetService {
 
     @Autowired
     private PlanetCommentMapper commentMapper;
+
+    @Autowired
+    private GalaxyMapper galaxyMapper;
 
     @Autowired
     private SystemAdminService systemAdminService;
@@ -60,19 +64,96 @@ public class PlanetService implements IPlanetService {
         commentMapper.updatePlanetId(commentId, null);
     }
 
+    /**
+     * 简单删除星球（不处理关联数据）
+     * 注意：此方法可能因为外键约束而失败，建议使用 deleteWithComments 方法
+     */
     @Override
     @Transactional
     public void delete(String planetId) {
-        planetMapper.deleteById(planetId);
+        // 直接调用带级联删除的方法
+        deleteWithComments(planetId);
     }
 
+    /**
+     * 删除星球及其所有关联数据 - 实现完整的级联删除
+     *
+     * 级联删除顺序：
+     * 1. 删除星球评论的点赞记录
+     * 2. 删除星球的所有评论
+     * 3. 删除与星球相关的通知
+     * 4. 更新所属星系的星球计数（如果属于某个星系）
+     * 5. 最后删除星球本身
+     */
     @Override
     @Transactional
     public void deleteWithComments(String planetId) {
-        // 先删除关联评论
+        // 检查星球是否存在
+        KnowledgePlanet planet = planetMapper.findByPlanetId(planetId);
+        if (planet == null) {
+            // 星球不存在，直接返回（幂等性设计）
+            return;
+        }
+
+        // 获取星球所属的星系ID（用于后续更新星系的星球计数）
+        String galaxyIdStr = planet.getGalaxyId();
+        Integer galaxyId = null;
+        if (galaxyIdStr != null && !galaxyIdStr.isEmpty()) {
+            try {
+                galaxyId = Integer.parseInt(galaxyIdStr);
+            } catch (NumberFormatException e) {
+                // galaxyId 格式不正确，忽略
+            }
+        }
+
+        // 1. 删除星球所有评论的点赞记录
+        // 必须在删除评论之前执行，否则会因外键约束失败
+        planetMapper.deletePlanetCommentLikesByPlanetId(planetId);
+
+        // 2. 删除星球的所有评论（包括子评论）
+        // 由于评论有自引用关系（子评论引用父评论），
+        // 直接删除所有该星球的评论即可
         commentMapper.deleteByPlanetId(planetId);
-        // 再删除星球
+
+        // 3. 删除与星球相关的通知
+        planetMapper.deleteNotificationsByPlanetId(planetId);
+
+        // 4. 删除星球本身
         planetMapper.deleteById(planetId);
+
+        // 5. 更新所属星系的星球计数
+        if (galaxyId != null) {
+            galaxyMapper.decrementPlanetCount(galaxyId);
+        }
+    }
+
+    /**
+     * 删除星球评论 - 实现级联删除
+     * 删除评论时需要同时删除：
+     * 1. 评论的子评论
+     * 2. 评论和子评论的点赞记录
+     * 3. 相关通知
+     */
+    @Transactional
+    public void deletePlanetCommentCascade(Integer commentId) {
+        // 1. 获取所有子评论ID
+        List<Integer> childCommentIds = commentMapper.getChildCommentIds(commentId);
+
+        // 2. 递归删除子评论
+        if (childCommentIds != null && !childCommentIds.isEmpty()) {
+            for (Integer childId : childCommentIds) {
+                deletePlanetCommentCascade(childId);
+            }
+        }
+
+        // 3. 删除评论的点赞记录
+        commentMapper.deleteLikesByCommentId(commentId);
+
+        // 4. 删除与评论相关的通知
+        commentMapper.deleteNotificationsByCommentId(commentId);
+
+        // 5. 删除评论本身
+        commentMapper.deleteComment(commentId);
     }
 
     @Override

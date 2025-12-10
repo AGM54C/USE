@@ -67,4 +67,27 @@ public interface PrivateMessageMapper {
             "AND TIMESTAMPDIFF(MINUTE, send_time, NOW()) <= 2")
     int recallMessage(@Param("messageId") Long messageId,
                       @Param("senderId") Integer senderId);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除用户发送和接收的所有私信（硬删除）
+     */
+    @Delete("DELETE FROM tab_private_message WHERE sender_id = #{userId} OR receiver_id = #{userId}")
+    void deleteMessagesByUserId(Integer userId);
+
+    /**
+     * 软删除用户发送和接收的所有私信
+     * 将状态设置为已删除（status = 1）
+     */
+    @Update("UPDATE tab_private_message SET status = 1 WHERE sender_id = #{userId} OR receiver_id = #{userId}")
+    void softDeleteMessagesByUserId(Integer userId);
+
+    /**
+     * 删除两个用户之间的所有私信
+     */
+    @Delete("DELETE FROM tab_private_message WHERE " +
+            "(sender_id = #{userId1} AND receiver_id = #{userId2}) OR " +
+            "(sender_id = #{userId2} AND receiver_id = #{userId1})")
+    void deleteMessagesBetweenUsers(@Param("userId1") Integer userId1, @Param("userId2") Integer userId2);
 }

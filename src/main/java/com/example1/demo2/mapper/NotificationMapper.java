@@ -224,4 +224,34 @@ public interface NotificationMapper {
             "AND create_time > DATE_SUB(NOW(), INTERVAL #{hours} HOUR)")
     int countSentNotifications(@Param("senderId") Integer senderId,
                                @Param("hours") int hours);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除用户接收和发送的所有通知（硬删除）
+     * 用于用户注销时清理数据
+     */
+    @Delete("DELETE FROM tab_notification WHERE receiver_id = #{userId} OR sender_id = #{userId}")
+    void deleteNotificationsByUserId(Integer userId);
+
+    /**
+     * 软删除用户接收的所有通知
+     * 将状态设置为已删除（status = 1）
+     */
+    @Update("UPDATE tab_notification SET status = 1 WHERE receiver_id = #{userId}")
+    void softDeleteNotificationsByReceiverId(Integer userId);
+
+    /**
+     * 删除指定目标类型和目标ID的所有通知
+     * 用于删除评论、星球、星系时同时删除相关通知
+     *
+     * 目标类型说明：
+     * 1 - 星系 (Galaxy)
+     * 2 - 星球 (Planet)
+     * 3 - 星系评论 (GalaxyComment)
+     * 4 - 星球评论 (PlanetComment)
+     * 5 - 用户 (User)
+     */
+    @Delete("DELETE FROM tab_notification WHERE target_type = #{targetType} AND target_id = #{targetId}")
+    void deleteNotificationsByTarget(@Param("targetType") Integer targetType, @Param("targetId") String targetId);
 }

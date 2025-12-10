@@ -70,4 +70,35 @@ public interface GalaxyAdministratorMapper {
      */
     @Select("SELECT user_id FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
     Integer getCommentAuthorId(Integer commentId);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除用户的所有管理员记录（硬删除）
+     * 用于用户注销时清理数据
+     * 这会删除该用户在所有星系中的管理员身份
+     */
+    @Delete("DELETE FROM tab_galaxy_admins WHERE user_id = #{userId}")
+    void deleteAdminRecordsByUserId(Integer userId);
+
+    /**
+     * 软删除用户的所有管理员记录
+     * 将状态设置为已撤销（status = 1）
+     */
+    @Update("UPDATE tab_galaxy_admins SET status = 1 WHERE user_id = #{userId}")
+    void softDeleteAdminRecordsByUserId(Integer userId);
+
+    /**
+     * 删除星系的所有管理员记录（硬删除）
+     * 用于删除星系时级联删除管理员记录
+     */
+    @Delete("DELETE FROM tab_galaxy_admins WHERE galaxy_id = #{galaxyId}")
+    void deleteAdminsByGalaxyId(Integer galaxyId);
+
+    /**
+     * 删除用户任命的所有管理员记录
+     * 可选：当删除用户时，同时删除该用户任命的其他管理员记录
+     */
+    @Delete("DELETE FROM tab_galaxy_admins WHERE appointed_by = #{userId}")
+    void deleteAdminRecordsAppointedByUser(Integer userId);
 }

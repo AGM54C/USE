@@ -1,6 +1,5 @@
 package com.example1.demo2.mapper;
 
-import com.example1.demo2.pojo.KnowledgeGalaxy;
 import com.example1.demo2.pojo.KnowledgePlanet;
 import org.apache.ibatis.annotations.*;
 
@@ -36,7 +35,7 @@ public interface PlanetMapper {
     List<KnowledgePlanet> selectAll(Integer userId);
 
     // 根据关键词搜索用户创建的星球ID(模糊查询)
-    @Select("select planet_id from tab_knowledge_planet where contentTitle like CONCAT('%', #{keyword}, '%') and user_id = #{userId}")
+    @Select("select planet_id from tab_knowledge_planet where content_title like CONCAT('%', #{keyword}, '%') and user_id = #{userId}")
     List<String> searchIdsByKeyword(String keyword, Integer userId);
 
     @Update("UPDATE tab_knowledge_planet " +
@@ -52,7 +51,7 @@ public interface PlanetMapper {
     @Delete("DELETE FROM tab_knowledge_planet WHERE planet_id = #{planetId}")
     void deleteById(String planetId);
 
-    @Select("SELECT * FROM tab_knowledge_planet WHERE title LIKE #{keyword}")
+    @Select("SELECT * FROM tab_knowledge_planet WHERE content_title LIKE #{keyword}")
     List<KnowledgePlanet> searchPlanets(String s);
 
     @Update("UPDATE tab_knowledge_planet " +
@@ -93,4 +92,44 @@ public interface PlanetMapper {
             "SET visibility = #{visibility}, update_time = NOW() " +
             "WHERE planet_id = #{planetId}")
     void updatevisibility(String planetId, Integer visibility);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除星球评论的所有点赞记录
+     * 通过子查询找到该星球的所有评论ID，然后删除对应的点赞记录
+     */
+    @Delete("DELETE FROM tab_planet_comment_like WHERE planet_comment_id IN " +
+            "(SELECT planet_comment_id FROM tab_planet_comment WHERE planet_id = #{planetId})")
+    void deletePlanetCommentLikesByPlanetId(String planetId);
+
+    /**
+     * 删除星球的所有评论
+     */
+    @Delete("DELETE FROM tab_planet_comment WHERE planet_id = #{planetId}")
+    void deletePlanetCommentsByPlanetId(String planetId);
+
+    /**
+     * 删除与星球相关的通知
+     */
+    @Delete("DELETE FROM tab_notification WHERE target_type = 2 AND target_id = #{planetId}")
+    void deleteNotificationsByPlanetId(String planetId);
+
+    /**
+     * 获取用户创建的所有星球ID
+     */
+    @Select("SELECT planet_id FROM tab_knowledge_planet WHERE user_id = #{userId}")
+    List<String> getPlanetIdsByUserId(Integer userId);
+
+    /**
+     * 删除用户创建的所有星球
+     */
+    @Delete("DELETE FROM tab_knowledge_planet WHERE user_id = #{userId}")
+    void deletePlanetsByUserId(Integer userId);
+
+    /**
+     * 获取星球所属的星系ID
+     */
+    @Select("SELECT galaxy_id FROM tab_knowledge_planet WHERE planet_id = #{planetId}")
+    String getGalaxyIdByPlanetId(String planetId);
 }

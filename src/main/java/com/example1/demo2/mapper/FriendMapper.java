@@ -83,4 +83,20 @@ public interface FriendMapper {
             "AND status = 1")
     void updateLastChatTime(@Param("userId") Integer userId,
                             @Param("friendUserId") Integer friendUserId);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除用户的所有好友关系记录（硬删除）
+     * 包括用户作为请求方和被请求方的所有记录
+     */
+    @Delete("DELETE FROM tab_friend WHERE user_id = #{userId} OR friend_user_id = #{userId}")
+    void deleteAllFriendshipsByUserId(Integer userId);
+
+    /**
+     * 软删除用户的所有好友关系
+     * 将状态设置为已删除（status = 3）
+     */
+    @Update("UPDATE tab_friend SET status = 3 WHERE user_id = #{userId} OR friend_user_id = #{userId}")
+    void softDeleteAllFriendshipsByUserId(Integer userId);
 }

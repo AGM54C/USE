@@ -120,20 +120,20 @@ public interface GalaxyCommentMapper {
     /**
      * 插入点赞记录
      */
-    @Insert("INSERT INTO tab_comment_like(user_id, comment_id, create_time) " +
+    @Insert("INSERT INTO tab_galaxy_comment_like(user_id, galaxy_comment_id, create_time) " +
             "VALUES(#{userId}, #{commentId}, now())")
     void insertLike(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**
      * 删除点赞记录
      */
-    @Delete("DELETE FROM tab_comment_like WHERE user_id = #{userId} AND comment_id = #{commentId}")
+    @Delete("DELETE FROM tab_galaxy_comment_like WHERE user_id = #{userId} AND galaxy_comment_id = #{commentId}")
     void deleteLike(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**
      * 检查是否已点赞
      */
-    @Select("SELECT COUNT(*) > 0 FROM tab_comment_like WHERE user_id = #{userId} AND comment_id = #{commentId}")
+    @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_comment_like WHERE user_id = #{userId} AND galaxy_comment_id = #{commentId}")
     boolean isLiked(@Param("userId") Integer userId, @Param("commentId") Integer commentId);
 
     /**
@@ -145,4 +145,56 @@ public interface GalaxyCommentMapper {
             "ELSE 2 END " +
             "FROM tab_knowledge_galaxy kg WHERE kg.galaxy_id = #{galaxyId}")
     Integer getUserRoleInGalaxy(@Param("userId") Integer userId, @Param("galaxyId") Integer galaxyId);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除评论的点赞记录
+     */
+    @Delete("DELETE FROM tab_galaxy_comment_like WHERE galaxy_comment_id = #{commentId}")
+    void deleteLikesByCommentId(Integer commentId);
+
+    /**
+     * 删除评论及其所有子评论的点赞记录
+     * 先删除子评论的点赞，再删除父评论的点赞
+     */
+    @Delete("DELETE FROM tab_galaxy_comment_like WHERE galaxy_comment_id IN " +
+            "(SELECT galaxy_comment_id FROM tab_galaxy_comment WHERE parent_comment_id = #{commentId})")
+    void deleteChildCommentLikes(Integer commentId);
+
+    /**
+     * 删除评论的所有子评论
+     */
+    @Delete("DELETE FROM tab_galaxy_comment WHERE parent_comment_id = #{commentId}")
+    void deleteChildComments(Integer commentId);
+
+    /**
+     * 获取评论的所有子评论ID
+     */
+    @Select("SELECT galaxy_comment_id FROM tab_galaxy_comment WHERE parent_comment_id = #{commentId}")
+    List<Integer> getChildCommentIds(Integer commentId);
+
+    /**
+     * 删除用户的所有星系评论
+     */
+    @Delete("DELETE FROM tab_galaxy_comment WHERE user_id = #{userId}")
+    void deleteCommentsByUserId(Integer userId);
+
+    /**
+     * 删除用户的所有星系评论点赞记录
+     */
+    @Delete("DELETE FROM tab_galaxy_comment_like WHERE user_id = #{userId}")
+    void deleteLikesByUserId(Integer userId);
+
+    /**
+     * 获取用户的所有星系评论ID
+     */
+    @Select("SELECT galaxy_comment_id FROM tab_galaxy_comment WHERE user_id = #{userId}")
+    List<Integer> getCommentIdsByUserId(Integer userId);
+
+    /**
+     * 删除与评论相关的通知
+     */
+    @Delete("DELETE FROM tab_notification WHERE target_type = 3 AND target_id = #{commentId}")
+    void deleteNotificationsByCommentId(Integer commentId);
 }

@@ -127,19 +127,15 @@ public interface GalaxyMapper {
 
     /**
      * 根据评论ID获取对应的星系
-     * @param commentId 评论ID
-     * @return 返回对应的星系对象
+     * 注意：tab_galaxy_comment 表的主键列名是 galaxy_comment_id
      */
-    @Select("SELECT *.kg FROM tab_knowledge_galaxy kg" +
+    @Select("SELECT kg.* FROM tab_knowledge_galaxy kg " +
             "JOIN tab_galaxy_comment gc ON kg.galaxy_id = gc.galaxy_id " +
             "WHERE gc.galaxy_comment_id = #{commentId}")
     KnowledgeGalaxy getGalaxyByCommentId(Integer commentId);
 
     /**
      * 检查用户是否是星系管理员
-     * @param galaxyId 星系ID
-     * @param currentUserId 当前用户ID
-     * @return 如果是管理员返回true，否则返回false
      */
     @Select("SELECT COUNT(*) > 0 FROM tab_galaxy_admins " +
             "WHERE galaxy_id = #{galaxyId} AND user_id = #{currentUserId} AND status = 0")
@@ -147,13 +143,70 @@ public interface GalaxyMapper {
 
     /**
      * 检查用户是否是系统管理员
-     * @param currentUserId 当前用户ID
-     * @return 如果是系统管理员返回true，否则返回false
      */
     @Select("SELECT COUNT(*) > 0 FROM tab_system_admin WHERE user_id = #{currentUserId}")
     boolean isUserSystemAdmin(Integer currentUserId);
 
-
+    /**
+     * 删除星系的所有评论
+     */
     @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_id = #{galaxyId}")
-    void deleteGalaxyComment(Integer galaxyId);
+    void deleteGalaxyComments(Integer galaxyId);
+
+    /**
+     * 删除单条星系评论
+     */
+    @Delete("DELETE FROM tab_galaxy_comment WHERE galaxy_comment_id = #{commentId}")
+    void deleteGalaxyComment(Integer commentId);
+
+    // ==================== 级联删除相关方法 ====================
+
+    /**
+     * 删除星系评论的所有点赞记录
+     *
+     * 重要说明：
+     * - tab_galaxy_comment 表的主键是 galaxy_comment_id
+     * - tab_galaxy_comment_like 表中引用评论的外键列名需要根据实际情况调整
+     * - 如果 like 表的外键列名是 comment_id，使用下面这个版本
+     * - 如果 like 表的外键列名也是 galaxy_comment_id，请将 comment_id 改为 galaxy_comment_id
+     */
+    @Delete("DELETE FROM tab_galaxy_comment_like WHERE comment_id IN " +
+            "(SELECT galaxy_comment_id FROM tab_galaxy_comment WHERE galaxy_id = #{galaxyId})")
+    void deleteGalaxyCommentLikesByGalaxyId(Integer galaxyId);
+
+    /**
+     * 删除星系的所有管理员记录
+     */
+    @Delete("DELETE FROM tab_galaxy_admins WHERE galaxy_id = #{galaxyId}")
+    void deleteGalaxyAdminsByGalaxyId(Integer galaxyId);
+
+    /**
+     * 将星系下所有星球的galaxy_id设置为null（解除星球与星系的关联）
+     */
+    @Update("UPDATE tab_knowledge_planet SET galaxy_id = NULL WHERE galaxy_id = #{galaxyId}")
+    void detachPlanetsFromGalaxy(Integer galaxyId);
+
+    /**
+     * 删除与星系相关的通知
+     */
+    @Delete("DELETE FROM tab_notification WHERE target_type = 1 AND target_id = #{galaxyId}")
+    void deleteNotificationsByGalaxyId(Integer galaxyId);
+
+    /**
+     * 获取用户创建的所有星系
+     */
+    @Select("SELECT * FROM tab_knowledge_galaxy WHERE user_id = #{userId}")
+    List<KnowledgeGalaxy> getGalaxiesByUserId(Integer userId);
+
+    /**
+     * 删除用户创建的所有星系
+     */
+    @Delete("DELETE FROM tab_knowledge_galaxy WHERE user_id = #{userId}")
+    void deleteGalaxiesByUserId(Integer userId);
+
+    /**
+     * 获取星系下所有星球的ID列表
+     */
+    @Select("SELECT planet_id FROM tab_knowledge_planet WHERE galaxy_id = #{galaxyId}")
+    List<String> getPlanetIdsByGalaxyId(Integer galaxyId);
 }
